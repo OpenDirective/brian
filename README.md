@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/OpenDirective/brian.png?label=ready&title=Ready)](https://waffle.io/OpenDirective/brian)
 # Brian
 
 ## Easy communication and media access for people with cognative disabilities.
