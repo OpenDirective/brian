@@ -27,7 +27,7 @@ There are 2 main user roles with Brian.
 
 ## Technical features
 
-The architecture is HTML based clients in collaboration with a web service. Initially the UX is optimsed for Desktop and tablet form factors.
+The architecture is HTML based clients in collaboration with a web service. Initially the UX is optimised for Desktop and tablet form factors.
 
 * Front-end is HTML, CSS, Javascript (ES5)
 * Server is Javascript nodejs and hapi web server
@@ -35,3 +35,13 @@ The architecture is HTML based clients in collaboration with a web service. Init
 * Minimal dependency on frameworks, libraries or tooling 
 * Workflow using Gulp, browserify
 * CommonJS modules
+
+## Our values
+
+### Technical
+* Mobile first, responsive, progressively enhanced and accessible
+* Minimal dependencies on frameworks etc
+* Agile dev - with MCP - minimum compelling product (loved by users)
+* Best practices, especially architectural patterns
+* Clear roadmap
+* Encourage diverse participation
