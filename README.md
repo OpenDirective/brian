@@ -1,4 +1,4 @@
-# Brian - community pages
+# Brian
 
 ## Easy communication and media access for people with cognative disabilities or low digital literacy.
 
@@ -11,4 +11,4 @@ This area on GitHub is the place to contribute and help improve Brian. See the p
 
 ## Project communication
 
-We use [GitHub issues](https://github.com/OpenDirective/brian/issues) for most communication, not just project management and bugs. So don't be shy, just create an issue to ask a question, make a request or start a discussion. We also use the [Waffle Kanban](https://waffle.io/OpenDirective/brian) view of our issues for project management.
+We use [Brian-discuss issues](https://github.com/OpenDirective/brian-discuss) as a general "mailing list" for communication. Issues in this repository are used for usual project management and tracking. We also use the [Waffle Kanban](https://waffle.io/OpenDirective/brian) view of our issues for project management.
