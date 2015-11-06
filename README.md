@@ -23,8 +23,8 @@ For easy visualisation of project work progress we have the [Waffle Kanban](http
 
 ### Guidelines
 
-* [Open an issue](https://github.com/OpenDirective/brian-discuss/issues/new) on this repository with your topic or question, providing as much detail as possible. The more we know, the better we can help.
-* Follow the [Conference Code of Conduct](http://confcodeofconduct.com). **tl;dr: Don't be a Jerk**
+* [Open an issue](https://github.com/OpenDirective/brian/issues/new) on this repository with your topic or question, providing as much detail as possible. The more we know, the better we can help.
+* Follow the [Conference Code of Conduct](http://confcodeofconduct.com). **tl;dr: Be nice**
 * Before posting, search the repository to see if there's already an issue opened to avoid duplicates.
 * If you think something is a bug or a limitation, then go ahead, post your issue. If you are not sure, you are also in the right place, or try the chat first.
-* If you do not already had a github account it's easy to [sign up](https://github.com/join).
+* If you do not already have a github account it's easy to [sign up](https://github.com/join).
