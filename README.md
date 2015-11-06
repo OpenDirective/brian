@@ -4,7 +4,7 @@
 
 Lead Maintainer: [SteveLee](https://github.com/SteveALee)
 
-[![Stories in Ready](https://badge.waffle.io/OpenDirective/brian.svg?label=ready&title=Ready)](http://waffle.io/OpenDirective/brian) 
+[![Stories in Ready](https://badge.waffle.io/OpenDirective/brian.svg?label=waffle%3Aready&title=Ready)](http://waffle.io/OpenDirective/brian) 
 
 The Brian project is a platform that supports easy, uncomplicated media sharing and communication between people. It features an easy, non intimidating user experience designed for people with cognitive disabilities. A control panel is provided to manage the end user experience in combination with existing on-line services for email and media. Brian manages the bridge to the end user experience automatically.
 
