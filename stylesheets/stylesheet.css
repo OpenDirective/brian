@@ -163,7 +163,15 @@ a.button span {
 }
 #view-on-github {
   margin-right: 0;
-  width: 240px;
+  width: 285px;
+}
+
+#image-container {
+  width: 100%;
+}
+#image-container img {
+  width: 48%;
+  padding: 2px;
 }
 
 code, pre {
