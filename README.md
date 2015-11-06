@@ -1,5 +1,7 @@
 # Brian
 
+[![Join the chat at https://gitter.im/OpenDirective/brian](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/OpenDirective/brian?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Easy communication and media access for people with cognative disabilities or low digital literacy.
 
 Lead Maintainer: [SteveLee](https://github.com/SteveALee)
