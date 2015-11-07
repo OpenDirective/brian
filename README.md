@@ -9,7 +9,7 @@ non intimidating user experience designed for people with cognitive disabilities
 experience in combination with existing on-line services for email and media. Brian manages the bridge to the end user experience 
 automatically.
 
-The project [website](http://opendirective.github.io/brian) provides an introduction and the [wiki](https://github.com/OpenDirective/brian/wiki/Home/_edit) contains detailed information for collaborators. 
+The project [website](http://opendirective.github.io/brian) provides an introduction and the [wiki](https://github.com/OpenDirective/brian/wiki/Home) contains detailed information for collaborators. 
 
 ## Project communication
 
