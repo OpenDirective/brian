@@ -32,6 +32,6 @@
     "start": "node server.js",
     "test": "eslint .\\"
   },
-  "author": "SteveALee (http://opendirective.com)",
+  "author": "Steve Lee (http://opendirective.com)",
   "license": "Apache-2.0"
 }
