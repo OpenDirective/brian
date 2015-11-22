@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "name": "brian",
+  "description": "Easy access to media and communications",
+  "homepage": "https://github.com/OpenDirective/brian",
+  "bugs": {
+    "url": "https://github.com/OpenDirective/brian/issues"
+  },
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/OpenDirective/brian"
+  },
+  "keywords": [
+    "Access",
+    "Assistive Technology",
+    "Cognitive"
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "hapi": "11.1.1",
+    "inert": "3.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^1.10.1",
+    "eslint-config-hapi": "^7.0.0",
+    "eslint-plugin-hapi": "^4.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "eslint .\\"
+  },
+  "author": "SteveALee (http://opendirective.com)",
+  "license": "Apache-2.0"
+}

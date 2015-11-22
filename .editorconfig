@@ -1,0 +1,22 @@
+﻿# This file is for unifying the coding style for different editors and IDEs.
+# EditorConfig http://EditorConfig.org
+# In VisualStudio use the EditorConfig extension - https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328
+
+# top-most EditorConfig file
+root = true
+
+# windows-style newlines with a newline ending every file
+# Line-ending will interact with git line ending transformation on *nix
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+
+#[{package.json,.travis.yml}]
+#indent_size = 2

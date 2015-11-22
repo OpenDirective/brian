@@ -1,0 +1,7 @@
+﻿{
+    "extends": "eslint-config-hapi",
+    "env": {
+        "browser": true,
+        "node": true
+    }
+}
