@@ -30,7 +30,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "eslint .\\"
+    "testCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' *\"",
+    "testBinary": "bash -c \"grep -ILr . *\"",
+    "test": "eslint ./"
   },
   "author": "Steve Lee (http://opendirective.com)",
   "license": "Apache-2.0"
