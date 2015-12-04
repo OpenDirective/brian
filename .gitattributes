@@ -9,6 +9,7 @@
 
 # Explicitly declare text files you want to always be normalized in repository
 # and converted to LF line endings on checkout.
+# see "npm run lsTextTypes"
 *.txt eol=lf
 *.md eol=lf
 *.js eol=lf
@@ -19,12 +20,12 @@ LICENCE eol=lf
 NOTICE eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
-# see "npm run testCRLF"
+# see "npm run lsCRLF"
 *.sln eol=crlf
 *.njsproj eol=crlf
 
 # Denote all files that are truly binary and should not be normalised or diffed.
-# see "npm run testBinary"
+# see "npm run lsBinary"
 *.png binary
 *.jpg binary
 *.pdf binary

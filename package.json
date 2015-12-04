@@ -30,8 +30,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "testCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' *\"",
-    "testBinary": "bash -c \"grep -ILr . *\"",
+    "lsCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' ./\"",
+    "lsBinary": "bash -c \"grep -ILr --exclude-dir={.git,.vs,node_modules} . ./\"",
+    "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\"",
     "test": "eslint ./"
   },
   "author": "Steve Lee (http://opendirective.com)",
