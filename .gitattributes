@@ -1,6 +1,6 @@
 ﻿# See https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 # Set the default behavior for the project regardless of user settings
-# Use Git for Windows' "file" to check end of line status 
+# Use Git for Windows' "file" to check end of line status
 
 # Note this interacts with .editorConfig.
 # Turn off all line tansformation as text=auto + eol=lf not possible
@@ -19,10 +19,12 @@ LICENCE eol=lf
 NOTICE eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
+# see "npm run testCRLF"
 *.sln eol=crlf
 *.njsproj eol=crlf
 
 # Denote all files that are truly binary and should not be normalised or diffed.
+# see "npm run testBinary"
 *.png binary
 *.jpg binary
 *.pdf binary
