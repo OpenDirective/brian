@@ -1,0 +1,6 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+
+	// When enabled, will trim trailing whitespace when you save a file.
+	"files.trimTrailingWhitespace": true
+}
