@@ -1,14 +1,12 @@
 # Brian
 
-## Easy communication and media access for people with cognative disabilities or low digital literacy.
+## Easy communication and media access for people with cognitive disabilities or low digital literacy.
 
 Lead Maintainer: [SteveLee](https://github.com/SteveALee)
 
-The Brian project is a platform that supports easy, uncomplicated media sharing and communication between people. It features an easy, 
-non intimidating user experience designed for people with cognitive disabilities. A control panel is provided to manage the end user 
-experience in combination with existing on-line services for email and media. Brian manages the bridge to the end user experience 
-automatically.
+The Brian project is a platform that supports easy, uncomplicated media sharing and communication between people. The main user experience is designed for people with cognitive disabilities. A control panel is also provided for supporters to manage the main user experience in combination with existing on-line services for email and media. Brian manages the bridge to the end user experience automatically.
 
+## More information
 The project [website](http://opendirective.github.io/brian) provides an introduction and the [wiki](https://github.com/OpenDirective/brian/wiki/Home) contains detailed information for collaborators. 
 
 ## Project communication
