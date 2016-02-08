@@ -1,7 +1,7 @@
-﻿# This file is for unifying the coding style for different editors and IDEs.
+﻿# EditorConfig helps developers define and maintain consistent
+# coding styles between different editors and IDEs.
 # EditorConfig http://EditorConfig.org
-# Use "npm install -g editorconfig" and "configeditor" to check file processing
-# In VisualStudio use the EditorConfig extension - https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328
+# For VisualStudio or VS Code use the EditorConfig extensions available in https://visualstudiogallery.msdn.microsoft.com
 
 # top-most EditorConfig file
 root = true
@@ -11,13 +11,18 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
-insert_final_newline = true
-trim_trailing_whitespace = true
+tab_width = 4
 end_of_line = lf
 charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
 
 [*.njsproj,*.sln]
 end_of_line = crlf
 
+[*.md]
+trim_trailing_whitespace = false
+
 [Makefile]
 indent_style = tab
+trim_trailing_whitespace = false

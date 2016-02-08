@@ -20,20 +20,21 @@
     "node": ">=4.2.0"
   },
   "dependencies": {
-    "hapi": "11.1.2",
+    "hapi": "13.0.0",
     "inert": "3.2.0"
   },
   "devDependencies": {
     "eslint": "^1.10.1",
-    "eslint-config-hapi": "^7.0.0",
+    "eslint-config-hapi": "^8.0.1",
     "eslint-plugin-hapi": "^4.0.0"
   },
   "scripts": {
     "start": "node server.js",
+    "test": "npm run lint",
+    "lint": "eslint ./",
     "lsCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' ./\"",
     "lsBinary": "bash -c \"grep -ILr --exclude-dir={.git,.vs,node_modules} . ./\"",
-    "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\"",
-    "test": "eslint ./"
+    "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\""
   },
   "author": "Steve Lee (http://opendirective.com)",
   "license": "Apache-2.0"
