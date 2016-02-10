@@ -5,45 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>responsive-grid demo</title>
-    <link rel="stylesheet" href="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-    <style>
-        @media all and (max-width: 35em) {
-            .my-breakpoint .ui-block-a,
-            .my-breakpoint .ui-block-b,
-            .my-breakpoint .ui-block-c,
-            .my-breakpoint .ui-block-d,
-            .my-breakpoint .ui-block-e {
-                width: 100%;
-                float:none;
-            }
-        }
-
- /*       @media all and (min-width: 45em) {
-        .my-breakpoint.ui-grid-b .ui-block-a { width: 49.95%; }
-        .my-breakpoint.ui-grid-b .ui-block-b,
-        .my-breakpoint.ui-grid-b .ui-block-c { width: 24.925%; }
-    }*/
-
-        input[type="button"] {
-            background: #0b9ccb;
-        }
-    </style>
-    </head>
+    <link rel="stylesheet" href="/css/style.css">
+   </head>
 
     <body>
     <div data-role="header">
        <h1>Brian layouts</h1>
     </div>
-    <div role="main" class="ui-content">
+    <div role="main" class="grid">
         <div class="ui-grid-b my-breakpoint">
-            <div class="ui-block-a"><input type="button" value="Photos"/></div>
-            <div class="ui-block-b"><input type="button" value="Videos" /></div>
-            <div class="ui-block-c"></div>
-            <div class="ui-block-a"><input type="button" value="Music" /></div>
-            <div class="ui-block-b"><input type="button" value="Other things to do..." /></div>
-            <div class="ui-block-b"><input type="button" value="Answer call" /></div>
+            <div><input type="button" value="Photos"/></div>
+            <div><input type="button" value="Videos" /></div>
+            <div></div>
+            <div><input type="button" value="Music" /></div>
+            <div><input type="button" value="Other things to do..." /></div>
+            <div><input type="button" value="Answer call" /></div>
         </div>
     </div>
     </body>

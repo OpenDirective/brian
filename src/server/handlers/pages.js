@@ -4,10 +4,11 @@
 
 // Declare internals
 
-const internals = {};
+const internals = {
+};
 
 
 exports.home = function (request, reply) {
 
-    reply.file('./public/index.html');
+    reply.file('index.html');
 };

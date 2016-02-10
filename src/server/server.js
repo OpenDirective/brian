@@ -5,19 +5,30 @@
 const Hapi = require('hapi');
 const Inert = require('inert');
 const Routes = require('./routes');
+const Path = require('path');
 
 // Declare internals
 
 const internals = {
     serverHost: 'localhost',
-    serverPort: process.env.PORT || 8080
+    serverPort: process.env.PORT || 8080,
+    webBaseURL: `http://${this.serverHost}:${this.serverPort}`,
+    serverDefaults: {
+        connections: {
+            routes: {
+                files: {
+                    relativeTo: Path.join(__dirname, '../client')
+                }
+            }
+        }
+    }
 };
 
-internals.webBaseURL = `http://${internals.serverHost}:${internals.serverPort}`;
 
 internals.init = function () {
 
-    const server = new Hapi.Server();
+    const server = new Hapi.Server(internals.serverDefaults);
+
     server.connection({ port: internals.serverPort });
 
     server.bind({

@@ -26,12 +26,13 @@
   "devDependencies": {
     "eslint": "^1.10.1",
     "eslint-config-hapi": "^8.0.1",
-    "eslint-plugin-hapi": "^4.0.0"
+    "eslint-plugin-hapi": "^4.0.0",
+    "typescript": "^1.9.0-dev.20160209"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node src/server/server.js",
     "test": "npm run lint",
-    "lint": "eslint ./",
+    "lint": "eslint --env node src/server/**/*.js && eslint --env browser src/client/**/*.js",
     "lsCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' ./\"",
     "lsBinary": "bash -c \"grep -ILr --exclude-dir={.git,.vs,node_modules} . ./\"",
     "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\""
