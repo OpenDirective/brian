@@ -46,6 +46,7 @@ Vagrant.configure(2) do |config|
   config.vm.hostname = app_name
 
   config.vm.provider :virtualbox do |vm|
+    vm.name = app_name + "_QI"
     vm.customize ["modifyvm", :id, "--memory", ram]
     vm.customize ["modifyvm", :id, "--cpus", cpus]
   end
