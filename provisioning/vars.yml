@@ -12,8 +12,9 @@ nodejs_app_name: brian
 nodejs_app_git_clone: false
 
 # The absolute file system path where either the application directory or the
-# Git working directory will be located.
-nodejs_app_install_dir: /home/vagrant
+# Git working directory will be located. Please make sure this isn't set to
+# '/home/vagrant', refer to issue GPII-1582.
+nodejs_app_install_dir: /home/vagrant/sync
 
 # A YAML list of commands that will be executed in order within the application's
 # Git working directory.
@@ -22,12 +23,12 @@ nodejs_app_commands:
 
 # The application script passed as an argument to the Node.js binary. If this
 # isn't set then the application won't start.
-nodejs_app_start_script: src/server/server.js
+nodejs_app_start_script: src/server/server/index.js
 
 # Enabling this will manage the application using https://github.com/remy/nodemon
 # so that Node process is restarted when file system changes are detected. This
 # will only work if 'nodejs_app_start_script' is set.
-nodejs_app_dev_env: true
+# nodejs_app_dev_env: true
 
 # A YAML list of RPM packages that the application requires.
 # nodejs_app_rpm_packages:

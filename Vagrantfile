@@ -32,7 +32,7 @@ Vagrant.configure(2) do |config|
 
   # List additional directories to sync to the VM in your "Vagrantfile.local" file
   # using the following format:
-  # config.vm.synced_folder "../path/on/your/host   /os/your-project", "/home/vagrant/sync/your-project"
+  # config.vm.synced_folder "../path/on/your/host/os/your-project", "/home/vagrant/sync/your-project"
 
   # Port forwarding takes place here. The 'guest' port is used inside the VM
   # whereas the 'host' port is used by your host operating system.
