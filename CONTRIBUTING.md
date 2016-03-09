@@ -1,4 +1,4 @@
-﻿# How to contribute
+# How to contribute
 We welcome contributions from the community and are pleased to have them.  Please follow this guide when logging issues or making code changes.
 
 ## Logging Issues

@@ -1,6 +1,8 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-
-	// When enabled, will trim trailing whitespace when you save a file.
-	"files.trimTrailingWhitespace": true
+	"editor.rulers":[80, 120],
+	
+	// following should be picked from EditorConfig extension but it doesn't work yet
+	"files.trimTrailingWhitespace": true,
+	"files.eol": "lf"
 }

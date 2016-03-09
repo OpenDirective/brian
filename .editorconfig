@@ -1,4 +1,4 @@
-﻿# EditorConfig helps developers define and maintain consistent
+# EditorConfig helps developers define and maintain consistent
 # coding styles between different editors and IDEs.
 # EditorConfig http://EditorConfig.org
 # For VisualStudio or VS Code use the EditorConfig extensions available in https://visualstudiogallery.msdn.microsoft.com
@@ -10,8 +10,8 @@ root = true
 # Line-ending will interact with git line ending configuration
 [*]
 indent_style = space
-indent_size = 4
-tab_width = 4
+indent_size = 2
+tab_width = 2
 end_of_line = lf
 charset = utf-8
 insert_final_newline = true

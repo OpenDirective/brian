@@ -1,0 +1,18 @@
+.grid input[type="button"] {
+    background: #0b9ccb;
+    flex: 0 0 18%;
+    height: 20%;
+    margin: 5px;
+    max-width: 18%;
+    font-size:  calc(2.9vw);
+}
+
+.grid {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-content: center;
+    align-items: center;
+
+    height: 80vh;
+}
