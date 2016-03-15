@@ -1,18 +1,16 @@
-import {Observable} from 'rx';
-import {div, img} from '@cycle/dom';
-import AdjectiveInput from './AdjectiveInput';
-import Sentence from './Sentence';
+import {Observable} from 'rx'
+import {div, img} from '@cycle/dom'
+import AdjectiveInput from './AdjectiveInput'
+import Sentence from './Sentence'
 
+function App (sources) {
+  const adjectiveInputComponent = AdjectiveInput({DOM: sources.DOM})
+  const adjectiveInputVTree$ = adjectiveInputComponent.DOM
+  const adjectiveInputValue$ = adjectiveInputComponent.inputValue$
 
-function App(sources) {
-
-  const adjectiveInputComponent = AdjectiveInput({DOM: sources.DOM});
-  const adjectiveInputVTree$ = adjectiveInputComponent.DOM;
-  const adjectiveInputValue$ = adjectiveInputComponent.inputValue$;
-
-  const sentenceSources = {DOM: sources.DOM, prop$: {adjectiveInputValue$}};
-  const sentenceComponent = Sentence(sentenceSources);
-  const sentenceVTree$ = sentenceComponent.DOM;
+  const sentenceSources = {DOM: sources.DOM, prop$: {adjectiveInputValue$}}
+  const sentenceComponent = Sentence(sentenceSources)
+  const sentenceVTree$ = sentenceComponent.DOM
 
   const vTree$ = Observable
         .combineLatest(
@@ -24,14 +22,13 @@ function App(sources) {
               sentenceVTree,
               inputVTree
             ])
-        );
+        )
 
   const sinks = {
     DOM: vTree$
-  };
+  }
 
-  return sinks;
+  return sinks
 }
 
-
-export default App;
+export default App
