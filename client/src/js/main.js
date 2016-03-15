@@ -26,4 +26,3 @@ if (module.hot) {   // hot loading enabled in config
 } else {
   run(App, drivers)
 }
-
