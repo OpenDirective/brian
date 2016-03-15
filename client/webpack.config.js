@@ -2,20 +2,22 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
-const ENV = process.env.NODE_ENV;
-const USEHOT = false;
+// build / run options
+const PRODUCTION = (process.env.NODE_ENV == 'production');
+const USEHOT = (!PRODUCTION && process.env.DEV_USEHOT == 'true');
+const USESOURCEMAPS = true;
 
 const srcDir = path.resolve(__dirname, 'src');
 const distDir = path.resolve(__dirname, 'dist');
 
-module.exports = {
+// common config
+const config = {
   entry: [
-             path.resolve(srcDir, 'js/main.js')
+          path.resolve(srcDir, 'js/main.js')
   ],
   output: {
     path: path.resolve(distDir, 'js/'),
-    publicPath: "/js/",
-    filename: 'bundle.js',
+    filename: 'bundle.js'
   },
   module: {
     loaders: [
@@ -31,24 +33,35 @@ module.exports = {
     ]
   },
   plugins: [
-            new CopyWebpackPlugin([{ from: srcDir, to: distDir }],
-                                  { ignore: [{glob: 'js/**/*'}] })
-  ],
-  devServer: {
-    contentBase: srcDir,
-    hot: USEHOT
-  }
+            new CopyWebpackPlugin([{ from: srcDir, to: '..' }],
+                                  { ignore: [{glob: 'js/**/*'}] }),
+            new webpack.NoErrorsPlugin()
+  ]
 };
 
-if (ENV == 'production') {
-  module.exports.plugins.push(new webpack.optimize.UglifyJsPlugin({minimize: true}));
+// Target specific config
+if (PRODUCTION) {
+	if (USESOURCEMAPS) {
+    config.devtool = 'source-map';
+  }
+  config.plugins.push(new webpack.optimize.UglifyJsPlugin({minimize: true}));
 }
 else
 {
-  module.exports.plugins.push(new webpack.SourceMapDevToolPlugin());
-  module.exports.entry.push('webpack-dev-server/client?http://localhost:8080');
-  if (USEHOT) {
-    module.exports.plugins.push(new webpack.HotModuleReplacementPlugin());
-    module.exports.entry.push('webpack/hot/dev-server');
+	if (USESOURCEMAPS) {
+    config.devtool = 'inline-source-map';
   }
+  config.devServer = {
+    contentBase: srcDir,
+    publicPath: "/js/",
+    hot: USEHOT
+   };
+  config.entry.push('webpack-dev-server/client?http://localhost:8080');
+  if (USEHOT) {
+    config.plugins.push(new webpack.HotModuleReplacementPlugin());
+    config.entry.push('webpack/hot/dev-server');
+  }
+
 };
+
+module.exports = config;
