@@ -1,24 +1,28 @@
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const path = require('path');
+const webpack = require('webpack')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const path = require('path')
 
 // build / run options
-const PRODUCTION = (process.env.NODE_ENV == 'production');
-const USEHOT = (!PRODUCTION && process.env.DEV_USEHOT == 'true');
-const USESOURCEMAPS = true;
+const PRODUCTION = (process.env.NODE_ENV === 'production')
+const USEHOT = (!PRODUCTION && process.env.DEV_USEHOT === 'true')
+const USESOURCEMAPS = true
 
-const srcDir = path.resolve(__dirname, 'src');
-const distDir = path.resolve(__dirname, 'dist');
+const srcDir = path.resolve(__dirname, 'src')
+const distDir = path.resolve(__dirname, 'dist')
 
 // common config
 const config = {
+  target: 'web',
+
   entry: [
-          path.resolve(srcDir, 'js/main.js')
+    path.resolve(srcDir, 'js/main.js')
   ],
+
   output: {
     path: path.resolve(distDir, 'js/'),
     filename: 'bundle.js'
   },
+
   module: {
     loaders: [
       {
@@ -32,36 +36,35 @@ const config = {
       }
     ]
   },
+
   plugins: [
-            new CopyWebpackPlugin([{ from: srcDir, to: '..' }],
-                                  { ignore: [{glob: 'js/**/*'}] }),
-            new webpack.NoErrorsPlugin()
+    new CopyWebpackPlugin([{ from: srcDir, to: '..' }]),
+    new webpack.NoErrorsPlugin()
   ]
-};
+}
 
 // Target specific config
 if (PRODUCTION) {
-	if (USESOURCEMAPS) {
-    config.devtool = 'source-map';
+  if (USESOURCEMAPS) {
+    config.devtool = 'source-map'
   }
-  config.plugins.push(new webpack.optimize.UglifyJsPlugin({minimize: true}));
-}
-else
-{
-	if (USESOURCEMAPS) {
-    config.devtool = 'inline-source-map';
+  config.plugins.push(new webpack.optimize.UglifyJsPlugin({minimize: true}))
+} else {
+  if (USESOURCEMAPS) {
+    config.devtool = 'inline-source-map'
   }
+  config.output.pathinfo = true
+  config.debug = true
   config.devServer = {
     contentBase: srcDir,
-    publicPath: "/js/",
+    publicPath: '/js/',
     hot: USEHOT
-   };
-  config.entry.push('webpack-dev-server/client?http://localhost:8080');
-  if (USEHOT) {
-    config.plugins.push(new webpack.HotModuleReplacementPlugin());
-    config.entry.push('webpack/hot/dev-server');
   }
+  config.entry.push('webpack-dev-server/client?http://localhost:8080')
+  if (USEHOT) {
+    config.plugins.push(new webpack.HotModuleReplacementPlugin())
+    config.entry.push('webpack/hot/dev-server')
+  }
+}
 
-};
-
-module.exports = config;
+module.exports = config
