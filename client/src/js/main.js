@@ -12,7 +12,7 @@ if (module.hot) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
 
   const drivers2 = {}
-  for (var prop in drivers) {
+  for (const prop in drivers) {
     if (drivers.hasOwnProperty(prop)) {
       drivers2[prop] = restartable(drivers[prop], {pauseSinksWhileReplaying: false})
     }

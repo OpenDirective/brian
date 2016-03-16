@@ -3,10 +3,10 @@ import {div, img} from '@cycle/dom'
 import AdjectiveInput from './AdjectiveInput'
 import Sentence from './Sentence'
 
-function App (sources) {
+function App(sources) {
   const adjectiveInputComponent = AdjectiveInput({DOM: sources.DOM})
-  const adjectiveInputVTree$ = adjectiveInputComponent.DOM
-  const adjectiveInputValue$ = adjectiveInputComponent.inputValue$
+  const {DOM: adjectiveInputVTree$,
+         inputValue$: adjectiveInputValue$} = adjectiveInputComponent
 
   const sentenceSources = {DOM: sources.DOM, prop$: {adjectiveInputValue$}}
   const sentenceComponent = Sentence(sentenceSources)

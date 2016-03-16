@@ -1,7 +1,7 @@
 import {Observable} from 'rx'
 import {input} from '@cycle/dom'
 
-function AdjectiveInput (sources) {
+function AdjectiveInput(sources) {
   const inputValue$ = sources.DOM
     .select('#adjectiveInput')
     .events('input')

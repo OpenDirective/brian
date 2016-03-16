@@ -13,7 +13,7 @@ The project [website](http://opendirective.github.io/brian) provides an introduc
 
 [![Join the chat at https://gitter.im/OpenDirective/brian](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/OpenDirective/brian?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Stories in Planned](https://badge.waffle.io/OpenDirective/brian.svg?label=planned&title=Planned)](http://waffle.io/OpenDirective/brian)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
+[![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 
 We use [issues](https://github.com/OpenDirective/brian/issues) on GitHub for most project discussion and progress tracking. We also have a [chat room](https://gitter.im/OpenDirective/brian) available for less formal and realtime discussion.
 

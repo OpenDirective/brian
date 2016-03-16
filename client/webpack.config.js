@@ -38,7 +38,7 @@ const config = {
   },
 
   plugins: [
-    new CopyWebpackPlugin([{ from: srcDir, to: '..' }]),
+    new CopyWebpackPlugin([{from: srcDir, to: '..'}]),
     new webpack.NoErrorsPlugin()
   ]
 }
