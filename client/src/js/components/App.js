@@ -1,28 +1,23 @@
 import {Observable} from 'rx'
 import {div, img} from '@cycle/dom'
-import AdjectiveInput from './AdjectiveInput'
-import Sentence from './Sentence'
+import Pad from './Pad'
 
 function App(sources) {
-  const adjectiveInputComponent = AdjectiveInput({DOM: sources.DOM})
-  const {DOM: adjectiveInputVTree$,
-         inputValue$: adjectiveInputValue$} = adjectiveInputComponent
+  const props = {
+    image: '/img/cyclejs_logo.svg'
+  }
 
-  const sentenceSources = {DOM: sources.DOM, prop$: {adjectiveInputValue$}}
-  const sentenceComponent = Sentence(sentenceSources)
-  const sentenceVTree$ = sentenceComponent.DOM
+  const padComponent = Pad({DOM: sources.DOM, props})
+  const {DOM: padVTree$,
+         values$: padValues$} = padComponent
 
   const vTree$ = Observable
-        .combineLatest(
-          adjectiveInputVTree$,
-          sentenceVTree$,
-          (inputVTree, sentenceVTree) =>
-            div({className: 'app'}, [
-              img({src: 'img/cyclejs_logo.svg', width: 200}),
-              sentenceVTree,
-              inputVTree
-            ])
-        )
+        .just(div({className: 'app',
+                   style: {width: "100vw", height: "100vh"}
+                  }, [
+                    padVTree$
+                  ])
+              )
 
   const sinks = {
     DOM: vTree$
