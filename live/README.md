@@ -1,1 +1,1 @@
-The protyoe live site goes here
+The protype live site lives here
