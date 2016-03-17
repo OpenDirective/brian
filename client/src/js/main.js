@@ -9,13 +9,10 @@ const drivers = {
 }
 
 function makeDriversRestartable(drivers) {
-  const wrappedDrivers = {}
-  for (const prop in drivers) {
-    if (drivers.hasOwnProperty(prop)) {
-      wrappedDrivers[prop] = restartable(drivers[prop],
-                                         {pauseSinksWhileReplaying: false})
-    }
-  }
+  const keys = drivers.keys
+  const wrappedDrivers = keys.map(k => restartable(drivers[k],
+                                           {pauseSinksWhileReplaying: false})
+                         )
   return wrappedDrivers
 }
 
