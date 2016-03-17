@@ -19,12 +19,12 @@
     "Cognitive"
   ],
   "scripts": {
-    "serve": "cross-env DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --progress --colors --inline --port 8080",
+    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --progress --colors --inline --port 8080\"",
     "start": "npm install && npm run serve",
-    "build": "npm run clean && cross-env NODE_ENV=production webpack --config client/webpack.config.js",
+    "build": "npm run clean && bash -c \"cross-env NODE_ENV=production webpack --config client/webpack.config.js\"",
     "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
     "_buildanddeploy": "npm build && npm run _deploy",
-    "_deploy": "cross-env GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./bin/deploy.sh",
+    "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./bin/deploy.sh\"",
     "test": "zuul --local 8080 test/test.js",
     "lint": "xo --verbose client/src/js/**/*.js",
     "clean": "rimraf client/dist/* && mkdirp client/dist",
@@ -53,7 +53,6 @@
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.6.0",
     "copy-webpack-plugin": "^1.1.1",
-    "cross-env": "^1.0.7",
     "eslint": "^2.4.0",
     "eslint-plugin-no-class": "^0.1.0",
     "mkdirp": "^0.5.1",
