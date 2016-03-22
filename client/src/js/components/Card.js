@@ -1,7 +1,7 @@
 import {Observable} from 'rx'
 import {button, div, img, text} from '@cycle/dom'
 
-function Pad(sources) {
+function Card(sources) {
 /*  const image$ = sources.props$
     .map(props => props.image)
     .first()
@@ -9,14 +9,14 @@ function Pad(sources) {
   const props = sources.props
 
   const intents$ = sources.DOM
-    .select('.pad')
+    .select('.Card')
     .events('click')
     .do(v => console.log(v))
     .map(e => e.target.value)
     .subscribe()
 
   const vTree$ = Observable.just(
-    button('.pad',
+    button('.Card',
       div({style: {width: '100vw', height: '100vh'}},
         img({src: props.image})
       )
@@ -30,4 +30,4 @@ function Pad(sources) {
   return sinks
 }
 
-export default Pad
+export default Card
