@@ -1,21 +1,21 @@
 import {Observable} from 'rx'
 import {div, img} from '@cycle/dom'
-import Pad from './Pad'
+import Card from './Card'
 
 function App(sources) {
   const props = {
     image: '/img/cyclejs_logo.svg'
   }
 
-  const padComponent = Pad({DOM: sources.DOM, props})
-  const {DOM: padVTree$,
-         values$: padValues$} = padComponent
+  const CardComponent = Card({DOM: sources.DOM, props})
+  const {DOM: CardVTree$,
+         values$: CardValues$} = CardComponent
 
   const vTree$ = Observable
         .just(div({className: 'app',
                    style: {width: "100vw", height: "100vh"}
                   }, [
-                    padVTree$
+                    CardVTree$
                   ])
               )
 
