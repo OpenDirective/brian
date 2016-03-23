@@ -1,5 +1,5 @@
 import {Observable} from 'rx'
-import {section, button, div, img, p} from '@cycle/dom'
+import {section, div, button, img, p} from '@cycle/dom'
 
 
 function model() {

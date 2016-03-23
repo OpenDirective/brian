@@ -95,19 +95,20 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+
 .content {
   width: 100vw;
   height: 100vh;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
-  align-content: flex-start;
-  align-items: stretch;
+  align-items: center;
+  align-content: space-around;
 }
 
 .cell {
-  flex: 0 0 50%;
-  height: 50%;
+  flex: 0 0 49%;
+  height: 48%;
 }
 
 .card {
@@ -115,25 +116,23 @@ textarea {
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  justify-content: flex-end;
   align-items: center;
 }
 
 .card > div {
-  display:flex;
+  display: flex;
   flex: 1 1;
 }
 
 .card > div > img {
-  max-width:100%;
+  max-width:96%;
   max-height:100%;
   object-fit: contain;
 }
 
 .card > p {
   font-size:  calc(.7em + 1.5vw);
-  flex: 0 0 ;
-  margin:5px;
+  flex: 0 1 ;
 }
 
 
