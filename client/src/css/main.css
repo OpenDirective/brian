@@ -135,10 +135,16 @@ textarea {
   flex: 0 1 ;
 }
 
+/* stop native control styling */
+button,
+html input[type="button"] {
+  -webkit-appearance: none;
+}
 
-
-
-
+button {
+  border-radius: 20px 20px 20px 20px;
+  border: 10px solid #000000;
+}
 
 
 
