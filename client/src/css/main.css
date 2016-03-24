@@ -117,6 +117,10 @@ textarea {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  border-radius: 20px 20px 20px 20px;
+  border: 10px solid #101010;
+  /* stop native control styling */
+  -webkit-appearance: none;
 }
 
 .card > div {
@@ -132,19 +136,12 @@ textarea {
 
 .card > p {
   font-size:  calc(.7em + 1.5vw);
-  flex: 0 1 ;
+  flex: 0 0 auto;
+  display: block;
+  margin-bottom: 1em;
 }
 
-/* stop native control styling */
-button,
-html input[type="button"] {
-  -webkit-appearance: none;
-}
 
-button {
-  border-radius: 20px 20px 20px 20px;
-  border: 10px solid #000000;
-}
 
 
 
