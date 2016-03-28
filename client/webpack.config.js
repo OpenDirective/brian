@@ -100,9 +100,6 @@ if (PRODUCTION) {
         }
       ]
     },
-    entry: [
-      'webpack-dev-server/client?http://localhost:8080'
-    ],
     plugins: [
       new HtmlWebpackPlugin({filename: 'index.html',
                               template: path.join(PATHS.src, 'index.html'),
@@ -113,8 +110,6 @@ if (PRODUCTION) {
 
   if (USEHOT) {
     config.plugins.push(new webpack.HotModuleReplacementPlugin())
-    config.entry.push('webpack/hot/dev-server')
-  }
 }
 
 module.exports = config
