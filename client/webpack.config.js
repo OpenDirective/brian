@@ -110,6 +110,7 @@ if (PRODUCTION) {
 
   if (USEHOT) {
     config.plugins.push(new webpack.HotModuleReplacementPlugin())
+  }
 }
 
 module.exports = config
