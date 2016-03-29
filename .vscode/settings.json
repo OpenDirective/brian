@@ -1,6 +1,6 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "xo.enable": true,
+   "xo.enable": true,
    "editor.rulers":[80, 120],
 
 	// following should be picked from EditorConfig extension but it doesn't work yet
