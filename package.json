@@ -19,23 +19,31 @@
     "Cognitive"
   ],
   "scripts": {
-    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --colors --progress\"",
-    "start": "npm install && npm run serve",
-    "build": "npm run clean && bash -c \"NODE_ENV=production webpack --config client/webpack.config.js\"",
-    "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
-    "_buildanddeploy": "npm run build && npm run _deploy",
-    "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
-    "test": "zuul --local 8080 test/test.js",
+    "clean": "rimraf client/dist/*",
+
+    "prebuild": "npm run clean ",
+    "build": "bash -c \"NODE_ENV=production webpack --config client/webpack.config.js\"",
+
     "lint": "xo ./client/src/js/**/*.js",
-    "clean": "rimraf client/dist/* && mkdirp client/dist",
-    "lsCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' ./\"",
-    "lsBinary": "bash -c \"grep -ILr --exclude-dir={.git,.vs,node_modules} . ./\"",
-    "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\"",
-    "env": "env",
+    "test": "zuul --local 8080 test/test.js",
+
     "open:prod": "opener chrome https://brian.opendirective.net/",
     "open:dev": "opener chrome http://localhost:8080/",
-    "dev": "npm run open:dev -s & npm run serve -s"
 
+    "_buildanddeploy": "npm run build && npm run _deploy",
+    "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
+    "predeploy": "npm run lint",
+    "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
+
+    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --colors --progress\"",
+    "start": "npm install && npm run serve",
+
+    "dev": "npm run open:dev -s & npm run serve -s",
+
+    "env": "env",
+    "lsCRLF": "bash -c \"grep -UIrl --exclude-dir={.git,.vs,node_modules} $'\\x0D' ./\"",
+    "lsBinary": "bash -c \"grep -ILr --exclude-dir={.git,.vs,node_modules} . ./\"",
+    "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\""
   },
   "engines": {
     "node": ">=4.3.2"
