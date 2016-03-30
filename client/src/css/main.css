@@ -123,6 +123,47 @@ textarea {
   -webkit-appearance: none;
 }
 
+.screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+}
+
+.main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: stretch;
+}
+
+.nav {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  flex: 1 0;
+}
+
+.action {
+  border-radius: 20px 20px 20px 20px;
+  border: 10px solid #606060;
+ }
+
+.title {
+  font-size:  calc(.7em + 1.5vw);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  border-radius: 20px 20px 20px 20px;
+  border: 10px solid #606060;
+}
+
 .card > div {
   display: flex;
   flex: 1 1;

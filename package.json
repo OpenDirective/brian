@@ -32,7 +32,6 @@
 
     "_buildanddeploy": "npm run build && npm run _deploy",
     "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
-    "predeploy": "npm run lint -s",
     "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy -s || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
 
     "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --colors --progress\"",
