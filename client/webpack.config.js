@@ -68,8 +68,9 @@ if (PRODUCTION) {
                           inject: true
                           }),
               new CopyWebpackPlugin([{from: path.join(PATHS.src, 'favicon.ico'), to: '..'},
-                          {from: path.join(PATHS.src, 'CNAME'), to: '..'},
-                                {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
+                                     {from: path.join(PATHS.src, 'media.json'), to: '..'},
+                                     {from: path.join(PATHS.src, 'CNAME'), to: '..'},
+                                     {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
               new webpack.NoErrorsPlugin(),
               new ExtractTextPlugin('../css/[name].css'),
               new webpack.optimize.UglifyJsPlugin({minimize: true})
