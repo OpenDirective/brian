@@ -19,6 +19,7 @@
     "Cognitive"
   ],
   "scripts": {
+
     "clean": "rimraf client/dist/*",
 
     "prebuild": "npm run clean -s",
@@ -34,6 +35,7 @@
     "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
     "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy -s || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
 
+    "preinstall":"nvm use 4.4.1 || echo nvm not found: check node version && pause",
     "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --colors --progress\"",
     "start": "npm install && npm run dev -s",
 
