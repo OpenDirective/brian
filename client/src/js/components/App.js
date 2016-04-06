@@ -23,9 +23,8 @@ function mkCard(name, link) {
           link}
 }
 
-function view(state$) {
-  return state$.map(screen =>
-  div('.screen', [
+function render(screen) {
+  return div('.screen', [
     header('.title', screen.title),
     main('.main', [
       section('.content',
@@ -39,20 +38,30 @@ function view(state$) {
         )
       ),
       nav('.actions', [
-        button('.action', 'back')
+        button('.action', {dataset: {action: 'back'}}, 'back')
       ])
     ])
-  ]))
+  ])
 }
 
-function App(sources) {
-  const cardClick$ = sources.DOM.select('.card').events('click')
+function App({DOM, HTTP, history}) {
+  const backClick$ = DOM.select('.action').events('click')
+  const navBack$ = backClick$
+    .map(() => { return {type: 'go', value: -1}})
 
-  let desiredAlbum = 'start'
-  const mediaRequest$ = cardClick$
-    .map(({currentTarget}) => currentTarget.dataset.view)
-    .do(x => desiredAlbum = x)
-    .startWith('')
+  const cardClick$ = DOM.select('.card').events('click')
+  const navScreen$ = cardClick$
+    .map(({currentTarget}) => {return {pathname: `/album/${currentTarget.dataset.view}`, state: {some: 'state'}}})
+    .startWith({pathname: `/album/start`})
+
+  function albumFromPath(path) {
+    return path.split('/')[2]
+  }
+
+  const album$ = history
+    .map(({pathname}) => {return albumFromPath(pathname)})
+
+  const request$ = album$
     .map(() => {
       return {
 //        url: 'https://OpenDirective.github.io/brianMedia/media.json',
@@ -62,29 +71,27 @@ function App(sources) {
       }
     })
 
-  const mediaConfig$ = sources.HTTP
+  const config$ = HTTP
     .filter(res$ => res$.request.category === 'media')
     .mergeAll()
     .map(res => res.body)
 
-  const screen$ = mediaConfig$
-    .flatMap(config => {
-      return Observable.from(config.albums)
-             .filter(album => album.name === desiredAlbum)
-    })
-       .do(x => console.log(x))
-  .map(album => {
+  const screen$ = config$
+    .combineLatest(album$,
+                   (config, album) => config.albums.filter(({name}) => name === album)[0])
+    .map(album => {
       return {title: album.name,
               cards: album.photos.map(name => {return mkCard(name, name)})
              }
     })
 
-  const state$ = screen$
-  const vtree$ = view(state$)
+  const view$ = screen$.combineLatest(render)
+  const navigate$ = navBack$.merge(navScreen$)
 
   return {
-    DOM: vtree$,
-    HTTP: mediaRequest$
+    DOM: view$,
+    HTTP: request$.do(x => console.log("req:", x)),
+    history: navigate$.do(x => console.log("nav", x))
   }
 }
 
