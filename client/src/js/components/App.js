@@ -1,5 +1,10 @@
 import {Observable} from 'rx'
-import {section, header, main, nav, div, button, img, p} from '@cycle/dom'
+import {section, header, main, nav, div, button, img, p, input} from '@cycle/dom'
+import {
+  addQueryStringValueToPath,
+  stripQueryStringValueFromPath,
+  getQueryStringValueFromPath,
+} from '../pathUtils'
 
 require('../../css/normalize.css')
 require('../../css/main.css')
@@ -17,49 +22,81 @@ function model() {
     })
 }
 
-function mkCard(name, link) {
+function mkCard(name, link, edit) {
   return {image: `https://opendirective.github.io/brianMedia/DARTMockup/${name}.jpg`,
           label: name,
-          link}
+          link,
+          edit}
 }
 
-function render(screen) {
+function render(screen, edits) {
+  const edit = screen.edit
+  const btn = edit ? button : button
   return div('.screen', [
     header('.title', screen.title),
     main('.main', [
       section('.content',
         screen.cards.map(card =>
           div('.cell', [
-            button('.card', {dataset: {view: card.label}}, [
-              div(img({src: card.image})),
-              p(card.label)
+            btn('.card', {dataset: {edit, view: card.label}}, [
+              edit ? "Editing"
+                   : "",
+              div(img('.cardImage', {src: card.image})),
+              edit ? input('.cardLabel', {type: "text", value: card.label})
+                   : p('.cardLabel', card.label)
             ])
           ])
         )
       ),
       nav('.actions', [
-        button('.action', {dataset: {action: 'back'}}, 'back')
+        button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
+        button('.action', {dataset: {action: 'edit'}}, edit ? 'Finish changes' : 'Make changes')
       ])
     ])
   ])
 }
 
+
+const EDIT_KEY = 'edit'
+function _isPathEdit(path) {
+  return getQueryStringValueFromPath(path, EDIT_KEY) === 'true'
+}
+function _togglePathEdit(path) {
+  return (_isPathEdit(path) ? stripQueryStringValueFromPath(path, 'edit')
+                            : addQueryStringValueToPath(path, 'edit', 'true'))
+}
+function _albumFromPath(path) {
+  return path === '/' ? 'start' : path.split('/')[2]
+}
+
+
 function App({DOM, HTTP, history}) {
-  const backClick$ = DOM.select('.action').events('click')
-  const navBack$ = backClick$
+  const actionClick$ = DOM.select('.action').events('click')
+  const navBack$ = actionClick$
+   .filter(({currentTarget}) => currentTarget.dataset.action === 'back')
     .map(() => { return {type: 'go', value: -1}})
 
-  const cardClick$ = DOM.select('.card').events('click')
-  const navScreen$ = cardClick$
-    .map(({currentTarget}) => {return {pathname: `/album/${currentTarget.dataset.view}`, state: {some: 'state'}}})
-    .startWith({pathname: `/album/start`})
+  const editMode$ = actionClick$
+   .filter(({currentTarget}) => currentTarget.dataset.action === 'edit')
+   .map(({currentTarget}) => _togglePathEdit(currentTarget.ownerDocument.URL))
 
-  function albumFromPath(path) {
-    return path.split('/')[2]
-  }
+  const cardImageClick$ = DOM.select('.cardImage').events('click')
+    .do(x => console.dir(x, x.currentTarget))
+
+  const edit$ = cardImageClick$
+   .map(({currentTarget}) => {return {pathname: `/album/zzz/getImage`}})
+
+
+  const cardClick$ = DOM.select('.card').events('click')
+   .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true') // stop being processed in capture phase so children get a look in
+
+  const navScreen$ = cardClick$
+    .map(({currentTarget}) => {return {pathname: `/album/${currentTarget.dataset.view}`}})
 
   const album$ = history
-    .map(({pathname}) => {return albumFromPath(pathname)})
+    .do(x => console.log('h', x, getQueryStringValueFromPath(x.search, 'edit')))
+    .map(({pathname, search}) => {return {name: _albumFromPath(pathname),
+                                          edit: _isPathEdit(search)}})
 
   const request$ = album$
     .map(() => {
@@ -76,20 +113,23 @@ function App({DOM, HTTP, history}) {
     .mergeAll()
     .map(res => res.body)
 
+  function albumFromConfig(config, album) {
+    const albumConfig = config.albums.filter(({name}) => name === album.name)[0]
+    return {title: albumConfig.name,
+            cards: albumConfig.photos.map(name => {return mkCard(name, name)}),
+            edit: album.edit
+    }
+  }
+
   const screen$ = config$
     .combineLatest(album$,
-                   (config, album) => config.albums.filter(({name}) => name === album)[0])
-    .map(album => {
-      return {title: album.name,
-              cards: album.photos.map(name => {return mkCard(name, name)})
-             }
-    })
+                   (config, album) => albumFromConfig(config, album))
 
   const view$ = screen$.combineLatest(render)
-  const navigate$ = navBack$.merge(navScreen$)
+  const navigate$ = navBack$.merge(navScreen$).merge(editMode$)
 
   return {
-    DOM: view$,
+    DOM: view$.do(x => console.log("view:", x)),
     HTTP: request$.do(x => console.log("req:", x)),
     history: navigate$.do(x => console.log("nav", x))
   }

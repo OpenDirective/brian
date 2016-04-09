@@ -116,10 +116,10 @@ textarea {
   height: 100%;
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
+  align-items: stretch;
   border-radius: 20px 20px 20px 20px;
   border: 10px solid #606060;
-  /* stop native control styling */
+  /* stop native control styling on iOS*/
   -webkit-appearance: none;
 }
 
@@ -164,20 +164,30 @@ textarea {
   border: 10px solid #606060;
 }
 
+.card {
+  font-size: calc(.7em + 1.5vw);
+}
+
+button {
+  font-size: calc(.7em + 1.5vw);
+}
+
+
+
 .card > div {
   display: flex;
   flex: 1 1;
 }
 
-.card > div > img {
+.card > div > .cardImage {
   max-width:96%;
   max-height:100%;
   object-fit: contain;
 }
 
-.card > p {
-  font-size:  calc(.7em + 1.5vw);
-  flex: 0 0 auto;
+.card > .cardLabel {
+  font-size: calc(.7em + 1.5vw);
+  flex: 0 1 auto;
   display: block;
   margin-bottom: 1em;
 }
