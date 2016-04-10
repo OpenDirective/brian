@@ -33,22 +33,20 @@ function render(screen, edits) {
   const edit = screen.edit
   const btn = edit ? button : button
   return div('.screen', [
-    header('.title', screen.title),
+    header('.title', {dataset: {action: 'speak'}}, screen.title),
     main('.main', [
       section('.content',
         screen.cards.map(card =>
-          div('.cell', [
-            btn('.card', {dataset: {edit, view: card.label}}, [
-              edit ? "Editing"
-                   : "",
-              div(img('.cardImage', {src: card.image})),
-              edit ? input('.cardLabel', {type: "text", value: card.label})
-                   : p('.cardLabel', card.label)
-            ])
+          btn('.card', {dataset: {edit, view: card.label}}, [
+            edit ? "Editing"
+                  : "",
+            img('.cardImage', {src: card.image}),
+            edit ? input('.cardLabel', {type: "text", value: card.label})
+                  : p('.cardLabel', card.label)
           ])
         )
       ),
-      nav('.actions', [
+      nav('.nav', [
         button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
         button('.action', {dataset: {action: 'edit'}}, edit ? 'Finish changes' : 'Make changes')
       ])
@@ -70,22 +68,21 @@ function _albumFromPath(path) {
 }
 
 
-function App({DOM, HTTP, history}) {
-  const actionClick$ = DOM.select('.action').events('click')
-  const navBack$ = actionClick$
-   .filter(({currentTarget}) => currentTarget.dataset.action === 'back')
-    .map(() => { return {type: 'go', value: -1}})
+function App({DOM, HTTP, history, speech}) {
+  const navBack$ = DOM.select('[data-action="back"]').events('click')
+   .map(() => { return {type: 'go', value: -1}})
 
-  const editMode$ = actionClick$
-   .filter(({currentTarget}) => currentTarget.dataset.action === 'edit')
+   const editMode$ = DOM.select('[data-action="edit"]').events('click')
    .map(({currentTarget}) => _togglePathEdit(currentTarget.ownerDocument.URL))
+
+  const speech$ = DOM.select('[data-action="speak"]').events('click')
+  .map(({currentTarget}) => currentTarget.textContent)
 
   const cardImageClick$ = DOM.select('.cardImage').events('click')
     .do(x => console.dir(x, x.currentTarget))
 
   const edit$ = cardImageClick$
    .map(({currentTarget}) => {return {pathname: `/album/zzz/getImage`}})
-
 
   const cardClick$ = DOM.select('.card').events('click')
    .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true') // stop being processed in capture phase so children get a look in
@@ -94,7 +91,7 @@ function App({DOM, HTTP, history}) {
     .map(({currentTarget}) => {return {pathname: `/album/${currentTarget.dataset.view}`}})
 
   const album$ = history
-    .do(x => console.log('h', x, getQueryStringValueFromPath(x.search, 'edit')))
+    //.filter(({search}) => _isPathEdit(search) !== true)
     .map(({pathname, search}) => {return {name: _albumFromPath(pathname),
                                           edit: _isPathEdit(search)}})
 
@@ -131,7 +128,8 @@ function App({DOM, HTTP, history}) {
   return {
     DOM: view$.do(x => console.log("view:", x)),
     HTTP: request$.do(x => console.log("req:", x)),
-    history: navigate$.do(x => console.log("nav", x))
+    history: navigate$.do(x => console.log("nav: ", x)),
+    speech: speech$.do(x => console.dir("spk: ", x))
   }
 }
 

@@ -96,100 +96,79 @@ textarea {
    ========================================================================== */
 
 
-.content {
+.screen {
   width: 100vw;
   height: 100vh;
   display: flex;
-  flex-flow: row wrap;
-  justify-content: space-around;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  font-size: calc(.7em + 1.5vw);
+}
+
+.title {
+  flex: 10;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  align-content: space-around;
+  border-radius: 20px 20px 20px 20px;
+  border: 10px solid #606060;
 }
 
-.cell {
-  flex: 0 0 49%;
-  height: 48%;
+.main {
+  flex: 90;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: stretch;
 }
 
-.card {
-  width: 100%;
-  height: 100%;
+.content {
+  flex: 80;
+  display: flex;
+  flex-flow: row wrap;
+  align-items: stretch;
+  align-content: stretch;
+}
+
+.nav {
+  flex: 20;
   display: flex;
   flex-flow: column nowrap;
+  justify-content: space-around;
   align-items: stretch;
-  border-radius: 20px 20px 20px 20px;
+}
+
+.card, .action {
+  margin: 1%;
+  border-radius: 20px;
   border: 10px solid #606060;
   /* stop native control styling on iOS*/
   -webkit-appearance: none;
 }
 
-.screen {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: stretch;
-}
-
-.main {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: stretch;
-}
-
-.nav {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-  align-items: stretch;
-  flex: 1 0;
-}
-
 .action {
-  border-radius: 20px 20px 20px 20px;
-  border: 10px solid #606060;
+  flex: 1;
  }
 
-.title {
-  font-size:  calc(.7em + 1.5vw);
-  width: 100%;
-  height: 100%;
+.card {
+  flex: 1 1 45%;
   display: flex;
   flex-flow: column nowrap;
-  align-items: center;
-  border-radius: 20px 20px 20px 20px;
-  border: 10px solid #606060;
+  justify-content: flex-start;
+  align-items: stretch;
 }
 
-.card {
-  font-size: calc(.7em + 1.5vw);
-}
-
-button {
-  font-size: calc(.7em + 1.5vw);
-}
-
-
-
-.card > div {
-  display: flex;
-  flex: 1 1;
-}
-
-.card > div > .cardImage {
-  max-width:96%;
-  max-height:100%;
+.card > .cardImage {
+  flex: 1;
   object-fit: contain;
+  margin-top: 1%;
 }
 
 .card > .cardLabel {
-  font-size: calc(.7em + 1.5vw);
-  flex: 0 1 auto;
-  display: block;
-  margin-bottom: 1em;
+  flex: 0;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
 }
 
 

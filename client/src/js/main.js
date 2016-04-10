@@ -3,6 +3,8 @@ import {makeDOMDriver} from '@cycle/dom'
 import {makeHTTPDriver} from '@cycle/http'
 import {makeHistoryDriver, supportsHistory} from '@cycle/history'
 import {useQueries, createHistory, createHashHistory} from 'history'
+import speechDriver from './drivers/speech'
+
 import runHot from './runHot'
 import App from './components/App'
 
@@ -12,7 +14,8 @@ const history = supportsHistory() ?
 const drivers = {
   DOM: makeDOMDriver('#root'),
   HTTP: makeHTTPDriver(),
-  history: makeHistoryDriver(history, {capture: false})
+  history: makeHistoryDriver(history, {capture: false}),
+  speech: speechDriver
 }
 
 if (module.hot) {   // hot loading enabled in config
