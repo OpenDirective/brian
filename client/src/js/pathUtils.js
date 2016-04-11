@@ -46,7 +46,7 @@ export const parsePath = (path) => {
   let search = ''
   let hash = ''
 
-  if (path === pathname)
+  if (path !== pathname)
     console.log(`A path must be pathname + search + hash only, not a fully qualified URL like "${path}"`
   )
 
