@@ -63,17 +63,36 @@ function _togglePathEdit(path) {
   return (_isPathEdit(path) ? stripQueryStringValueFromPath(path, 'edit')
                             : addQueryStringValueToPath(path, 'edit', 'true'))
 }
-function _albumFromPath(path) {
+function _albumPath(name) {
+  return `/album/${name}`
+}
+function _albumNameFromPath(path) {
   return path === '/' ? 'start' : path.split('/')[2]
 }
 
+function _albumConfig(config, album) {
+   // console.log('ac', config, album)
+   return config.albums.filter(({name}) => name === album.name)[0]
+}
 
-function App({DOM, HTTP, history, speech}) {
+function _albumModel(config, album) {
+  const albumConfig = _albumConfig(config, album)
+  return {title: albumConfig.name,
+          cards: albumConfig.photos.map(name => {return mkCard(name, name)}),
+          edit: album.edit}
+}
+
+function App({DOM, HTTP, history, speech, localStorage}) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
-   .map(() => { return {type: 'go', value: -1}})
+  .map({type: 'go', value: -1})
 
-   const editMode$ = DOM.select('[data-action="edit"]').events('click')
-   .map(({currentTarget}) => _togglePathEdit(currentTarget.ownerDocument.URL))
+  const editMode$ = DOM.select('[data-action="edit"]').events('click')
+  .map(({currentTarget}) => { const loc = currentTarget.ownerDocument.location
+                              return _togglePathEdit(`${loc.pathname}${loc.search}`)})
+
+  const blur$ = DOM.select('.cardLabel').events('blur')
+  .map(({currentTarget}) => currentTarget.value)
+  .subscribe(x=> console.log(x))
 
   const speech$ = DOM.select('[data-action="speak"]').events('click')
   .map(({currentTarget}) => currentTarget.textContent)
@@ -84,50 +103,37 @@ function App({DOM, HTTP, history, speech}) {
   const edit$ = cardImageClick$
    .map(({currentTarget}) => {return {pathname: `/album/zzz/getImage`}})
 
-  const cardClick$ = DOM.select('.card').events('click')
+  const cardClick$ = DOM.select('[data-view]').events('click')
    .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true') // stop being processed in capture phase so children get a look in
 
   const navScreen$ = cardClick$
-    .map(({currentTarget}) => {return {pathname: `/album/${currentTarget.dataset.view}`}})
+    .map(({currentTarget}) => {return {name: currentTarget.dataset.view}})
+    .combineLatest(localStorage,
+                   (album, config) => _albumConfig(config, album))
+    .filter(x => x !== undefined)
+    .map(albumConfig => _albumPath(albumConfig.name))
 
   const album$ = history
-    //.filter(({search}) => _isPathEdit(search) !== true)
-    .map(({pathname, search}) => {return {name: _albumFromPath(pathname),
+    .do(x => console.log(x))
+    .filter(({search, action}) => !(action === 'POP' && _isPathEdit(search) === true))
+    .map(({pathname, search, action}) => {return {name: _albumNameFromPath(pathname),
                                           edit: _isPathEdit(search)}})
+    .do(x => console.log('a', x))
 
-  const request$ = album$
-    .map(() => {
-      return {
-//        url: 'https://OpenDirective.github.io/brianMedia/media.json',
-        url: '/media.json',
-        category: 'media',
-        method: 'GET'
-      }
-    })
+  const skipEdit$ = history
+    .filter(({search, action}) => action === 'POP' && _isPathEdit(search) === true)
+    .map({type: 'go', value: -2})
+    .do(x => console.log('se', x))
 
-  const config$ = HTTP
-    .filter(res$ => res$.request.category === 'media')
-    .mergeAll()
-    .map(res => res.body)
-
-  function albumFromConfig(config, album) {
-    const albumConfig = config.albums.filter(({name}) => name === album.name)[0]
-    return {title: albumConfig.name,
-            cards: albumConfig.photos.map(name => {return mkCard(name, name)}),
-            edit: album.edit
-    }
-  }
-
-  const screen$ = config$
-    .combineLatest(album$,
-                   (config, album) => albumFromConfig(config, album))
+  const screen$ = album$
+    .combineLatest(localStorage,
+                   (album, config) => _albumModel(config, album))
 
   const view$ = screen$.combineLatest(render)
-  const navigate$ = navBack$.merge(navScreen$).merge(editMode$)
+  const navigate$ = Observable.merge(navBack$, navScreen$, editMode$, skipEdit$)
 
   return {
     DOM: view$.do(x => console.log("view:", x)),
-    HTTP: request$.do(x => console.log("req:", x)),
     history: navigate$.do(x => console.log("nav: ", x)),
     speech: speech$.do(x => console.dir("spk: ", x))
   }

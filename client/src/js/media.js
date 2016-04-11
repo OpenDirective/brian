@@ -1,4 +1,4 @@
-{
+export default {
   "meta": "DART mockup",
   "photoDir": "./DARTMockup",
   "albums": [
