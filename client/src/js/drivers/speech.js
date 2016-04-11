@@ -1,7 +1,7 @@
 // limited availablity see caniuse
-import _ from 'lodash'
 
 // TODO test if (window.SpeechSynthesisUtterance === undefined) {
+// Add fallback
 
 function speechDriver(speechText$) {
   speechText$.subscribe(text => {
