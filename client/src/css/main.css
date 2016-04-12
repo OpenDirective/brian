@@ -107,7 +107,7 @@ textarea {
 }
 
 .title {
-  flex: 10;
+  flex: 5;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +117,7 @@ textarea {
 }
 
 .main {
-  flex: 90;
+  flex: 95;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
