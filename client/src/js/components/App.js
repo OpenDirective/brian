@@ -21,7 +21,24 @@ function model() {
     })
 }
 
+function updateQueryStringValueFromPath(path, item, value) {
+  const path2 = stripQueryStringValueFromPath(path, item)
+  return addQueryStringValueToPath(path2, item, value)
+}
+
 const EDIT_KEY = 'edit'
+const LEVEL_KEY = 'level'
+const ITEM_KEY = 'item'
+function _pathItem(path) {
+  const item = parseInt(getQueryStringValueFromPath(path, ITEM_KEY))
+  return (item === NaN) ? 0 : item
+}
+function _setPathItem(path, item) {
+  return updateQueryStringValueFromPath(path, ITEM_KEY, item)
+}
+function _pathLevel(path) {
+  return getQueryStringValueFromPath(path, LEVEL_KEY)
+}
 function _isPathEdit(path) {
   return getQueryStringValueFromPath(path, EDIT_KEY) === 'true'
 }
@@ -42,13 +59,15 @@ function _albumConfig(config, album) {
 }
 
 function _albumModel(config, album) {
+  console.log(album.showCard)
   const albumConfig = _albumConfig(config, album)
   return {title: `Touch the photos to see more. This is "${albumConfig.name}"`,
           cards: albumConfig.cards.map(({label, image, album}) =>
                 { const image2 = (image.slice(0, 4) === 'blob' ? image : `${config.photoBasePath}${image}.jpg`)
-                  console.log(image2)
                   return {label, image: image2, album}}),
-          edit: album.edit}
+          edit: album.edit,
+          level: album.level,
+          showCard: album.showCard}
 }
 
 function App({DOM, HTTP, history, speech, appConfig}) {
@@ -71,6 +90,12 @@ function App({DOM, HTTP, history, speech, appConfig}) {
                               const path = `${loc.pathname}${loc.search}`
                               return (_isPathEdit(path)) ?
                               {type: 'go', value: -1} : _togglePathEdit(path)})
+
+  const navNextItem$ = DOM.select('[data-action="next"]').events('click')
+  .map(({currentTarget}) => { const loc = currentTarget.ownerDocument.location
+                              const path = `${loc.pathname}${loc.search}`
+                              const nextItem = (_pathItem(path) + 1) % 4
+                              return _setPathItem(path, nextItem)})
 
   const blurLabel$ = DOM.select('.cardLabel').events('blur')
     .map(({currentTarget}) => {return {
@@ -106,7 +131,6 @@ function App({DOM, HTTP, history, speech, appConfig}) {
                                         URL: image.src,
                                 }})
   .combineLatest(appConfig, (update, config) => {
-    console.log('u', update);
     const newConfig = Object.assign({}, config)
     const album = _findAlbum(newConfig.albums, update.album)
     album.cards[update.index].image = update.URL
@@ -115,12 +139,6 @@ function App({DOM, HTTP, history, speech, appConfig}) {
 
   const speech$ = DOM.select('[data-action="speak"]').events('click')
   .map(({currentTarget}) => currentTarget.textContent)
-
-  const cardImageClick$ = DOM.select('.cardImage').events('click')
-    .do(x => console.dir(x, x.currentTarget))
-
-  const edit$ = cardImageClick$
-   .map(({currentTarget}) => {return {pathname: `/album/zzz/getImage`}})
 
   const cardClick$ = DOM.select('[data-view]').events('click')
     // stop being processed in capture phase so children get a look in
@@ -135,14 +153,16 @@ function App({DOM, HTTP, history, speech, appConfig}) {
 
   const album$ = history
     .map(({pathname, search, action}) => {return {name: _albumNameFromPath(pathname),
-                                          edit: _isPathEdit(search)}})
+                                          edit: _isPathEdit(search),
+                                          level: _pathLevel(search),
+                                          showCard: _pathItem(search)}})
 
   const screen$ = album$
     .combineLatest(appConfig,
                    (album, config) => _albumModel(config, album))
 
   const view$ = screen$.combineLatest(render)
-  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navEditMode$)
+  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$)
 
   return {
     DOM: view$.do(x => console.log("view:", x)),
