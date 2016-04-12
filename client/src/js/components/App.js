@@ -32,16 +32,17 @@ function mkCard(name, link, edit) {
 function render(screen, edits) {
   const edit = screen.edit
   const btn = edit ? button : button
+  let cardID = 0;
   return div('.screen', [
     header('.title', {dataset: {action: 'speak'}}, screen.title),
     main('.main', [
       section('.content',
         screen.cards.map(card =>
-          btn('.card', {dataset: {edit, view: card.label}}, [
+          btn('.card', {dataset: {edit, view: card.label, album: screen.title}}, [
             edit ? "Editing"
                   : "",
             img('.cardImage', {src: card.image}),
-            edit ? input('.cardLabel', {type: "text", value: card.label})
+            edit ? input('.cardLabel', {type: "text", attributes: {value: card.label}, dataset: {card: ++cardID} })
                   : p('.cardLabel', card.label)
           ])
         )
@@ -86,13 +87,16 @@ function App({DOM, HTTP, history, speech, localStorage}) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
-  const editMode$ = DOM.select('[data-action="edit"]').events('click')
+  const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
   .map(({currentTarget}) => { const loc = currentTarget.ownerDocument.location
-                              return _togglePathEdit(`${loc.pathname}${loc.search}`)})
+                              const path = `${loc.pathname}${loc.search}`
+                              return (_isPathEdit(path)) ?
+                              {type: 'go', value: -1} : _togglePathEdit(path)})
 
   const blur$ = DOM.select('.cardLabel').events('blur')
   .map(({currentTarget}) => currentTarget.value)
-  .subscribe(x=> console.log(x))
+  .do(x=>console.log(x))
+  .subscribe(x => console.log(x))
 
   const speech$ = DOM.select('[data-action="speak"]').events('click')
   .map(({currentTarget}) => currentTarget.textContent)
@@ -104,7 +108,8 @@ function App({DOM, HTTP, history, speech, localStorage}) {
    .map(({currentTarget}) => {return {pathname: `/album/zzz/getImage`}})
 
   const cardClick$ = DOM.select('[data-view]').events('click')
-   .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true') // stop being processed in capture phase so children get a look in
+    // stop being processed in capture phase so children get a look in
+   .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true')
 
   const navScreen$ = cardClick$
     .map(({currentTarget}) => {return {name: currentTarget.dataset.view}})
@@ -115,22 +120,16 @@ function App({DOM, HTTP, history, speech, localStorage}) {
 
   const album$ = history
     .do(x => console.log(x))
-    .filter(({search, action}) => !(action === 'POP' && _isPathEdit(search) === true))
     .map(({pathname, search, action}) => {return {name: _albumNameFromPath(pathname),
                                           edit: _isPathEdit(search)}})
     .do(x => console.log('a', x))
-
-  const skipEdit$ = history
-    .filter(({search, action}) => action === 'POP' && _isPathEdit(search) === true)
-    .map({type: 'go', value: -2})
-    .do(x => console.log('se', x))
 
   const screen$ = album$
     .combineLatest(localStorage,
                    (album, config) => _albumModel(config, album))
 
   const view$ = screen$.combineLatest(render)
-  const navigate$ = Observable.merge(navBack$, navScreen$, editMode$, skipEdit$)
+  const navigate$ = Observable.merge(navBack$, navScreen$, navEditMode$)
 
   return {
     DOM: view$.do(x => console.log("view:", x)),
