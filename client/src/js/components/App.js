@@ -1,11 +1,10 @@
 import {Observable} from 'rx'
-import {section, header, main, nav, div, button, img, p, input} from '@cycle/dom'
 import {
   addQueryStringValueToPath,
   stripQueryStringValueFromPath,
   getQueryStringValueFromPath,
 } from '../pathUtils'
-
+import render from './view'
 require('../../css/normalize.css')
 require('../../css/main.css')
 
@@ -21,40 +20,6 @@ function model() {
       ]
     })
 }
-
-function mkCard(name, link, edit) {
-  return {image: `https://opendirective.github.io/brianMedia/DARTMockup/${name}.jpg`,
-          label: name,
-          link,
-          edit}
-}
-
-function render(screen, edits) {
-  const edit = screen.edit
-  const btn = edit ? button : button
-  let cardID = 0;
-  return div('.screen', [
-    header('.title', {dataset: {action: 'speak'}}, screen.title),
-    main('.main', [
-      section('.content',
-        screen.cards.map(card =>
-          btn('.card', {dataset: {edit, view: card.label, album: screen.title}}, [
-            edit ? "Editing"
-                  : "",
-            img('.cardImage', {src: card.image}),
-            edit ? input('.cardLabel', {type: "text", attributes: {value: card.label}, dataset: {card: ++cardID} })
-                  : p('.cardLabel', card.label)
-          ])
-        )
-      ),
-      nav('.nav', [
-        button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
-        button('.action', {dataset: {action: 'edit'}}, edit ? 'Finish changes' : 'Make changes')
-      ])
-    ])
-  ])
-}
-
 
 const EDIT_KEY = 'edit'
 function _isPathEdit(path) {
@@ -72,20 +37,34 @@ function _albumNameFromPath(path) {
 }
 
 function _albumConfig(config, album) {
-   // console.log('ac', config, album)
+   //console.log('ac', config, album)
    return config.albums.filter(({name}) => name === album.name)[0]
 }
 
 function _albumModel(config, album) {
   const albumConfig = _albumConfig(config, album)
-  return {title: albumConfig.name,
-          cards: albumConfig.photos.map(name => {return mkCard(name, name)}),
+  return {title: `Touch the photos to see more. This is "${albumConfig.name}"`,
+          cards: albumConfig.cards.map(({label, image, album}) =>
+                { const image2 = (image.slice(0, 4) === 'blob' ? image : `${config.photoBasePath}${image}.jpg`)
+                  console.log(image2)
+                  return {label, image: image2, album}}),
           edit: album.edit}
 }
 
-function App({DOM, HTTP, history, speech, localStorage}) {
+function App({DOM, HTTP, history, speech, appConfig}) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
+
+  function _findAlbum(albums, albumName) {
+    return albums.filter(({name}) => name === albumName)[0]
+  }
+
+  const assist$ = DOM.select('[data-action="assist"]').events('click')
+    .subscribe(() => alert('Your request for assistance request has been sent.\\r\\rThe people you asked for will soon be in contact'))
+
+  const navHome$ = DOM.select('[data-action="home"]').events('click')
+  .map('/')
+
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
   .map(({currentTarget}) => { const loc = currentTarget.ownerDocument.location
@@ -93,10 +72,46 @@ function App({DOM, HTTP, history, speech, localStorage}) {
                               return (_isPathEdit(path)) ?
                               {type: 'go', value: -1} : _togglePathEdit(path)})
 
-  const blur$ = DOM.select('.cardLabel').events('blur')
-  .map(({currentTarget}) => currentTarget.value)
-  .do(x=>console.log(x))
-  .subscribe(x => console.log(x))
+  const blurLabel$ = DOM.select('.cardLabel').events('blur')
+    .map(({currentTarget}) => {return {
+      album: currentTarget.parentElement.dataset.album,
+      index: currentTarget.parentElement.dataset.card,
+      text: currentTarget.value
+    }})
+  .combineLatest(appConfig, (update, config) => {
+    const newConfig = Object.assign({}, config)
+    const album = _findAlbum(newConfig.albums, update.album)
+    album.cards[update.index].label = update.text
+    return newConfig
+  })
+
+ /* const load$ = DOM.select('.cardImage').events('load')
+    .do(({currentTarget}) => {window.URL.revokeObjectURL(currentTarget.src)})
+    .subscribe(x => console.log('revoked', x))
+*/
+
+ // simply hand click over to hidden file picker
+ const selectImage$ = DOM.select('.cardImage').events('click')
+   .do(({currentTarget}) => currentTarget.previousSibling.click())
+   .subscribe()
+
+ // TODO find a way to persist links to local files - may be impossible
+  const changeImage$ = DOM.select('.fileElem').events('change')
+    .filter(({currentTarget}) => currentTarget.files.length)
+    .map(({currentTarget}) => { const image = currentTarget.nextSibling
+                                const file = currentTarget.files[0]
+                                image.src = window.URL.createObjectURL(file)
+                                return {album: currentTarget.parentElement.dataset.album,
+                                        index: currentTarget.parentElement.dataset.card,
+                                        URL: image.src,
+                                }})
+  .combineLatest(appConfig, (update, config) => {
+    console.log('u', update);
+    const newConfig = Object.assign({}, config)
+    const album = _findAlbum(newConfig.albums, update.album)
+    album.cards[update.index].image = update.URL
+    return newConfig
+  })
 
   const speech$ = DOM.select('[data-action="speak"]').events('click')
   .map(({currentTarget}) => currentTarget.textContent)
@@ -113,28 +128,27 @@ function App({DOM, HTTP, history, speech, localStorage}) {
 
   const navScreen$ = cardClick$
     .map(({currentTarget}) => {return {name: currentTarget.dataset.view}})
-    .combineLatest(localStorage,
+    .combineLatest(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
     .map(albumConfig => _albumPath(albumConfig.name))
 
   const album$ = history
-    .do(x => console.log(x))
     .map(({pathname, search, action}) => {return {name: _albumNameFromPath(pathname),
                                           edit: _isPathEdit(search)}})
-    .do(x => console.log('a', x))
 
   const screen$ = album$
-    .combineLatest(localStorage,
+    .combineLatest(appConfig,
                    (album, config) => _albumModel(config, album))
 
   const view$ = screen$.combineLatest(render)
-  const navigate$ = Observable.merge(navBack$, navScreen$, navEditMode$)
+  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navEditMode$)
 
   return {
     DOM: view$.do(x => console.log("view:", x)),
     history: navigate$.do(x => console.log("nav: ", x)),
-    speech: speech$.do(x => console.dir("spk: ", x))
+    speech: speech$.do(x => console.log("spk: ", x)),
+    appConfig: Observable.merge(blurLabel$, changeImage$).do(x => console.log("config: ", x))
   }
 }
 
