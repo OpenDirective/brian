@@ -188,8 +188,6 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 // Assistant
   const navAssistant$ = history
     .filter(({pathname}) => pathname === '/assistant.html')
-  const screenAssistant$ = navAssistant$
-    .map({assistant: true})
 
   const intentLevel0$ = DOM.select('[data-action="level0"]').events('click')
     .map({level: 0})
@@ -206,6 +204,9 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .startWith({changes: 1})
 
   const setting$ = Observable.combineLatest(changesSet$, levelSet$, ({changes},{level}) => ({level, changes}))
+
+  const screenAssistant$ = setting$
+    .map(settings => ({assistant: true, settings}))
 
 // merge streams for sinks
   const view$ = screen$.merge(screenAssistant$)

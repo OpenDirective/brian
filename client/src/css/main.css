@@ -148,6 +148,11 @@ textarea {
   -webkit-appearance: none;
 }
 
+.selected {
+ background-color: yellow;
+ border-colour:  darkgoldenrod;
+}
+
 .action {
   flex: 1;
  }
