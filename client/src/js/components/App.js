@@ -72,6 +72,7 @@ function _albumModel(config, album) {
                   return {label, image: image2, album}}),
           edit: album.edit,
           level: album.level,
+          changes: album.changes,
           showCard: album.showCard}
 }
 
@@ -173,9 +174,11 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 
   const album$ = history
     .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || pathname === '/' || pathname === '/index.html'))
-    .map(({pathname, search, action}) => {return {name: _albumNameFromPath(pathname),
+    .combineLatest(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
+    .map(({pathname, search, action, changes}) => {return {name: _albumNameFromPath(pathname),
                                           edit: _isPathEdit(search),
                                           level: _pathLevel(search),
+                                          changes,
                                           showCard: _pathItem(search)}})
   const screen$ = album$
     .combineLatest(appConfig,
@@ -193,16 +196,16 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const intentLevel1$ = DOM.select('[data-action="level1"]').events('click')
     .map({level: 1})
   const levelSet$ = Observable.merge(intentLevel0$, intentLevel1$)
-    .combineLatest(settings, ({level},{changes}) => ({level, changes}))
+    .startWith({level: 1})
 
   const intentChangesN$ = DOM.select('[data-action="changesN"]').events('click')
     .map({changes: 0})
   const intentChangesY$ = DOM.select('[data-action="changesY"]').events('click')
     .map({changes: 1})
   const changesSet$ = Observable.merge(intentChangesN$, intentChangesY$)
-    .combineLatest(settings, ({changes},{level}) => ({level, changes}))
+    .startWith({changes: 1})
 
-  const setting$ = Observable.merge(changesSet$, levelSet$)
+  const setting$ = Observable.combineLatest(changesSet$, levelSet$, ({changes},{level}) => ({level, changes}))
 
 // merge streams for sinks
   const view$ = screen$.merge(screenAssistant$)

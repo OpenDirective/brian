@@ -5,6 +5,7 @@ function render(screen) {
   const level = screen.level
   const showCard = screen.showCard
   const btn = edit ? button : button
+  const changes = screen.changes
   if (level === '0') {
     let cardID = 0
     return div('.screen', [
@@ -37,7 +38,7 @@ function render(screen) {
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'assist'}}, 'Get assistance'),
-          button('.action', {dataset: {action: 'edit'}}, edit ? 'See changes' : 'Make changes')
+          button(`.action ${changes ? '' : '.hidden'}`, {dataset: {action: 'edit'}}, edit ? 'See changes' : 'Make changes')
         ]),
         section('.content',
           screen.cards.map(({label, image, album}) =>
