@@ -13,7 +13,7 @@ function render(screen) {
         section('.content',
           screen.cards.map(({label, image, album}) =>
             div(`.card ${cardID !== showCard ? '.hidden' : ''}`,
-                {dataset: {edit, view: album, album: screen.title, card: cardID++ }}, [
+                {dataset: {edit, view: album, album: screen.name, card: cardID++ }}, [
               edit ? "Change text" : "",
               img('.cardImage', {src: image}),
               edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label)
@@ -41,7 +41,7 @@ function render(screen) {
         ]),
         section('.content',
           screen.cards.map(({label, image, album}) =>
-            btn('.card', {dataset: {edit, view: album, album: screen.title, card: cardID++}}, [
+            btn('.card', {dataset: {edit, view: album, album: screen.name, card: cardID++}}, [
               edit ? "Change picture or text" : "",
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
               img('.cardImage', {src: image}),

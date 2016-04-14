@@ -17,7 +17,8 @@ const drivers = {
   DOM: makeDOMDriver('#root'),
   history: makeHistoryDriver(history, {capture: false}),
   speech: speechDriver,
-  appConfig: mkLocalStorageDriver('config', defaultConfig)
+  appConfig: mkLocalStorageDriver('config', defaultConfig),
+  settings: mkLocalStorageDriver('setting', {level: 0, changes: 1})
 }
 
 if (module.hot && false) {   // hot loading enabled in config

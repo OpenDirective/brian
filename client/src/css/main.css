@@ -152,6 +152,10 @@ textarea {
   flex: 1;
  }
 
+.settings .action {
+  flex: 1 1 45%;
+}
+
 .card {
   flex: 1 1 45%;
   display: flex;

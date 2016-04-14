@@ -105,6 +105,10 @@ if (PRODUCTION) {
       new HtmlWebpackPlugin({filename: 'index.html',
                               template: path.join(PATHS.src, 'index.html'),
                               inject: true
+                            }),
+      new HtmlWebpackPlugin({filename: 'assistant.html',
+                              template: path.join(PATHS.src, 'assistant.html'),
+                              inject: true
                             })
     ]
   })
