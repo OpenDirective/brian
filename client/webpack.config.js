@@ -67,6 +67,10 @@ if (PRODUCTION) {
                           template: path.join(PATHS.src, 'index.html'),
                           inject: true
                           }),
+              new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'assistant.html'),
+                          template: path.join(PATHS.src, 'assistant.html'),
+                          inject: true
+                        }),
               new CopyWebpackPlugin([{from: path.join(PATHS.src, 'favicon.ico'), to: '..'},
                                      {from: path.join(PATHS.src, 'assistant.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'media.json'), to: '..'},
