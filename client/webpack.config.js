@@ -68,6 +68,7 @@ if (PRODUCTION) {
                           inject: true
                           }),
               new CopyWebpackPlugin([{from: path.join(PATHS.src, 'favicon.ico'), to: '..'},
+                                     {from: path.join(PATHS.src, 'assistant.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'media.json'), to: '..'},
                                      {from: path.join(PATHS.src, 'CNAME'), to: '..'},
                                      {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
