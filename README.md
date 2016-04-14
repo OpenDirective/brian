@@ -4,6 +4,8 @@
 
 Lead Maintainer: [SteveLee](https://github.com/SteveALee)
 
+**Brian Supports conversation through easy access to photos, email, videos, music, and video calls.**
+
 The Brian project is a platform that supports easy, uncomplicated media sharing and communication between people. The main user experience is designed for people with cognitive disabilities. A control panel is also provided for supporters to manage the main user experience in combination with existing on-line services for email and media. Brian manages the bridge to the end user experience automatically.
 
 ## More information
