@@ -23,8 +23,7 @@ function render(screen) {
         ),
         nav('.nav', [
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Choose more photos'),
-          button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'next'}}, 'Next Photo'),
-          button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'assist'}}, 'Get assistance'),
+          button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'next'}}, 'Next Photo')
         ])
       ])
     ])
@@ -37,7 +36,6 @@ function render(screen) {
         nav('.nav', [
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
-          button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'assist'}}, 'Get assistance'),
           button(`.action ${changes ? '' : '.hidden'}`, {dataset: {action: 'edit'}}, edit ? 'See changes' : 'Make changes')
         ]),
         section('.content',
