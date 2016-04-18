@@ -9,8 +9,11 @@ function addGlobalErrorHandler(useAlert = false) {
     const extra = `${colTxt} ${errTxt}`
 
     const message = `Error: ${msg}\nurl: ${url}\nline: ${line} ${extra}`
-    const logger = useAlert ? alert : console.log
-    logger(message)
+    if (useAlert) {
+      alert(message)
+    } else {
+      console.log(message)
+    }
 
     const suppressErrorAlert = true
     return suppressErrorAlert
