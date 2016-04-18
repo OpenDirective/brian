@@ -6,9 +6,16 @@ import {useQueries, createHistory, createHashHistory} from 'history'
 import speechDriver from './drivers/speech'
 import mkLocalStorageDriver from './drivers/localStorage'
 import defaultConfig from './config/defaultConfig.js'
+import addGlobalErrorHandler from './globalError'
 
 import runHot from './runHot'
 import App from './components/App'
+
+const PRODUCTION = (process.env.NODE_ENV === 'production')
+
+if (!PRODUCTION) {
+  addGlobalErrorHandler()
+}
 
 const history = supportsHistory() ?
   createHistory() : createHashHistory()
@@ -21,7 +28,7 @@ const drivers = {
   settings: mkLocalStorageDriver('setting', {level: 0, changes: 1})
 }
 
-if (module.hot && false) {   // hot loading enabled in config
+if (!PRODUCTION && module.hot && false) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
   runHot('./components/App', App, drivers)
 } else {
