@@ -92,11 +92,6 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
       return _setPathLevel(`${loc.pathname}${loc.search}`, level)
     })
 
-  const assist$ = DOM.select('[data-action="assist"]').events('click')
-    .do(() => alert('Your request for assistance has been sent.The people you asked for will soon be in contact'))
-  const assistSpeech$ = assist$
-    .map("Your request for assistance has been sent")
-
   const navHome$ = DOM.select('[data-action="home"]').events('click')
    .map('/')
 
@@ -225,7 +220,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
                        .map(model => {
                          const renderer = (model.assistant) ? renderAssistant : render
                          return renderer(model)
-                        })
+                       })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$)
   const speech$ = Observable.merge(touchSpeech$)
 
