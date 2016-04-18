@@ -1,3 +1,4 @@
+/* eslint-disable */
 // sourced from https://github.com/mjackson/history/blob/master/modules/PathUtils.js
 
 // import warning from 'warning'

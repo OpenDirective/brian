@@ -9,7 +9,7 @@ import renderAssistant from './viewAssistant'
 require('../../css/normalize.css')
 require('../../css/main.css')
 
-
+/*
 function model() {
   return Observable.just(
     {title: 'hello',
@@ -21,6 +21,7 @@ function model() {
       ]
     })
 }
+*/
 
 function updateQueryStringValueFromPath(path, item, value) {
   const path2 = stripQueryStringValueFromPath(path, item)
@@ -31,7 +32,7 @@ const EDIT_KEY = 'edit'
 const LEVEL_KEY = 'level'
 const ITEM_KEY = 'item'
 function _pathItem(path) {
-  const item = parseInt(getQueryStringValueFromPath(path, ITEM_KEY))
+  const item = parseInt(getQueryStringValueFromPath(path, ITEM_KEY), 10)
   return (isNaN(item)) ? 0 : item
 }
 function _setPathItem(path, item) {
@@ -58,18 +59,19 @@ function _albumNameFromPath(path) {
 }
 
 function _albumConfig(config, album) {
-   //console.log('ac', config, album)
-   return config.albums.filter(({name}) => name === album.name)[0]
+  // console.log('ac', config, album)
+  return config.albums.filter(({name}) => name === album.name)[0]
 }
 
 function _albumModel(config, album) {
-  //console.log('model', album, album.showCard)
+  // console.log('model', album, album.showCard)
   const albumConfig = _albumConfig(config, album)
   return {name: albumConfig.name,
           title: `Touch the photos to see more. This is "${albumConfig.name}"`,
-          cards: albumConfig.cards.map(({label, image, album}) =>
-                { const image2 = (image.slice(0, 4) === 'blob' ? image : `${config.photoBasePath}${image}.jpg`)
-                  return {label, image: image2, album}}),
+          cards: albumConfig.cards.map(({label, image, album}) => {
+            const image2 = (image.slice(0, 4) === 'blob' ? image : `${config.photoBasePath}${image}.jpg`)
+            return {label, image: image2, album}
+          }),
           edit: album.edit,
           level: album.level,
           changes: album.changes,
@@ -85,8 +87,9 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   }
 
   const navLevel$ = settings
-    .map(({level}) => { const loc = window.location
-                        return _setPathLevel(`${loc.pathname}${loc.search}`, level)
+    .map(({level}) => {
+      const loc = window.location
+      return _setPathLevel(`${loc.pathname}${loc.search}`, level)
     })
 
   const assist$ = DOM.select('[data-action="assist"]').events('click')
@@ -98,23 +101,28 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
-   .map(({currentTarget}) => { const loc = currentTarget.ownerDocument.location // bad developer !
-                              const path = `${loc.pathname}${loc.search}`
-                              return (_isPathEdit(path)) ?
-                              {type: 'go', value: -1} : _togglePathEdit(path)})
+   .map(({currentTarget}) => {
+     const loc = currentTarget.ownerDocument.location // bad developer !
+     const path = `${loc.pathname}${loc.search}`
+     return (_isPathEdit(path)) ?
+     {type: 'go', value: -1} : _togglePathEdit(path)})
 
   const navNextItem$ = DOM.select('[data-action="next"]').events('click')
-   .map(({currentTarget}) => { const loc = currentTarget.ownerDocument.location
-                              const path = `${loc.pathname}${loc.search}`
-                              const nextItem = (_pathItem(path) + 1) % 4
-                              return _setPathItem(path, nextItem)})
+    .map(({currentTarget}) => {
+      const loc = currentTarget.ownerDocument.location
+      const path = `${loc.pathname}${loc.search}`
+      const nextItem = (_pathItem(path) + 1) % 4
+      return _setPathItem(path, nextItem)
+    })
 
   const blurLabel$ = DOM.select('.cardLabel').events('blur')
-    .map(({currentTarget}) => {console.dir('#', currentTarget); return {
-      album: currentTarget.parentElement.dataset.album,
-      index: currentTarget.parentElement.dataset.card,
-      text: currentTarget.value
-    }})
+    .map(({currentTarget}) => {
+      console.dir('#', currentTarget)
+      return {
+        album: currentTarget.parentElement.dataset.album,
+        index: currentTarget.parentElement.dataset.card,
+        text: currentTarget.value
+      }})
   .combineLatest(appConfig, (update, config) => {
     const newConfig = Object.assign({}, config)
     console.log('@', newConfig.albums, ':', update.album)
@@ -129,20 +137,21 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 */
 
  // simply hand click over to hidden file picker
- const selectImage$ = DOM.select('.cardImage').events('click')
+  const selectImage$ = DOM.select('.cardImage').events('click')
    .do(({currentTarget}) => currentTarget.previousSibling.click())
    .subscribe()
 
  // TODO find a way to persist links to local files - may be impossible
   const changeImage$ = DOM.select('.fileElem').events('change')
     .filter(({currentTarget}) => currentTarget.files.length)
-    .map(({currentTarget}) => { const image = currentTarget.nextSibling
-                                const file = currentTarget.files[0]
-                                image.src = window.URL.createObjectURL(file)
-                                return {album: currentTarget.parentElement.dataset.album,
-                                        index: currentTarget.parentElement.dataset.card,
-                                        URL: image.src,
-                                }})
+    .map(({currentTarget}) => {
+      const image = currentTarget.nextSibling
+      const file = currentTarget.files[0]
+      image.src = window.URL.createObjectURL(file) // eslint immutable/no-mutation: "off"
+      return {album: currentTarget.parentElement.dataset.album,
+              index: currentTarget.parentElement.dataset.card,
+              URL: image.src,
+      }})
   .combineLatest(appConfig, (update, config) => {
     const newConfig = Object.assign({}, config)
     const album = _findAlbum(newConfig.albums, update.album)
@@ -162,7 +171,9 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
    .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true')
 
   const navScreen$ = cardClick$
-    .map(({currentTarget}) => {return {name: currentTarget.dataset.view}})
+    .map(({currentTarget}) => {
+      return {name: currentTarget.dataset.view}
+    })
     .combineLatest(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
@@ -175,11 +186,12 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const album$ = history
     .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || pathname === '/' || pathname === '/index.html'))
     .combineLatest(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
-    .map(({pathname, search, action, changes}) => {return {name: _albumNameFromPath(pathname),
-                                          edit: _isPathEdit(search),
-                                          level: _pathLevel(search),
-                                          changes,
-                                          showCard: _pathItem(search)}})
+    .map(({pathname, search, action, changes}) => {
+      return {name: _albumNameFromPath(pathname),
+              edit: _isPathEdit(search),
+              level: _pathLevel(search),
+              changes,
+              showCard: _pathItem(search)}})
   const screen$ = album$
     .combineLatest(appConfig,
                    (album, config) => _albumModel(config, album))
@@ -210,8 +222,10 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 
 // merge streams for sinks
   const view$ = screen$.merge(screenAssistant$)
-                       .map(model => {const renderer = (model.assistant) ? renderAssistant : render
-                                      return renderer(model)})
+                       .map(model => {
+                         const renderer = (model.assistant) ? renderAssistant : render
+                         return renderer(model)
+                       })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$)
   const speech$ = Observable.merge(touchSpeech$, assistSpeech$)
 
