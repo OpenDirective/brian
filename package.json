@@ -19,7 +19,6 @@
     "Cognitive"
   ],
   "scripts": {
-
     "clean": "rimraf client/dist/*",
 
     "prebuild": "npm run clean -s",
@@ -35,7 +34,8 @@
     "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
     "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy -s || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
 
-    "preinstall":"nvm use 4.4.1 || echo nvm not found: check node version && pause",
+    "preinstall": "nvm use 4.4.1 || echo nvm not found: check node version && pause",
+
     "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --colors --progress\"",
     "start": "npm install && npm run dev -s",
 
@@ -50,42 +50,42 @@
     "node": ">=4.3.2"
   },
   "dependencies": {
-    "@cycle/core": "^6.0.3",
-    "@cycle/dom": "^9.2.2",
-    "@cycle/http": "^8.2.2",
-    "@cycle/isolate": "^1.2.0",
-    "@cycle/history": "^2.0.0",
-    "history": "^2.0.0",
+    "@cycle/core": "6.0.3",
+    "@cycle/dom": "9.4.0",
+    "@cycle/history": "2.0.1",
+    "@cycle/http": "8.2.2",
+    "@cycle/isolate": "1.2.0",
     "cycle-restart": "0.0.14",
-    "hapi": "13.2.2",
+    "hapi": "13.3.0",
+    "history": "2.0.2",
     "inert": "3.2.0",
-    "lodash": "^4.6.1",
-    "rx": "^4.1.0",
-    "rx-combine-latest-obj": "^1.0.2",
-    "switch-path": "^1.1.5"
+    "lodash": "4.11.1",
+    "rx": "4.1.0",
+    "rx-combine-latest-obj": "1.0.2",
+    "switch-path": "1.1.6"
   },
   "devDependencies": {
-    "babel-core": "^6.7.4",
-    "babel-loader": "^6.2.4",
-    "babel-preset-es2015": "^6.6.0",
-    "copy-webpack-plugin": "^1.1.1",
-    "css-loader": "^0.23.1",
-    "eslint-plugin-immutable": "^1.0.0",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "html-webpack-plugin": "^2.15.0",
-    "mkdirp": "^0.5.1",
-    "ncp": "^2.0.0",
-    "opener": "^1.4.1",
-    "parallelshell": "^2.0.0",
-    "rimraf": "^2.5.2",
-    "standard": "^6.0.8",
-    "style-loader": "^0.13.1",
-    "tape": "^4.5.1",
-    "webpack": "^1.12.14",
-    "webpack-dev-server": "^1.14.1",
-    "webpack-merge": "^0.8.4",
-    "xo": "^0.13.0",
-    "zuul": "^3.10.1"
+    "babel-core": "6.7.6",
+    "babel-loader": "6.2.4",
+    "babel-preset-es2015": "6.6.0",
+    "copy-webpack-plugin": "2.1.1",
+    "css-loader": "0.23.1",
+    "eslint-plugin-immutable": "1.0.0",
+    "extract-text-webpack-plugin": "1.0.1",
+    "html-webpack-plugin": "2.16.0",
+    "mkdirp": "0.5.1",
+    "ncp": "2.0.0",
+    "opener": "1.4.1",
+    "parallelshell": "2.0.0",
+    "rimraf": "2.5.2",
+    "standard": "6.0.8",
+    "style-loader": "0.13.1",
+    "tape": "4.5.1",
+    "webpack": "1.13.0",
+    "webpack-dev-server": "1.14.1",
+    "webpack-merge": "0.11.0",
+    "xo": "0.14.0",
+    "zuul": "3.10.1"
   },
   "xo": {
     "esnext": true,
@@ -107,7 +107,6 @@
       "immutable/no-let": 2,
       "immutable/no-this": 2,
       "immutable/no-mutation": 2,
-
       "no-var": 2,
       "no-undef": 2,
       "no-param-reassign": 2
