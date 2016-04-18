@@ -225,9 +225,9 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
                        .map(model => {
                          const renderer = (model.assistant) ? renderAssistant : render
                          return renderer(model)
-                       })
+                        })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$)
-  const speech$ = Observable.merge(touchSpeech$, assistSpeech$)
+  const speech$ = Observable.merge(touchSpeech$)
 
   return {
     DOM: view$.do(x => console.log("view:", x)),
