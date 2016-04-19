@@ -54,8 +54,8 @@ function render(screen) {
               img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
               edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
 //              edit && album !== '' ? `Album: ${album}` : edit ? button('.addAlbum', 'Make Album to show') : ''
-              edit ? select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`)))
-               : edit ? button('.addAlbum', 'Make Album to show') : ''
+              edit ? div(['Show: ', select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`)))])
+               : ''
 
             ])
           )

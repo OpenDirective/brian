@@ -55,7 +55,7 @@ function _albumModel(config, album) {
   const albumConfig = _albumConfig(config, album)
   return {
     name: albumConfig.name,
-    title: `Touch the photos to see more. This is "${albumConfig.name}"`,
+    title: `${album.edit ? '' : `Touch the photos to see more. `}This is "${albumConfig.name}"`,
     cards: albumConfig.cards.map(({label, image, album}) => {
       const image2 = (image.slice(0, 4) === 'blob' ? image : `${image}`)
       return {label, image: image2, album}
