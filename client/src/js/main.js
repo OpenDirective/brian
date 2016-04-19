@@ -14,7 +14,7 @@ import App from './components/App'
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 
 if (!PRODUCTION) {
-  addGlobalErrorHandler()
+//  addGlobalErrorHandler()
 }
 
 const history = supportsHistory() ?

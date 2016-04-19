@@ -131,11 +131,6 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .subscribe(x => console.log('revoked', x))
 */
 
- // simply hand click over to hidden file picker
-  const selectImage$ = DOM.select('.cardImage').events('click')
-   .do(({currentTarget}) => currentTarget.previousSibling.click())
-   .subscribe()
-
  // TODO find a way to persist links to local files - may be impossible
   const changeImage$ = DOM.select('.fileElem').events('change')
     .filter(({currentTarget}) => currentTarget.files.length)
@@ -158,12 +153,21 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   .map(({currentTarget}) => currentTarget.textContent)
 
   const key$ = DOM.select('.screen').events('keydown')
-    .do(({currentTarget}) => console.log("key", currentTarget))
+    .do(({target}) => console.log("key", target))
     .subscribe()
 
-  const cardClick$ = DOM.select('[data-view]').events('click')
+  // If editing hand click over to hidden file picker
+  const selectImage$ = DOM.select('.cardImage').events('click')
+  .filter(({target}) => target.previousSibling.className === 'fileElem')
+   .do(e => {
+     e.stopPropagation()
+     e.target.previousSibling.click()
+   })
+   .subscribe()
+
+ const cardClick$ = DOM.select('[data-view]').events('click')
     // stop being processed in capture phase so children get a look in
-   .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true')
+   .filter(({target}) => target.dataset.edit !== 'true')
 
   const navScreen$ = cardClick$
     .map(({currentTarget}) => {
