@@ -28,7 +28,7 @@ const drivers = {
   settings: mkLocalStorageDriver('setting', {level: 0, changes: 1})
 }
 
-if (!PRODUCTION && module.hot && false) {   // hot loading enabled in config
+if (!PRODUCTION && module.hot) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
   runHot('./components/App', App, drivers)
 } else {
