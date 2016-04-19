@@ -63,19 +63,20 @@ if (PRODUCTION) {
       }]
     },
 
-    plugins: [new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'index.html'),
-                          template: path.join(PATHS.src, 'index.html'),
-                          inject: true
-                          }),
-              new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'assistant.html'),
-                          template: path.join(PATHS.src, 'assistant.html'),
-                          inject: true
-                        }),
+    plugins: [
               new CopyWebpackPlugin([{from: path.join(PATHS.src, 'favicon.ico'), to: '..'},
                                      {from: path.join(PATHS.src, 'assistant.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'media.json'), to: '..'},
                                      {from: path.join(PATHS.src, 'CNAME'), to: '..'},
                                      {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
+              new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'assistant.html'),
+                          template: path.join(PATHS.src, 'assistant.html'),
+                          inject: true
+                        }),
+              new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'index.html'),
+                template: path.join(PATHS.src, 'index.html'),
+                inject: true
+                }),
               new webpack.NoErrorsPlugin(),
               new ExtractTextPlugin('../css/[name].css'),
               new webpack.optimize.UglifyJsPlugin({minimize: true})
