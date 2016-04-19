@@ -4,66 +4,59 @@ export default {
 //  photoBasePath: "file:///C:/projects/brianMedia/DARTMockup/",
   albums: [
     {name: "start",
-     cards: [{label: "Familjen", image: "Familjen", album: 'Familjen'},
-             {label: "Resor", image: "Resor", album: "Resor"},
-             {label: "Huset", image: "Huset", album: "Huset"},
-             {label: "Intressen", image: "Intressen", album: "Intressen"}
+     cards: [{label: "Familjen", image: "https://opendirective.github.io/brianMedia/DARTMockup/Barnen.jpg", album: "Familjen"},
+             {label: "Resor", image: "https://opendirective.github.io/brianMedia/DARTMockup/Resor.jpg", album: "Resor"},
+             {label: "Huset", image: "https://opendirective.github.io/brianMedia/DARTMockup/Huset.jpg", album: "Huset"},
+             {label: "Intressen", image: "https://opendirective.github.io/brianMedia/DARTMockup/Intressen.jpg", album: "Intressen"}
             ]
     },
     {name: "Familjen",
-     cards: [{label: "Barnen", image: "Barnen", album: 'Barnen'},
-             {label: "Barnbarnen", image: "Barnbarnen", album: "Barnbarnen"},
-             {label: "Mor & far", image: "Mor & far", album: "Mor & far"},
-             {label: "Missan", image: "Missan", album: "Missan"}
-            ]
-    },
-    {name: "Barnbarnen",
-     cards: [{label: "Einer", image: "Einer", album: 'Einer'},
-             {label: "Amon", image: "Amon", album: "Amon"},
-             {label: "Isidor", image: "Isidor", album: "Isidor"},
-             {label: "Tyr", image: "Tyr", album: "Tyr"}
+     cards: [{label: "Barnen", image: "", album: ""},
+             {label: "Barnbarnen", image: "", album: ""},
+             {label: "Mor & far", image: "https://opendirective.github.io/brianMedia/DARTMockup/Mor & far.jpg", album: "Mor & far"},
+             {label: "Missan", image: "https://opendirective.github.io/brianMedia/DARTMockup/Missan.jpg", album: "Missan"}
             ]
     },
     {name: "Resor",
-      cards: [{label: "Gotland", image: "Gotland", album: 'Visby'},
-              {label: "Vadstena", image: "Vadstena", album: "Vadstena"},
-              {label: "Skärg ården", image: "Skärg ården", album: "Skärg ården"},
-              {label: "Paris", image: "Paris", album: "Paris"}
+      cards: [{label: "Gotland", image: "https://opendirective.github.io/brianMedia/DARTMockup/Gotland.jpg", album: "Visby"},
+              {label: "Vadstena", image: "https://opendirective.github.io/brianMedia/DARTMockup/Vadstena.jpg", album: ""},
+              {label: "Skärg ården", image: "https://opendirective.github.io/brianMedia/DARTMockup/Skärg ården.jpg", album: ""},
+              {label: "Paris", image: "https://opendirective.github.io/brianMedia/DARTMockup/Paris.jpg", album: ""}
             ]
     },
     {name: "Visby",
-      cards: [{label: "Ruin", image: "Ruin", album: 'Ruin'},
-              {label: "Botaniska", image: "Botaniska", album: "Botaniska"},
-              {label: "Fåro", image: "Fåro", album: "Fåro"},
-              {label: "Promenad", image: "Promenad", album: "Promenad"}
+      cards: [{label: "Ruin", image: "https://opendirective.github.io/brianMedia/DARTMockup/Ruin.jpg", album: ""},
+              {label: "Botaniska", image: "https://opendirective.github.io/brianMedia/DARTMockup/Botaniska.jpg", album: ""},
+              {label: "Fåro", image: "https://opendirective.github.io/brianMedia/DARTMockup/Fåro.jpg", album: ""},
+              {label: "Promenad", image: "https://opendirective.github.io/brianMedia/DARTMockup/Promenad.jpg", album: ""}
             ]
     },
     {name: "Huset",
-      cards: [{label: "Vinter", image: "Vinter", album: 'Vinter'},
-              {label: "Sommar", image: "Sommar", album: "Sommar"},
-              {label: "Solnedgång", image: "Solnedgång", album: "Solnedgång"},
-              {label: "Skogen", image: "Skogen", album: "Skogen"}
+      cards: [{label: "Vinter", image: "https://opendirective.github.io/brianMedia/DARTMockup/Vinter.jpg", album: ""},
+              {label: "Sommar", image: "https://opendirective.github.io/brianMedia/DARTMockup/Sommar.jpg", album: ""},
+              {label: "Solnedgång", image: "https://opendirective.github.io/brianMedia/DARTMockup/Solnedgång.jpg", album: ""},
+              {label: "Skogen", image: "https://opendirective.github.io/brianMedia/DARTMockup/Skogen.jpg", album: ""}
             ]
     },
     {name: "Tradgården",
-      cards: [{label: "Stora rabatten", image: "Stora rabatten", album: 'Stora rabatten'},
-              {label: "Vallmo", image: "Vallmo", album: "Vallmo"},
-              {label: "Vårrabatt", image: "Vårrabatt", album: "Vårrabatt"},
-              {label: "Tradpion", image: "Tradpion", album: "Tradpion"}
+      cards: [{label: "Stora rabatten", image: "https://opendirective.github.io/brianMedia/DARTMockup/Stora rabatten.jpg", album: ""},
+              {label: "Vallmo", image: "https://opendirective.github.io/brianMedia/DARTMockup/Vallmo.jpg", album: ""},
+              {label: "Vårrabatt", image: "https://opendirective.github.io/brianMedia/DARTMockup/Vårrabatt.jpg", album: ""},
+              {label: "Tradpion", image: "https://opendirective.github.io/brianMedia/DARTMockup/Tradpion.jpg", album: ""}
             ]
     },
     {name: "Intressen",
-      cards: [{label: "Handarbete", image: "Handarbete", album: 'Tradgården'},
-              {label: "Bakning", image: "Bakning", album: "Bakning"},
-              {label: "Odling", image: "Odling", album: "Odling"},
-              {label: "Båten", image: "Båten", album: "Båten"}
+      cards: [{label: "Handarbete", image: "https://opendirective.github.io/brianMedia/DARTMockup/Handarbete.jpg", album: "Tradgården"},
+              {label: "Bakning", image: "https://opendirective.github.io/brianMedia/DARTMockup/Bakning.jpg", album: ""},
+              {label: "Odling", image: "https://opendirective.github.io/brianMedia/DARTMockup/Odling.jpg", album: "Odling"},
+              {label: "Båten", image: "https://opendirective.github.io/brianMedia/DARTMockup/Båten.jpg", album: ""}
             ]
     },
     {name: "Odling",
-      cards: [{label: "Squash", image: "Squash", album: 'Squash'},
-              {label: "Rabarber", image: "Rabarber", album: "Rabarber"},
-              {label: "Landet", image: "Landet", album: "Landet"},
-              {label: "Vårodling", image: "Vårodling", album: "Vårodling"}
+      cards: [{label: "Squash", image: "https://opendirective.github.io/brianMedia/DARTMockup/Squash.jpg", album: ""},
+              {label: "Rabarber", image: "https://opendirective.github.io/brianMedia/DARTMockup/Rabarber.jpg", album: ""},
+              {label: "Landet", image: "https://opendirective.github.io/brianMedia/DARTMockup/Landet.jpg", album: ""},
+              {label: "Vårodling", image: "https://opendirective.github.io/brianMedia/DARTMockup/Vårodling.jpg", album: ""}
             ]
     }
   ]
