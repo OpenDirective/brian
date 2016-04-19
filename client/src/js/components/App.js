@@ -9,20 +9,6 @@ import renderAssistant from './viewAssistant'
 require('../../css/normalize.css')
 require('../../css/main.css')
 
-/*
-function model() {
-  return Observable.just(
-    {title: 'hello',
-      cards: [
-        {image: 'img/montie.jpg', label: 'Montie at rest', link: 'start'},
-        {image: 'img/032.jpg', label: 'Totem Pole', link: 'start'},
-        {image: 'https://i.ytimg.com/vi/hSU-PvQBx0A/maxresdefault.jpg', label: 'Pimp my pooch', link: 'start'},
-        {image: 'https://i.ytimg.com/vi/19nm5_nAwQg/hqdefault.jpg', label: 'Native Indian Musician', link: 'start'}
-      ]
-    })
-}
-*/
-
 function updateQueryStringValueFromPath(path, item, value) {
   const path2 = stripQueryStringValueFromPath(path, item)
   return addQueryStringValueToPath(path2, item, value)
