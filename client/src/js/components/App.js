@@ -69,7 +69,7 @@ function _albumModel(config, album) {
   return {name: albumConfig.name,
           title: `Touch the photos to see more. This is "${albumConfig.name}"`,
           cards: albumConfig.cards.map(({label, image, album}) => {
-            const image2 = (image.slice(0, 4) === 'blob' ? image : `${config.photoBasePath}${image}.jpg`)
+            const image2 = (image.slice(0, 4) === 'blob' ? image : `${image}`)
             return {label, image: image2, album}
           }),
           edit: album.edit,
@@ -133,7 +133,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 
  // TODO find a way to persist links to local files - may be impossible
   const changeImage$ = DOM.select('.fileElem').events('change')
-    .filter(({currentTarget}) => currentTarget.files.length)
+  .filter(({currentTarget}) => currentTarget.files.length)
     .map(({currentTarget}) => {
       const image = currentTarget.nextSibling
       const file = currentTarget.files[0]
@@ -158,14 +158,16 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 
   // If editing hand click over to hidden file picker
   const selectImage$ = DOM.select('.cardImage').events('click')
-  .filter(({target}) => target.previousSibling.className === 'fileElem')
+   .filter(({target}) => target.previousSibling.className === 'fileElem')
    .do(e => {
      e.stopPropagation()
      e.target.previousSibling.click()
    })
    .subscribe()
 
- const cardClick$ = DOM.select('[data-view]').events('click')
+
+
+  const cardClick$ = DOM.select('[data-view]').events('click')
     // stop being processed in capture phase so children get a look in
    .filter(({target}) => target.dataset.edit !== 'true')
 
@@ -214,17 +216,28 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const changesSet$ = Observable.merge(intentChangesN$, intentChangesY$)
     .startWith({changes: 1})
 
-  const setting$ = Observable.combineLatest(changesSet$, levelSet$, ({changes},{level}) => ({level, changes}))
+  const setting$ = Observable.combineLatest(changesSet$, levelSet$, ({changes}, {level}) => ({level, changes}))
+
+  const intentReset$ = DOM.select('[data-action="reset"]').events('click')
+    .do(e => e.stopPropagation()) // stop next event resetConf getting fired - prolly the driver and bubbling
+  const intentResetConf$ = DOM.select('[data-action="resetConf"]').events('click')
+    .map("Reset")
+
+  const settingsResetClear$ = intentResetConf$
+    .combineLatest(setting$, (x, settings) => ({assistant: true, resetReq: false, settings}))
+  const settingsReset$ = intentReset$
+    .combineLatest(setting$, (x, settings) => ({assistant: true, resetReq: true, settings}))
+    .merge(settingsResetClear$)
 
   const screenAssistant$ = setting$
-    .map(settings => ({assistant: true, settings}))
+    .map(settings => ({assistant: true, resetReq: false, settings}))
+    .merge(settingsReset$)
 
-// merge streams for sinks
   const view$ = screen$.merge(screenAssistant$)
-                       .map(model => {
-                         const renderer = (model.assistant) ? renderAssistant : render
-                         return renderer(model)
-                       })
+    .map(model => {
+      const renderer = (model.assistant) ? renderAssistant : render
+      return renderer(model)
+    })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$)
   const speech$ = Observable.merge(touchSpeech$)
 
@@ -232,7 +245,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     DOM: view$.do(x => console.log("view:", x)),
     history: navigate$.do(x => console.log("nav: ", x)),
     speech: speech$.do(x => console.log("spk: ", x)),
-    appConfig: Observable.merge(blurLabel$, changeImage$).do(x => console.log("config: ", x)),
+    appConfig: Observable.merge(blurLabel$, changeImage$, intentResetConf$).do(x => console.log("config: ", x)),
     settings: setting$.do(x => console.log("setting: ", x))
   }
 }

@@ -18,8 +18,12 @@ function _storageAvailable(type) {
 const storage$ = Observable.fromEvent(window, 'storage')
 
 function makeLocalStorageDriver(key, initialValue) {
-  if (!localStorage.getItem(key)) {
+  function _reset() {
     localStorage.setItem(key, JSON.stringify(initialValue))
+  }
+
+  if (!localStorage.getItem(key)) {
+    _reset()
   } // will we get an extra event here?
 
   const keyStorage$ = storage$
@@ -30,7 +34,11 @@ function makeLocalStorageDriver(key, initialValue) {
 
   return function localStorageDriver(payload$) {
     payload$.subscribe(payload => {
-      localStorage.setItem(key, JSON.stringify(payload))
+      if (payload === "Reset") {
+        _reset()
+      } else {
+        localStorage.setItem(key, JSON.stringify(payload))
+      }
     })
 
     return keyStorage$
