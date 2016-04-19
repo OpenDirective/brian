@@ -107,7 +107,7 @@ textarea {
 }
 
 .title {
-  flex: 5;
+  flex: 7;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +117,7 @@ textarea {
 }
 
 .main {
-  flex: 95;
+  flex: 93;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
@@ -180,6 +180,12 @@ textarea {
   margin-top: 0.4em;
   margin-bottom: 0.4em;
   align-self: center;
+}
+
+button[data-action="resetConf"] {
+  font-weight: bold;
+  background-color: red;
+  border-color: darkred;
 }
 
 
