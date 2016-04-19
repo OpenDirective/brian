@@ -256,10 +256,15 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .map("Reset")
 
   const settingsResetClear$ = intentResetConf$
-    .combineLatest(setting$, (x, settings) => ({assistant: true, resetReq: false, settings}))
+    .map({resetReq: false})
   const settingsReset$ = intentReset$
-    .combineLatest(setting$, (x, settings) => ({assistant: true, resetReq: true, settings}))
+    .mergeMap(x => Observable.interval(2000)
+      .take(1)
+      .takeUntil(intentResetConf$)
+      .map({resetReq: false})
+      .startWith({resetReq: true}))
     .merge(settingsResetClear$)
+    .combineLatest(setting$, ({resetReq}, settings) => ({assistant: true, resetReq, settings}))
 
   const screenAssistant$ = setting$
     .map(settings => ({assistant: true, resetReq: false, settings}))
