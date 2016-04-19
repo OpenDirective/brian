@@ -64,18 +64,22 @@ function _albumConfig(config, album) {
 }
 
 function _albumModel(config, album) {
-  // console.log('model', album, album.showCard)
+  //console.log('model', album, album.showCard)
+  const albumList = config.albums.map(a => a.name).concat(['[Show Nothing]'])
   const albumConfig = _albumConfig(config, album)
-  return {name: albumConfig.name,
-          title: `Touch the photos to see more. This is "${albumConfig.name}"`,
-          cards: albumConfig.cards.map(({label, image, album}) => {
-            const image2 = (image.slice(0, 4) === 'blob' ? image : `${image}`)
-            return {label, image: image2, album}
-          }),
-          edit: album.edit,
-          level: album.level,
-          changes: album.changes,
-          showCard: album.showCard}
+  return {
+    name: albumConfig.name,
+    title: `Touch the photos to see more. This is "${albumConfig.name}"`,
+    cards: albumConfig.cards.map(({label, image, album}) => {
+      const image2 = (image.slice(0, 4) === 'blob' ? image : `${image}`)
+      return {label, image: image2, album}
+    }),
+    edit: album.edit,
+    level: album.level,
+    changes: album.changes,
+    showCard: album.showCard,
+    albumList
+  }
 }
 
 function App({DOM, HTTP, history, speech, appConfig, settings}) {
@@ -89,7 +93,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const navLevel$ = settings
     .map(({level}) => {
       const loc = window.location
-      return _setPathLevel(`${loc.pathname}${loc.search}`, level)
+      return _setPathLevel(`${decodeURI(loc.pathname)}${loc.search}`, level)
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
@@ -98,31 +102,45 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
    .map(({currentTarget}) => {
      const loc = currentTarget.ownerDocument.location // bad developer !
-     const path = `${loc.pathname}${loc.search}`
+     const path = `${decodeURI(loc.pathname)}${loc.search}`
      return (_isPathEdit(path)) ?
      {type: 'go', value: -1} : _togglePathEdit(path)})
 
   const navNextItem$ = DOM.select('[data-action="next"]').events('click')
     .map(({currentTarget}) => {
       const loc = currentTarget.ownerDocument.location
-      const path = `${loc.pathname}${loc.search}`
+      const path = `${decodeURI(loc.pathname)}${loc.search}`
       const nextItem = (_pathItem(path) + 1) % 4
       return _setPathItem(path, nextItem)
     })
 
   const blurLabel$ = DOM.select('.cardLabel').events('blur')
-    .map(({currentTarget}) => {
+   .map(({currentTarget}) => {
       console.dir('#', currentTarget)
       return {
         album: currentTarget.parentElement.dataset.album,
         index: currentTarget.parentElement.dataset.card,
-        text: currentTarget.value
+        value: currentTarget.value
       }})
   .combineLatest(appConfig, (update, config) => {
     const newConfig = Object.assign({}, config)
-    console.log('@', newConfig.albums, ':', update.album)
     const album = _findAlbum(newConfig.albums, update.album)
-    album.cards[update.index].label = update.text
+    album.cards[update.index].label = update.value
+    return newConfig
+  })
+
+  const blurOption$ = DOM.select('.cardOption').events('change')
+//    .do(e => e.stopPropagation())
+    .map(({currentTarget}) => {
+      return {
+        album: currentTarget.parentElement.dataset.album,
+        index: currentTarget.parentElement.dataset.card,
+        value: currentTarget.value
+      }})
+  .combineLatest(appConfig, (update, config) => {
+    const newConfig = Object.assign({}, config)
+    const album = _findAlbum(newConfig.albums, update.album)
+    album.cards[update.index].album = update.value
     return newConfig
   })
 
@@ -166,10 +184,38 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
    .subscribe()
 
 
+ const newAlbumClick$ = DOM.select('.addAlbum').events('click')
+   .map(({target}) => {
+     console.dir('#', target)
+     return {
+       album: target.parentElement.dataset.album,
+       index: target.parentElement.dataset.card,
+     }})
+  .combineLatest(appConfig, (update, config) => {
+    const newConfig = Object.assign({}, config)
+    newConfig.albums.push({name: "New",
+      cards: [{label: "One", image: "", album: ""},
+      {label: "Two", image: "", album: ""},
+      {label: "Three", image: "", album: ""},
+      {label: "Four", image: "", album: ""}]})
+    const album = _findAlbum(newConfig.albums, update.album)
+    album.cards[update.index].album = "New"
+    return newConfig
+  })
+
+  const navNewAlbum$ = newAlbumClick$ // NB there's an race condition here
+    .map(({currentTarget}) => {
+      return {name: "New"}
+    })
+    .combineLatest(appConfig,
+                   (album, config) => _albumConfig(config, album))
+    .filter(x => x !== undefined)
+    .map(albumConfig => _albumPath(albumConfig.name))
+    .map(path => _togglePathEdit(path))
 
   const cardClick$ = DOM.select('[data-view]').events('click')
     // stop being processed in capture phase so children get a look in
-   .filter(({target}) => target.dataset.edit !== 'true')
+   .filter(({currentTarget}) => currentTarget.dataset.edit !== 'true')
 
   const navScreen$ = cardClick$
     .map(({currentTarget}) => {
@@ -188,7 +234,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || pathname === '/' || pathname === '/index.html'))
     .combineLatest(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
-      return {name: _albumNameFromPath(pathname),
+      return {name: _albumNameFromPath(decodeURI(pathname)),
               edit: _isPathEdit(search),
               level: _pathLevel(search),
               changes,
@@ -238,14 +284,14 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
       const renderer = (model.assistant) ? renderAssistant : render
       return renderer(model)
     })
-  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$)
+  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$, navNewAlbum$)
   const speech$ = Observable.merge(touchSpeech$)
 
   return {
     DOM: view$.do(x => console.log("view:", x)),
     history: navigate$.do(x => console.log("nav: ", x)),
     speech: speech$.do(x => console.log("spk: ", x)),
-    appConfig: Observable.merge(blurLabel$, changeImage$, intentResetConf$).do(x => console.log("config: ", x)),
+    appConfig: Observable.merge(blurLabel$, blurOption$, changeImage$, newAlbumClick$, intentResetConf$).do(x => console.log("config: ", x)),
     settings: setting$.do(x => console.log("setting: ", x))
   }
 }

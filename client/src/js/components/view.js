@@ -1,4 +1,4 @@
-import {section, header, main, nav, div, button, img, p, input} from '@cycle/dom'
+import {section, header, main, nav, div, button, img, p, input, select, option} from '@cycle/dom'
 
 function render(screen) {
   const edit = screen.edit
@@ -6,9 +6,17 @@ function render(screen) {
   const showCard = screen.showCard
   const btn = edit ? button : button
   const changes = screen.changes
+  let vdom = undefined
+  function optionAttribs(value, selectedValue) {
+    let attr = {value}
+    if (selectedValue === value || (!selectedValue && value === '[Show Nothing]')) {
+      attr.selected = 'selected' // eslint-disable immutable/no-mutation
+    }
+    return attr
+  }
   if (level === '0') {
     let cardID = 0
-    return div('.screen', [
+    vdom = div('.screen', [
       header('.title', {dataset: {action: 'speak'}}, screen.title),
       main('.main', [
         section('.content',
@@ -28,10 +36,10 @@ function render(screen) {
       ])
     ])
   } else {
-
     let cardID = 0
-    return div('.screen', [
-      header('.title', {dataset: {action: 'speak'}}, screen.title),
+    vdom = div('.screen', [
+//      edit ? input('.title', {type: "text", attributes: {value: screen.album}}) : header('.title', screen.title),
+      header('.title', screen.title),
       main('.main', [
         nav('.nav', [
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
@@ -43,14 +51,19 @@ function render(screen) {
             btn('.card', {dataset: {edit, view: album, album: screen.name, card: cardID++}}, [
               edit ? "Change picture or text" : "",
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
-              img('.cardImage', {src: image}),
-              edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label)
+              img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
+              edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
+//              edit && album !== '' ? `Album: ${album}` : edit ? button('.addAlbum', 'Make Album to show') : ''
+              edit ? select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`)))
+               : edit ? button('.addAlbum', 'Make Album to show') : ''
+
             ])
           )
         )
       ])
     ])
   }
+  return vdom
 }
 
 export default render
