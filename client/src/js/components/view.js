@@ -52,9 +52,8 @@ function render(screen) {
 //              edit ? "Change picture or text" : "",
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
               img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
-              edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
-//              edit && album !== '' ? `Album: ${album}` : edit ? button('.addAlbum', 'Make Album to show') : ''
-              edit ? div('.selectView', ['Show: ', select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`)))])
+              edit ? input('.cardLabelEdit', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
+              edit ? span('.selectView', [select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`))), button('.addAlbum', {dataset: {action: 'addAlbum'}}, 'Add')])
                : ''
 
             ])
