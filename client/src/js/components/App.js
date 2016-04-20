@@ -68,25 +68,30 @@ function _albumModel(config, album) {
   }
 }
 
+function _findAlbum(albums, albumName) {
+  return albums.filter(({name}) => name === albumName)[0]
+}
+
+function _getParentCard(nodeStart) {
+  let node = undefined;
+  for (node = nodeStart;
+        node.id !== 'root';
+        node = node.parentElement) {
+    if (node.className === 'card') {
+      break;
+    }
+  }
+  return node.id === 'root' ? undefined : node
+}
+
+
 function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
-  function _findAlbum(albums, albumName) {
-    return albums.filter(({name}) => name === albumName)[0]
-  }
-
-  function _getParentCard(nodeStart) {
-    let node = undefined;
-    for (node = nodeStart;
-         node.id !== 'root';
-         node = node.parentElement) {
-      if (node.className === 'card') {
-        break;
-      }
-    }
-    return node.id === 'root' ? undefined : node
-  }
+  const cleanInstall$ = appConfig
+    .filter(({cleanInstall}) => cleanInstall)
+    .map(config => Object.assign({}, config, {cleanInstall: false}))
 
   const navLevel$ = settings
     .map(({level}) => {
@@ -95,6 +100,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
+   .merge(cleanInstall$)
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
@@ -141,7 +147,6 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
      const newConfig = Object.assign({}, config)
      const album = _findAlbum(newConfig.albums, update.album)
      album.cards[update.index].album = update.value
-     console.log(album.cards[update.index].album)
      return newConfig
    })
 
@@ -270,12 +275,13 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const intentReset$ = DOM.select('[data-action="reset"]').events('click')
     .do(e => e.stopPropagation()) // stop next event resetConf getting fired - prolly the driver and bubbling
   const intentResetConf$ = DOM.select('[data-action="resetConf"]').events('click')
+  const reset$ = intentResetConf$
     .map("Reset")
 
   const settingsResetClear$ = intentResetConf$
     .map({resetReq: false})
   const settingsReset$ = intentReset$
-    .mergeMap(x => Observable.interval(2000)
+    .mergeMap(() => Observable.interval(2000)
       .take(1)
       .takeUntil(intentResetConf$)
       .map({resetReq: false})
@@ -299,8 +305,8 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     DOM: view$.do(x => console.log("view:", x)),
     history: navigate$.do(x => console.log("nav: ", x)),
     speech: speech$.do(x => console.log("spk: ", x)),
-    appConfig: Observable.merge(blurLabel$, blurOption$, changeImage$, newAlbumClick$, intentResetConf$).do(x => console.log("config: ", x)),
-    settings: setting$.do(x => console.log("setting: ", x))
+    appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, newAlbumClick$, reset$).do(x => console.log("config: ", x)),
+    settings: Observable.merge(setting$, reset$).do(x => console.log("setting: ", x))
   }
 }
 

@@ -1,7 +1,7 @@
 export default {
   meta: "DART mockup",
   photoBasePath: "https://opendirective.github.io/brianMedia/DARTMockup/",
-//  photoBasePath: "file:///C:/projects/brianMedia/DARTMockup/",
+  cleanInstall: true,
   albums: [
     {name: "start",
      cards: [{label: "Familjen", image: "https://opendirective.github.io/brianMedia/DARTMockup/Barnen.jpg", album: "Familjen"},
