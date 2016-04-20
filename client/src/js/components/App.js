@@ -44,6 +44,16 @@ function _albumNameFromPath(path) {
   return path === '/' ? 'start' : path === '/index.html' ? 'start' : path.split('/')[2]
 }
 
+function _isPathUser(path) {
+  return (path === '/' || path === '/index.html')
+}
+
+function _isPathAssistant(path) {
+  const assistant = '/assistant'
+  return (path === `${assistant}.html` || path.slice(0, assistant.length) === assistant)
+}
+
+
 function _albumConfig(config, album) {
   // console.log('ac', config, album)
   return config.albums.filter(({name}) => name === album.name)[0]
@@ -81,7 +91,7 @@ function _getParentCard(nodeStart) {
       break;
     }
   }
-  return node.id === 'root' ? undefined : node
+  return node
 }
 
 
@@ -100,7 +110,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   .merge(cleanInstall$)
+   .merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname)))
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
@@ -118,7 +128,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
       return _setPathItem(path, nextItem)
     })
 
-  const blurLabel$ = DOM.select('.cardLabel').events('blur')
+  const blurLabel$ = DOM.select('.cardLabelEdit').events('blur')
    .map(({currentTarget}) => {
 //      console.dir('#', currentTarget)
       const card = _getParentCard(currentTarget)
@@ -235,11 +245,11 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .map(albumConfig => _albumPath(albumConfig.name))
 
   const naveHome$ = history
-      .filter(({pathname}) => pathname === '/' || pathname === '/index.html')
+      .filter(({pathname}) => _isPathUser(pathname))
       .map(({search}) => `/album/start${search}`)
 
   const album$ = history
-    .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || pathname === '/' || pathname === '/index.html'))
+    .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || _isPathUser(pathname)))
     .combineLatest(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
       return {name: _albumNameFromPath(decodeURI(pathname)),
@@ -251,11 +261,9 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .combineLatest(appConfig,
                    (album, config) => _albumModel(config, album))
 
-
 // Assistant
   const navAssistant$ = history
-    .filter(({pathname}) => pathname === '/assistant.html')
-
+    .filter(({pathname}) => _isPathAssistant(pathname))
   const intentLevel0$ = DOM.select('[data-action="level0"]').events('click')
     .map({level: 0})
   const intentLevel1$ = DOM.select('[data-action="level1"]').events('click')
@@ -302,6 +310,8 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const speech$ = Observable.merge(touchSpeech$)
 
   const anyClick$ = DOM.select('#root').events('click')
+  const fullScreen$ = anyClick$
+    .filter(() => !_isPathAssistant(window.location.pathname))
     .map({fullScreen: true})
 
   return {
@@ -310,7 +320,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     speech: speech$.do(x => console.log("spk: ", x)),
     appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, newAlbumClick$, reset$).do(x => console.log("config: ", x)),
     settings: Observable.merge(setting$, reset$).do(x => console.log("setting: ", x)),
-    fullScreen: anyClick$
+    fullScreen: fullScreen$
   }
 }
 
