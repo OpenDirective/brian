@@ -97,8 +97,8 @@ textarea {
 
 
 .screen {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -111,7 +111,7 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 1vh 1vw;
+  margin: 0.6% 0.6%;
   border-radius: 20px;
   border: 10px solid #606060;
 }
@@ -124,6 +124,14 @@ textarea {
   align-items: stretch;
 }
 
+.nav {
+  flex: 20;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  align-items: stretch;
+}
+
 .content {
   flex: 80;
   display: flex;
@@ -132,16 +140,13 @@ textarea {
   align-content: stretch;
 }
 
-.nav {
-  flex: 20;
-  display: flex;
-  flex-flow: column nowrap;
-  justify-content: space-around;
-  align-items: stretch;
+.action {
+  margin: 1% 1%;
 }
-
+.card {
+  margin: 0.5% 0.5%;
+}
 .card, .action {
-  margin: 1vh 1vw;
   border-radius: 20px;
   border: 10px solid #606060;
   /* stop native control styling on iOS*/
@@ -163,22 +168,30 @@ textarea {
 
 .card {
   flex: 1 1 45%;
+  padding-top: 1%;
   display: flex;
   flex-flow: column nowrap;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: stretch;
 }
 
-.card > .cardImage {
-  flex: 1;
+.card .cardImage {
+  flex: 7 1;
   object-fit: contain;
-  margin-top: 1%;
+  max-width: 80%;
+  align-self:center;
 }
 
-.card > .cardLabel {
-  flex: 0;
-  margin-top: 0.4em;
-  margin-bottom: 0.4em;
+.card .cardLabel {
+  flex: 1  1;
+  margin-top: 0.2%;
+  margin-bottom: 0.3%;
+  align-self: center;
+}
+
+.card .selectView {
+  flex: 1  1;
+  margin: 5px;
   align-self: center;
 }
 

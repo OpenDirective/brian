@@ -1,4 +1,4 @@
-import {section, header, main, nav, div, button, img, p, input, select, option} from '@cycle/dom'
+import {section, header, main, nav, div, button, img, p, input, select, option, span} from '@cycle/dom'
 
 function render(screen) {
   const edit = screen.edit
@@ -23,10 +23,10 @@ function render(screen) {
           screen.cards.map(({label, image, album}) =>
             div(`.card ${cardID !== showCard ? '.hidden' : ''}`,
                 {dataset: {edit, view: album, album: screen.name, card: cardID++ }}, [
-              edit ? "Change text" : "",
-              img('.cardImage', {src: image}),
-              edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label)
-            ])
+                  edit ? "Change text" : "",
+                  img('.cardImage', {src: image}),
+                  edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label)
+              ])
           )
         ),
         nav('.nav', [
@@ -46,19 +46,19 @@ function render(screen) {
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
           button(`.action ${changes ? '' : '.hidden'}`, {dataset: {action: 'edit'}}, edit ? 'See changes' : 'Make changes')
         ]),
-        section('.content',
+        section('.content', [
           screen.cards.map(({label, image, album}) =>
-            btn('.card', {dataset: {edit, view: album, album: screen.name, card: cardID++}}, [
-              edit ? "Change picture or text" : "",
+            div('.card', {dataset: {edit, view: album, album: screen.name, card: cardID++}}, [
+//              edit ? "Change picture or text" : "",
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
               img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
               edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
 //              edit && album !== '' ? `Album: ${album}` : edit ? button('.addAlbum', 'Make Album to show') : ''
-              edit ? div(['Show: ', select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`)))])
+              edit ? div('.selectView', ['Show: ', select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`)))])
                : ''
 
             ])
-          )
+          )]
         )
       ])
     ])
