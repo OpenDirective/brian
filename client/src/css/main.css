@@ -146,9 +146,13 @@ textarea {
 .card {
   margin: 0.5% 0.5%;
 }
+
 .card, .action {
   border-radius: 20px;
   border: 10px solid #606060;
+}
+
+.card, .action {
   /* stop native control styling on iOS*/
   -webkit-appearance: none;
 }
@@ -169,6 +173,7 @@ textarea {
 .card {
   flex: 1 1 45%;
   padding-top: 1%;
+  padding-bottom: 1%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-between;
@@ -178,21 +183,24 @@ textarea {
 .card .cardImage {
   flex: 7 1;
   object-fit: contain;
-  max-width: 80%;
-  align-self:center;
+  max-width: 85%;
+  align-self: center;
 }
 
-.card .cardLabel {
-  flex: 1  1;
-  margin-top: 0.2%;
-  margin-bottom: 0.3%;
-  align-self: center;
+.card .cardLabel, .cardLabelEdit {
+  flex: 1 1;
+  margin: 1%;
+  align-self: stretch;
+  text-align: center;
 }
 
 .card .selectView {
   flex: 1  1;
-  margin: 5px;
-  align-self: center;
+  margin: 1%;
+  align-self: stretch;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
 }
 
 button[data-action="resetConf"] {
