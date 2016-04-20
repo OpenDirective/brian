@@ -13,6 +13,7 @@ import App from './components/App'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 
+// note while this is usefull it breaks the source mapping in console error messages
 if (!PRODUCTION) {
 //  addGlobalErrorHandler()
 }
