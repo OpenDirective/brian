@@ -45,6 +45,8 @@ const common = {
     ]
   },
 
+  stats: { colors: true },
+
   plugins: [
   ]
 }
@@ -86,17 +88,20 @@ if (PRODUCTION) {
   config = merge(common, {
     devtool: (USESOURCEMAPS) ? 'inline-source-map' : common.devtool,
     output: {
-      pathinfo: true
+      pathinfo: true,
+      publicPath: '/'
     },
     debug: true,
     devServer: {
       contentBase: PATHS.src,
-      publicPath: '/',
       hot: USEHOT,
       inline: true,
       stats: 'errors-only',
       host: process.env.HOST || '0.0.0.0',
-      port: process.env.PORT || '8080'
+      port: process.env.PORT || '8080',
+      historyApiFallback: {
+        index: '/'
+      }
     },
     module: {
       loaders: [
@@ -107,6 +112,7 @@ if (PRODUCTION) {
         }
       ]
     },
+
     plugins: [
       new HtmlWebpackPlugin({filename: 'index.html',
                               template: path.join(PATHS.src, 'index.html'),
