@@ -48,14 +48,15 @@ function render(screen) {
         ]),
         section('.content', [
           screen.cards.map(({label, image, album}) =>
-            div('.card', {dataset: {edit, view: album, album: screen.name, card: cardID++}}, [
+            button('.card', {dataset: {edit, view: album, album: screen.name, card: cardID++}}, [
 //              edit ? "Change picture or text" : "",
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
               img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
               edit ? input('.cardLabelEdit', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
-              edit ? span('.selectView', [select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`))), button('.addAlbum', {dataset: {action: 'addAlbum'}}, 'Add')])
-               : ''
-
+              edit ? span('.selectView', [
+                select('.cardOption', screen.albumList.map(a => option(optionAttribs(a, album), `${a}`))),
+                button('.addAlbum', {dataset: {action: 'addAlbum'}}, 'Add')
+              ]) : ''
             ])
           )]
         )

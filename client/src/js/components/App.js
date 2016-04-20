@@ -61,11 +61,12 @@ function _albumConfig(config, album) {
 
 function _albumModel(config, album) {
   //console.log('model', album, album.showCard)
-  const albumList = config.albums.map(a => a.name).concat(['[Show Nothing]'])
   const albumConfig = _albumConfig(config, album)
+  const albumLista = config.albums.map(a => a.name).concat(['[Show Nothing]'])
+  const albumList = albumLista.filter(name => name !== albumConfig.name)
   return {
     name: albumConfig.name,
-    title: `${album.edit ? '' : `Touch the photos to see more. `}This is "${albumConfig.name}"`,
+    title: `${album.edit ? '' : `Touch the photos to see more. `}This is "${albumConfig.name}".`,
     cards: albumConfig.cards.map(({label, image, album}) => {
       const image2 = (image.slice(0, 4) === 'blob' ? image : `${image}`)
       return {label, image: image2, album}
@@ -200,30 +201,36 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
    })
    .subscribe()
 
+ const nextAlbumId$ = appConfig
+   .do(x=>console.log(x))
+   .map(({albums}) => albums.length + 1)
+ .do(x=>console.log(x))
 
  const newAlbumClick$ = DOM.select('.addAlbum').events('click')
+ const addNewAlbum$ = newAlbumClick$
+   .do(e => e.stopPropagation())
    .map(({target}) => {
-     console.dir('#', target)
      const card = _getParentCard(target)
      return {
        album: card.dataset.album,
        index: card.dataset.card,
      }})
-  .combineLatest(appConfig, (update, config) => {
+  .combineLatest(appConfig, nextAlbumId$, (update, config, nextID) => {
     const newConfig = Object.assign({}, config)
-    newConfig.albums.push({name: "New",
+    newConfig.albums.push({id: nextID,
+      name: `Album ${nextID}`,
       cards: [{label: "One", image: "", album: ""},
       {label: "Two", image: "", album: ""},
       {label: "Three", image: "", album: ""},
       {label: "Four", image: "", album: ""}]})
     const album = _findAlbum(newConfig.albums, update.album)
-    album.cards[update.index].album = "New"
+    album.cards[update.index].album = `Album ${nextID}`
     return newConfig
   })
 
-  const navNewAlbum$ = newAlbumClick$ // NB there's an race condition here
-    .map(({currentTarget}) => {
-      return {name: "New"}
+  const navNewAlbum$ = addNewAlbum$
+    .combineLatest(nextAlbumId$, (config, nextID) => {
+      return {name: `Album ${nextID}`}
     })
     .combineLatest(appConfig,
                    (album, config) => _albumConfig(config, album))
@@ -320,7 +327,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     speech: speech$.do(x => console.log("spk: ", x)),
     appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, newAlbumClick$, reset$).do(x => console.log("config: ", x)),
     settings: Observable.merge(setting$, reset$).do(x => console.log("setting: ", x)),
-    fullScreen: fullScreen$
+    //fullScreen: fullScreen$
   }
 }
 
