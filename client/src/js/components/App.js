@@ -301,12 +301,16 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$, navNewAlbum$)
   const speech$ = Observable.merge(touchSpeech$)
 
+  const anyClick$ = DOM.select('#root').events('click')
+    .map({fullScreen: true})
+
   return {
     DOM: view$.do(x => console.log("view:", x)),
     history: navigate$.do(x => console.log("nav: ", x)),
     speech: speech$.do(x => console.log("spk: ", x)),
     appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, newAlbumClick$, reset$).do(x => console.log("config: ", x)),
-    settings: Observable.merge(setting$, reset$).do(x => console.log("setting: ", x))
+    settings: Observable.merge(setting$, reset$).do(x => console.log("setting: ", x)),
+    fullScreen: anyClick$
   }
 }
 

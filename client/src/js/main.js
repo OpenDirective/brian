@@ -4,6 +4,7 @@ import {makeHTTPDriver} from '@cycle/http'
 import {makeHistoryDriver, supportsHistory} from '@cycle/history'
 import {useQueries, createHistory, createHashHistory} from 'history'
 import speechDriver from './drivers/speech'
+import fullScreenDriver from './drivers/fullScreen'
 import mkLocalStorageDriver from './drivers/localStorage'
 import defaultConfig from './config/defaultConfig.js'
 import defaultSettings from './config/defaultSettings.js'
@@ -27,7 +28,8 @@ const drivers = {
   history: makeHistoryDriver(history, {capture: false}),
   speech: speechDriver,
   appConfig: mkLocalStorageDriver('config', defaultConfig),
-  settings: mkLocalStorageDriver('setting', defaultSettings)
+  settings: mkLocalStorageDriver('setting', defaultSettings),
+  fullScreen: fullScreenDriver
 }
 
 if (!PRODUCTION && module.hot) {   // hot loading enabled in config
