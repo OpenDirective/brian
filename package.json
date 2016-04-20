@@ -36,7 +36,7 @@
 
     "preinstall": "nvm use 4.4.3 || echo nvm not found: check node version && pause",
 
-    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --colors --progress\"",
+    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --progress\"",
     "start": "npm install && npm run dev -s",
 
     "dev": "npm run open:dev -s & npm run serve -s",
