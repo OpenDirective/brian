@@ -6,6 +6,7 @@ import {useQueries, createHistory, createHashHistory} from 'history'
 import speechDriver from './drivers/speech'
 import mkLocalStorageDriver from './drivers/localStorage'
 import defaultConfig from './config/defaultConfig.js'
+import defaultSettings from './config/defaultSettings.js'
 import addGlobalErrorHandler from './globalError'
 
 import runHot from './runHot'
@@ -26,7 +27,7 @@ const drivers = {
   history: makeHistoryDriver(history, {capture: false}),
   speech: speechDriver,
   appConfig: mkLocalStorageDriver('config', defaultConfig),
-  settings: mkLocalStorageDriver('setting', {level: 0, changes: 1})
+  settings: mkLocalStorageDriver('setting', defaultSettings)
 }
 
 if (!PRODUCTION && module.hot) {   // hot loading enabled in config
