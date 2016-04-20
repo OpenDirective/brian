@@ -70,6 +70,7 @@ if (PRODUCTION) {
                                      {from: path.join(PATHS.src, 'assistant.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'media.json'), to: '..'},
                                      {from: path.join(PATHS.src, 'CNAME'), to: '..'},
+                                     {from: path.join(PATHS.src, '404.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
               new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'assistant.html'),
                           template: path.join(PATHS.src, 'assistant.html'),
