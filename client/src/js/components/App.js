@@ -76,6 +76,18 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     return albums.filter(({name}) => name === albumName)[0]
   }
 
+  function _getParentCard(nodeStart) {
+    let node = undefined;
+    for (node = nodeStart;
+         node.id !== 'root';
+         node = node.parentElement) {
+      if (node.className === 'card') {
+        break;
+      }
+    }
+    return node.id === 'root' ? undefined : node
+  }
+
   const navLevel$ = settings
     .map(({level}) => {
       const loc = window.location
@@ -102,10 +114,11 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 
   const blurLabel$ = DOM.select('.cardLabel').events('blur')
    .map(({currentTarget}) => {
-      console.dir('#', currentTarget)
+//      console.dir('#', currentTarget)
+      const card = _getParentCard(currentTarget)
       return {
-        album: currentTarget.parentElement.dataset.album,
-        index: currentTarget.parentElement.dataset.card,
+        album: card.dataset.album,
+        index: card.dataset.card,
         value: currentTarget.value
       }})
   .combineLatest(appConfig, (update, config) => {
@@ -116,19 +129,21 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   })
 
   const blurOption$ = DOM.select('.cardOption').events('change')
-//    .do(e => e.stopPropagation())
+    .do(e => e.stopPropagation())
     .map(({currentTarget}) => {
+      const card = _getParentCard(currentTarget)
       return {
-        album: currentTarget.parentElement.dataset.album,
-        index: currentTarget.parentElement.dataset.card,
+        album: card.dataset.album,
+        index: card.dataset.card,
         value: currentTarget.value
       }})
-  .combineLatest(appConfig, (update, config) => {
-    const newConfig = Object.assign({}, config)
-    const album = _findAlbum(newConfig.albums, update.album)
-    album.cards[update.index].album = update.value
-    return newConfig
-  })
+   .combineLatest(appConfig, (update, config) => {
+     const newConfig = Object.assign({}, config)
+     const album = _findAlbum(newConfig.albums, update.album)
+     album.cards[update.index].album = update.value
+     console.log(album.cards[update.index].album)
+     return newConfig
+   })
 
  /* const load$ = DOM.select('.cardImage').events('load')
     .do(({currentTarget}) => {window.URL.revokeObjectURL(currentTarget.src)})
@@ -142,8 +157,9 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
       const image = currentTarget.nextSibling
       const file = currentTarget.files[0]
       image.src = window.URL.createObjectURL(file) // eslint immutable/no-mutation: "off"
-      return {album: currentTarget.parentElement.dataset.album,
-              index: currentTarget.parentElement.dataset.card,
+      const card = _getParentCard(currentTarget)
+      return {album: card.dataset.album,
+              index: card.dataset.card,
               URL: image.src,
       }})
   .combineLatest(appConfig, (update, config) => {
@@ -173,9 +189,10 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
  const newAlbumClick$ = DOM.select('.addAlbum').events('click')
    .map(({target}) => {
      console.dir('#', target)
+     const card = _getParentCard(target)
      return {
-       album: target.parentElement.dataset.album,
-       index: target.parentElement.dataset.card,
+       album: card.dataset.album,
+       index: card.dataset.card,
      }})
   .combineLatest(appConfig, (update, config) => {
     const newConfig = Object.assign({}, config)
