@@ -152,6 +152,11 @@ textarea {
   border: 10px solid #606060;
 }
 
+.action[data-action="edit"] {
+    border-color: grey;
+    color: grey;
+}
+
 .card, .action {
   /* stop native control styling on iOS*/
   -webkit-appearance: none;
@@ -171,7 +176,7 @@ textarea {
 }
 
 .card {
-  flex: 1 1 45%;
+  flex: 1 1 49%;
   padding-top: 1%;
   padding-bottom: 1%;
   display: flex;
