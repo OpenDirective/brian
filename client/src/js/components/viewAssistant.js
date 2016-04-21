@@ -9,8 +9,8 @@ function render(screen) {
       section('.content .settings', [
         button(`.action ${(level === 0) ? '.selected' : ''}`, {dataset: {action: 'level0'}}, 'Complexity 0'),
         button(`.action ${(level === 1) ? '.selected' : ''}`, {dataset: {action: 'level1'}}, 'Complexity 1'),
-        button(`.action ${(changes === 0) ? '.selected' : ''} `, {dataset: {action: 'changesN'}}, 'No Changes'),
-        button(`.action ${(changes === 1) ? '.selected' : ''}`, {dataset: {action: 'changesY'}}, 'Make Changes'),
+        button(`.action ${(changes === 0) ? '.selected' : ''} `, {dataset: {action: 'changesN'}}, 'Hide "Make changes"'),
+        button(`.action ${(changes === 1) ? '.selected' : ''}`, {dataset: {action: 'changesY'}}, 'Show "Make changes" '),
         button(`.action`, {dataset: {action: (resetReq) ? 'resetConf' : 'reset'}}, (resetReq) ? 'Yes, Reset Everything!' : 'Reset Everything!')
       ]
     )
