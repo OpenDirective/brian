@@ -29,7 +29,7 @@ const drivers = {
   speech: speechDriver,
   appConfig: mkLocalStorageDriver('config', defaultConfig),
   settings: mkLocalStorageDriver('setting', defaultSettings),
-  fullScreen: fullScreenDriver
+//  fullScreen: fullScreenDriver
 }
 
 if (!PRODUCTION && module.hot) {   // hot loading enabled in config
