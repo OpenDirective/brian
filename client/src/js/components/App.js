@@ -55,12 +55,11 @@ function _isPathAssistant(path) {
 
 
 function _albumConfig(config, album) {
-  // console.log('ac', config, album)
   return config.albums.filter(({name}) => name === album.name)[0]
 }
 
 function _albumModel(config, album) {
-  //console.log('model', album, album.showCard)
+  //console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
   const albumLista = config.albums.map(a => a.name).concat(['[Show Nothing]'])
   const albumList = albumLista.filter(name => name !== albumConfig.name)
@@ -96,13 +95,21 @@ function _getParentCard(nodeStart) {
 }
 
 
-function App({DOM, HTTP, history, speech, appConfig, settings}) {
+function App({DOM, history, speech, appConfig, settings}) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
   const cleanInstall$ = appConfig
     .filter(({cleanInstall}) => cleanInstall)
     .map(config => Object.assign({}, config, {cleanInstall: false}))
+
+// log inputs
+  const x = appConfig.do(x => console.log("in: appConfig`", x))
+    .subscribe()
+  const x1 = settings.do(x => console.log("in: settings", x))
+    .subscribe()
+  const x2 = history.do(x => console.log("in: history", x))
+    .subscribe()
 
   const navLevel$ = settings
     .map(({level}) => {
@@ -111,7 +118,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   .merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname)))
+   //.merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname)))
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
@@ -130,7 +137,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     })
 
   const blurLabel$ = DOM.select('.cardLabelEdit').events('blur')
-   .map(({currentTarget}) => {
+    .map(({currentTarget}) => {
 //      console.dir('#', currentTarget)
       const card = _getParentCard(currentTarget)
       return {
@@ -138,12 +145,13 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
         index: card.dataset.card,
         value: currentTarget.value
       }})
-  .combineLatest(appConfig, (update, config) => {
-    const newConfig = Object.assign({}, config)
-    const album = _findAlbum(newConfig.albums, update.album)
-    album.cards[update.index].label = update.value
-    return newConfig
-  })
+   .withLatestFrom(appConfig, (update, config) => {
+     const newConfig = Object.assign({}, config)
+     const album = _findAlbum(newConfig.albums, update.album)
+     album.cards[update.index].label = update.value
+     console.log(config.albums[0].cards[0].label)
+     return newConfig
+   })
 
   const blurOption$ = DOM.select('.cardOption').events('change')
     .do(e => e.stopPropagation())
@@ -154,12 +162,13 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
         index: card.dataset.card,
         value: currentTarget.value
       }})
-   .combineLatest(appConfig, (update, config) => {
+   .withLatestFrom(appConfig, (update, config) => {
      const newConfig = Object.assign({}, config)
      const album = _findAlbum(newConfig.albums, update.album)
      album.cards[update.index].album = update.value
      return newConfig
    })
+
 
  /* const load$ = DOM.select('.cardImage').events('load')
     .do(({currentTarget}) => {window.URL.revokeObjectURL(currentTarget.src)})
@@ -178,7 +187,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
               index: card.dataset.card,
               URL: image.src,
       }})
-  .combineLatest(appConfig, (update, config) => {
+  .withLatestFrom(appConfig, (update, config) => {
     const newConfig = Object.assign({}, config)
     const album = _findAlbum(newConfig.albums, update.album)
     album.cards[update.index].image = update.URL
@@ -188,10 +197,10 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
   const touchSpeech$ = DOM.select('[data-action="speak"]').events('click')
   .map(({currentTarget}) => currentTarget.textContent)
 
-  const key$ = DOM.select('.screen').events('keydown')
+  /*const key$ = DOM.select('.screen').events('keydown')
     .do(({target}) => console.log("key", target))
     .subscribe()
-
+*/
   // If editing hand click over to hidden file picker
   const selectImage$ = DOM.select('.cardImage').events('click')
    .filter(({target}) => target.previousSibling.className === 'fileElem')
@@ -202,20 +211,20 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
    .subscribe()
 
  const nextAlbumId$ = appConfig
-   .do(x=>console.log(x))
+//   .do(x=>console.log('na', x))
    .map(({albums}) => albums.length + 1)
- .do(x=>console.log(x))
+// .do(x=>console.log(x))
 
  const newAlbumClick$ = DOM.select('.addAlbum').events('click')
  const addNewAlbum$ = newAlbumClick$
-   .do(e => e.stopPropagation())
+   // .do(e => e.stopPropagation())
    .map(({target}) => {
      const card = _getParentCard(target)
      return {
        album: card.dataset.album,
        index: card.dataset.card,
      }})
-  .combineLatest(appConfig, nextAlbumId$, (update, config, nextID) => {
+  .withLatestFrom(appConfig, nextAlbumId$, (update, config, nextID) => {
     const newConfig = Object.assign({}, config)
     newConfig.albums.push({id: nextID,
       name: `Album ${nextID}`,
@@ -228,11 +237,12 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     return newConfig
   })
 
+
   const navNewAlbum$ = addNewAlbum$
     .combineLatest(nextAlbumId$, (config, nextID) => {
       return {name: `Album ${nextID}`}
     })
-    .combineLatest(appConfig,
+    .withLatestFrom(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
     .map(albumConfig => _albumPath(albumConfig.name))
@@ -246,7 +256,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .map(({currentTarget}) => {
       return {name: currentTarget.dataset.view}
     })
-    .combineLatest(appConfig,
+    .withLatestFrom(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
     .map(albumConfig => _albumPath(albumConfig.name))
@@ -257,7 +267,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
 
   const album$ = history
     .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || _isPathUser(pathname)))
-    .combineLatest(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
+    .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
       return {name: _albumNameFromPath(decodeURI(pathname)),
               edit: _isPathEdit(search),
@@ -265,7 +275,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
               changes,
               showCard: _pathItem(search)}})
   const screen$ = album$
-    .combineLatest(appConfig,
+    .withLatestFrom(appConfig,
                    (album, config) => _albumModel(config, album))
 
 // Assistant
@@ -302,7 +312,7 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
       .map({resetReq: false})
       .startWith({resetReq: true}))
     .merge(settingsResetClear$)
-    .combineLatest(setting$, ({resetReq}, settings) => ({assistant: true, resetReq, settings}))
+    .withLatestFrom(setting$, ({resetReq}, settings) => ({assistant: true, resetReq, settings}))
 
   const screenAssistant$ = setting$
     .map(settings => ({assistant: true, resetReq: false, settings}))
@@ -322,11 +332,11 @@ function App({DOM, HTTP, history, speech, appConfig, settings}) {
     .map({fullScreen: true})
 
   return {
-    DOM: view$.do(x => console.log("view:", x)),
-    history: navigate$.do(x => console.log("nav: ", x)),
-    speech: speech$.do(x => console.log("spk: ", x)),
-    appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, newAlbumClick$, reset$).do(x => console.log("config: ", x)),
-    settings: Observable.merge(setting$, reset$).do(x => console.log("setting: ", x)),
+    DOM: view$.do(x => console.log("out: DOM", x)),
+    history: navigate$.do(x => console.log("out: history", x)),
+    speech: speech$.do(x => console.log("out: speech", x)),
+    appConfig: Observable.merge(/*cleanInstall$, */blurLabel$, blurOption$, changeImage$, addNewAlbum$, reset$).do(x => console.log("out: appConfig: ", x)),
+    settings: Observable.merge(setting$, reset$).do(x => console.log("out: settings", x)),
     //fullScreen: fullScreen$
   }
 }
