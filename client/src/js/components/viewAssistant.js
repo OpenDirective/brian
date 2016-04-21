@@ -1,4 +1,4 @@
-import {section, header, main, nav, div, button, img, p, input} from '@cycle/dom'
+import {section, header, main, div, button} from '@cycle/dom'
 
 function render(screen) {
   const {level, changes} = screen.settings
