@@ -118,7 +118,7 @@ function App({DOM, history, speech, appConfig, settings}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   //.merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname)))
+   .merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname)))
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
@@ -335,7 +335,7 @@ function App({DOM, history, speech, appConfig, settings}) {
     DOM: view$.do(x => console.log("out: DOM", x)),
     history: navigate$.do(x => console.log("out: history", x)),
     speech: speech$.do(x => console.log("out: speech", x)),
-    appConfig: Observable.merge(/*cleanInstall$, */blurLabel$, blurOption$, changeImage$, addNewAlbum$, reset$).do(x => console.log("out: appConfig: ", x)),
+    appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, reset$).do(x => console.log("out: appConfig: ", x)),
     settings: Observable.merge(setting$, reset$).do(x => console.log("out: settings", x)),
     //fullScreen: fullScreen$
   }
