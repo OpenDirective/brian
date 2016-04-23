@@ -15,6 +15,7 @@ function updateQueryStringValueFromPath(path, item, value) {
 }
 
 const EDIT_KEY = 'edit'
+const ADDING_KEY = 'add'
 const LEVEL_KEY = 'level'
 const ITEM_KEY = 'item'
 function _pathItem(path) {
@@ -34,8 +35,15 @@ function _isPathEdit(path) {
   return getQueryStringValueFromPath(path, EDIT_KEY) === 'true'
 }
 function _togglePathEdit(path) {
-  return (_isPathEdit(path) ? stripQueryStringValueFromPath(path, 'edit')
-                            : addQueryStringValueToPath(path, 'edit', 'true'))
+  return (_isPathEdit(path) ? stripQueryStringValueFromPath(path, EDIT_KEY)
+                            : addQueryStringValueToPath(path, EDIT_KEY, 'true'))
+}
+function _isPathAdding(path) {
+  return getQueryStringValueFromPath(path, ADDING_KEY) === 'true'
+}
+function _togglePathAdding(path) {
+  return (_isPathAdding(path) ? stripQueryStringValueFromPath(path, ADDING_KEY)
+                            : addQueryStringValueToPath(path, ADDING_KEY, 'true'))
 }
 function _albumPath(name) {
   return `/album/${name}`
@@ -61,8 +69,8 @@ function _albumConfig(config, album) {
 function _albumModel(config, album) {
   //console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
-  const albumLista = config.albums.map(a => a.name).concat(['[Show Nothing]'])
-  const albumList = albumLista.filter(name => name !== albumConfig.name)
+  const albumList = config.albums.map(a => a.name).concat(['[Show Nothing]'])
+                      .filter(name => name !== albumConfig.name)
   return {
     name: albumConfig.name,
     title: `${album.edit ? '' : `Touch the photos to see more. `}This is "${albumConfig.name}".`,
@@ -71,6 +79,7 @@ function _albumModel(config, album) {
       return {label, image: image2, album}
     }),
     edit: album.edit,
+    adding: album.adding,
     level: album.level,
     changes: album.changes,
     showCard: album.showCard,
@@ -211,13 +220,12 @@ function App({DOM, history, speech, appConfig, settings}) {
    .subscribe()
 
  const nextAlbumId$ = appConfig
-//   .do(x=>console.log('na', x))
    .map(({albums}) => albums.length + 1)
-// .do(x=>console.log(x))
 
  const newAlbumClick$ = DOM.select('.addAlbum').events('click')
+   .filter(({currentTarget}) => currentTarget.parentElement !== null) // filter strange second event after button is hidden
+
  const addNewAlbum$ = newAlbumClick$
-   // .do(e => e.stopPropagation())
    .map(({target}) => {
      const card = _getParentCard(target)
      return {
@@ -236,17 +244,14 @@ function App({DOM, history, speech, appConfig, settings}) {
     album.cards[update.index].album = `Album ${nextID}`
     return newConfig
   })
-
+  .share()  // DOM is cold
 
   const navNewAlbum$ = addNewAlbum$
-    .combineLatest(nextAlbumId$, (config, nextID) => {
-      return {name: `Album ${nextID}`}
-    })
+    .withLatestFrom(nextAlbumId$, (config, nextID) => ({name: `Album ${nextID}`}))
     .withLatestFrom(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
-    .map(albumConfig => _albumPath(albumConfig.name))
-    .map(path => _togglePathEdit(path))
+    .map(albumConfig => _togglePathAdding(_togglePathEdit(_albumPath(albumConfig.name))))
 
   const cardClick$ = DOM.select('[data-view]').events('click')
     // stop being processed in capture phase so children get a look in
@@ -271,6 +276,7 @@ function App({DOM, history, speech, appConfig, settings}) {
     .map(({pathname, search, action, changes}) => {
       return {name: _albumNameFromPath(decodeURI(pathname)),
               edit: _isPathEdit(search),
+              adding: _isPathAdding(search),
               level: _pathLevel(search),
               changes,
               showCard: _pathItem(search)}})
@@ -323,7 +329,7 @@ function App({DOM, history, speech, appConfig, settings}) {
       const renderer = (model.assistant) ? renderAssistant : render
       return renderer(model)
     })
-  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, naveHome$, navLevel$, navNewAlbum$)
+  const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
   const speech$ = Observable.merge(touchSpeech$)
 
   const anyClick$ = DOM.select('#root').events('click')
@@ -331,11 +337,13 @@ function App({DOM, history, speech, appConfig, settings}) {
     .filter(() => !_isPathAssistant(window.location.pathname))
     .map({fullScreen: true})
 
+  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, reset$)
+
   return {
     DOM: view$.do(x => console.log("out: DOM", x)),
     history: navigate$.do(x => console.log("out: history", x)),
     speech: speech$.do(x => console.log("out: speech", x)),
-    appConfig: Observable.merge(cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, reset$).do(x => console.log("out: appConfig: ", x)),
+    appConfig: Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, reset$).do(x => console.log("out: appConfig", x)),
     settings: Observable.merge(setting$, reset$).do(x => console.log("out: settings", x)),
     //fullScreen: fullScreen$
   }
