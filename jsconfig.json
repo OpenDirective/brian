@@ -1,7 +1,6 @@
 {
 	"compilerOptions": {
     "target": "ES6",
-   	"allowJS": true,
     "experimentalDecorators": true
 	},
   "exclude": [
