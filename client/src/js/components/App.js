@@ -6,6 +6,7 @@ import {
 } from '../pathUtils'
 import render from './view'
 import renderAssistant from './viewAssistant'
+import renderActivity from './viewActivity'
 require('../../css/normalize.css')
 require('../../css/main.css')
 
@@ -61,6 +62,11 @@ function _isPathAssistant(path) {
   return (path === `${assistant}.html` || path.slice(0, assistant.length) === assistant)
 }
 
+function _isPathActivity(path) {
+  const activity = '/activity'
+  return (path === `${activity}.html` || path.slice(0, activity.length) === activity)
+}
+
 
 function _albumConfig(config, album) {
   return config.albums.filter(({name}) => name === album.name)[0]
@@ -104,7 +110,7 @@ function _getParentCard(nodeStart) {
 }
 
 
-function App({DOM, history, speech, appConfig, settings}) {
+function App({DOM, history, speech, appConfig, settings, activityLog}) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
@@ -119,7 +125,10 @@ function App({DOM, history, speech, appConfig, settings}) {
     .subscribe()
   const x2 = history.do(x => console.log("in: history", x))
     .subscribe()
+//  const x3 = activityLog.do(x => console.log("in: activityLog", x))
+//    .subscribe()
 
+ // TODO stop this being called at startup
   const navLevel$ = settings
     .map(({level}) => {
       const loc = window.location
@@ -127,7 +136,8 @@ function App({DOM, history, speech, appConfig, settings}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   .merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname)))
+   .merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname) &&
+                                     !_isPathActivity(window.location.pathname)))
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
@@ -158,7 +168,6 @@ function App({DOM, history, speech, appConfig, settings}) {
      const newConfig = Object.assign({}, config)
      const album = _findAlbum(newConfig.albums, update.album)
      album.cards[update.index].label = update.value
-     console.log(config.albums[0].cards[0].label)
      return newConfig
    })
 
@@ -206,10 +215,12 @@ function App({DOM, history, speech, appConfig, settings}) {
   const touchSpeech$ = DOM.select('[data-action="speak"]').events('click')
   .map(({currentTarget}) => currentTarget.textContent)
 
-  /*const key$ = DOM.select('.screen').events('keydown')
+/*
+     const key$ = DOM.select('.screen').events('keydown')
     .do(({target}) => console.log("key", target))
     .subscribe()
 */
+
   // If editing hand click over to hidden file picker
   const selectImage$ = DOM.select('.cardImage').events('click')
    .filter(({target}) => target.previousSibling.className === 'fileElem')
@@ -219,7 +230,7 @@ function App({DOM, history, speech, appConfig, settings}) {
    })
    .subscribe()
 
- const nextAlbumId$ = appConfig
+  const nextAlbumId$ = appConfig
    .map(({albums}) => albums.length + 1)
 
  const newAlbumClick$ = DOM.select('.addAlbum').events('click')
@@ -231,7 +242,8 @@ function App({DOM, history, speech, appConfig, settings}) {
      return {
        album: card.dataset.album,
        index: card.dataset.card,
-     }})
+     }
+   })
   .withLatestFrom(appConfig, nextAlbumId$, (update, config, nextID) => {
     const newConfig = Object.assign({}, config)
     newConfig.albums.push({id: nextID,
@@ -266,11 +278,12 @@ function App({DOM, history, speech, appConfig, settings}) {
     .filter(x => x !== undefined)
     .map(albumConfig => _albumPath(albumConfig.name))
 
-  const naveHome$ = history
-      .filter(({pathname}) => _isPathUser(pathname))
-      .map(({search}) => `/album/start${search}`)
+//  const naveHome$ = history
+//      .filter(({pathname}) => _isPathUser(pathname))
+//      .map(({search}) => `/album/start${search}`)
 
   const album$ = history
+
     .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || _isPathUser(pathname)))
     .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
@@ -280,13 +293,18 @@ function App({DOM, history, speech, appConfig, settings}) {
               level: _pathLevel(search),
               changes,
               showCard: _pathItem(search)}})
+      .share()
+
   const screen$ = album$
     .withLatestFrom(appConfig,
                    (album, config) => _albumModel(config, album))
 
+  const activity$ = album$
+    .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
+
 // Assistant
-  const navAssistant$ = history
-    .filter(({pathname}) => _isPathAssistant(pathname))
+//  const navAssistant$ = history
+//    .filter(({pathname}) => _isPathAssistant(pathname))
   const intentLevel0$ = DOM.select('[data-action="level0"]').events('click')
     .map({level: 0})
   const intentLevel1$ = DOM.select('[data-action="level1"]').events('click')
@@ -301,32 +319,48 @@ function App({DOM, history, speech, appConfig, settings}) {
   const changesSet$ = Observable.merge(intentChangesN$, intentChangesY$)
     .startWith({changes: 1})
 
-  const setting$ = Observable.combineLatest(changesSet$, levelSet$, ({changes}, {level}) => ({level, changes}))
+  const assistantActions$ = Observable.combineLatest(changesSet$, levelSet$, ({changes}, {level}) => ({level, changes}))
+    .filter(() => _isPathAssistant(window.location.pathname))
 
+  // reset handling
+  // TODO glitches here? certainly multiple events per click
   const intentReset$ = DOM.select('[data-action="reset"]').events('click')
-    .do(e => e.stopPropagation()) // stop next event resetConf getting fired - prolly the driver and bubbling
-  const intentResetConf$ = DOM.select('[data-action="resetConf"]').events('click')
-  const reset$ = intentResetConf$
-    .map("Reset")
+  const intentConfirmReset$ = DOM.select('[data-action="resetConf"]').events('click')
 
-  const settingsResetClear$ = intentResetConf$
-    .map({resetReq: false})
-  const settingsReset$ = intentReset$
-    .mergeMap(() => Observable.interval(2000)
-      .take(1)
-      .takeUntil(intentResetConf$)
-      .map({resetReq: false})
-      .startWith({resetReq: true}))
-    .merge(settingsResetClear$)
-    .withLatestFrom(setting$, ({resetReq}, settings) => ({assistant: true, resetReq, settings}))
+  const resetStates$ = intentReset$
+    .flatMap(Observable.of('start')
+              .merge(intentConfirmReset$.map('confirm'))
+              .timeout(2000, Observable.of('timeout'))
+              .takeUntil(intentConfirmReset$)
+              .concat(Observable.of('off')))
+    .filter(x => x !== 'timeout')
 
-  const screenAssistant$ = setting$
+  const resetAssistant$ = resetStates$
+    .filter(() => _isPathAssistant(window.location.pathname))
+    .filter(x => x === 'confirm')
+    .map('Reset')
+
+  const screenAssistant$ = assistantActions$
+    .filter(() => _isPathAssistant(window.location.pathname))
     .map(settings => ({assistant: true, resetReq: false, settings}))
-    .merge(settingsReset$)
+    .merge(resetStates$.filter(() => _isPathAssistant(window.location.pathname)).withLatestFrom(settings, (r, settings) => ({assistant: true, resetReq: r === "start", settings})))    .do(x=>console.log('sa',x))
 
-  const view$ = screen$.merge(screenAssistant$)
+  const resetActivity$ = resetStates$
+    .filter(() => _isPathActivity(window.location.pathname))
+    .filter(x => x === 'confirm')
+    .map('Reset')
+
+  const screenActivity$ = activityLog
+    .filter(() => _isPathActivity(window.location.pathname))
+    .map(log => ({activity: true, resetReq: false, log}))
+    .merge(resetStates$.filter(() => _isPathActivity(window.location.pathname)).withLatestFrom(activityLog, (r, log) => ({activity: true, resetReq: r === "start", log})))
+
+  // combine
+
+  const view$ = Observable.merge(screen$, screenAssistant$, screenActivity$)
     .map(model => {
-      const renderer = (model.assistant) ? renderAssistant : render
+      console.log('a', model)
+      const renderer = (model.assistant) ? renderAssistant : (model.activity) ? renderActivity : render
       return renderer(model)
     })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
@@ -334,17 +368,20 @@ function App({DOM, history, speech, appConfig, settings}) {
 
   const anyClick$ = DOM.select('#root').events('click')
   const fullScreen$ = anyClick$
-    .filter(() => !_isPathAssistant(window.location.pathname))
+    .filter(() => !_isPathAssistant(window.location.pathname) &&
+                  !_isPathActivity(window.location.pathname))
     .map({fullScreen: true})
 
-  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, reset$)
+  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, resetAssistant$)
 
+  // nb order does matter her as main as cycle loops through
   return {
+    activityLog: Observable.merge(resetActivity$, activity$).do(x => console.log("out: activityLog", x)),
+    appConfig: config$.do(x => console.log("out: appConfig", x)),
+    settings: Observable.merge(assistantActions$, resetAssistant$).do(x => console.log("out: settings", x)),
     DOM: view$.do(x => console.log("out: DOM", x)),
     history: navigate$.do(x => console.log("out: history", x)),
     speech: speech$.do(x => console.log("out: speech", x)),
-    appConfig: Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, reset$).do(x => console.log("out: appConfig", x)),
-    settings: Observable.merge(setting$, reset$).do(x => console.log("out: settings", x)),
     //fullScreen: fullScreen$
   }
 }

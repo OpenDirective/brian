@@ -140,14 +140,14 @@ textarea {
   align-content: stretch;
 }
 
-.action {
+.action, .activityLog {
   margin: 1% 1%;
 }
 .card {
   margin: 0.5% 0.5%;
 }
 
-.card, .action {
+.card, .action, .activityLog {
   border-radius: 20px;
   border: 10px solid #606060;
 }
@@ -214,7 +214,19 @@ button[data-action="resetConf"] {
   border-color: darkred;
 }
 
+.activity {
+  flex: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: stretch;
+  align-content: stretch;
+}
 
+.activityLog {
+  flex: 7;
+  overflow: auto;
+  resize: none;
+}
 
 
 

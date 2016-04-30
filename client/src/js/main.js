@@ -5,6 +5,7 @@ import {makeHistoryDriver, supportsHistory} from '@cycle/history'
 import {useQueries, createHistory, createHashHistory} from 'history'
 import speechDriver from './drivers/speech'
 import fullScreenDriver from './drivers/fullScreen'
+import activityLogDriver from './drivers/activityLog.js'
 import mkLocalStorageDriver from './drivers/localStorage'
 import defaultConfig from './config/defaultConfig.js'
 import defaultSettings from './config/defaultSettings.js'
@@ -29,6 +30,7 @@ const drivers = {
   speech: speechDriver,
   appConfig: mkLocalStorageDriver('config', defaultConfig),
   settings: mkLocalStorageDriver('setting', defaultSettings),
+  activityLog: activityLogDriver
 //  fullScreen: fullScreenDriver
 }
 
