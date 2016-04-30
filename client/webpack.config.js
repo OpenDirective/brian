@@ -23,7 +23,7 @@ const common = {
   target: 'web',
 
   entry: [
-      path.join(PATHS.js, 'main.js')
+    path.join(PATHS.js, 'main.js')
   ],
 
   output: {
@@ -39,13 +39,14 @@ const common = {
         include: PATHS.js,
         exclude: /node_modules/,
         query: {
-          presets: ['es2015']
+          presets: ['es2015'],
+          plugins: ['transform-object-rest-spread']
         }
       }
     ]
   },
 
-  stats: { colors: true },
+  stats: {colors: true},
 
   plugins: [
   ]
@@ -68,10 +69,15 @@ if (PRODUCTION) {
     plugins: [
               new CopyWebpackPlugin([{from: path.join(PATHS.src, 'favicon.ico'), to: '..'},
                                      {from: path.join(PATHS.src, 'assistant.html'), to: '..'},
+                                     {from: path.join(PATHS.src, 'activity.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'media.json'), to: '..'},
                                      {from: path.join(PATHS.src, 'CNAME'), to: '..'},
                                      {from: path.join(PATHS.src, '404.html'), to: '..'},
                                      {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
+              new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'activity.html'),
+                          template: path.join(PATHS.src, 'activity.html'),
+                          inject: true
+                        }),
               new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'assistant.html'),
                           template: path.join(PATHS.src, 'assistant.html'),
                           inject: true
@@ -83,7 +89,7 @@ if (PRODUCTION) {
               new webpack.NoErrorsPlugin(),
               new ExtractTextPlugin('../css/[name].css'),
               new webpack.optimize.UglifyJsPlugin({minimize: true})
-  ]
+    ]
   })
 } else {
   config = merge(common, {
@@ -121,6 +127,10 @@ if (PRODUCTION) {
                             }),
       new HtmlWebpackPlugin({filename: 'assistant.html',
                               template: path.join(PATHS.src, 'assistant.html'),
+                              inject: true
+                            }),
+      new HtmlWebpackPlugin({filename: 'activity.html',
+                              template: path.join(PATHS.src, 'activity.html'),
                               inject: true
                             })
     ]
