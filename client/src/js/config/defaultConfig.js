@@ -4,7 +4,7 @@ export default {
   cleanInstall: true,
   albums: [
     {id: 1,
-     name: "start",
+     name: "Home",
      cards: [{label: "Familjen", image: "https://opendirective.github.io/brianMedia/DARTMockup/Barnen.jpg", album: "Familjen"},
              {label: "Resor", image: "https://opendirective.github.io/brianMedia/DARTMockup/Resor.jpg", album: "Resor"},
              {label: "Huset", image: "https://opendirective.github.io/brianMedia/DARTMockup/Huset.jpg", album: "Huset"},

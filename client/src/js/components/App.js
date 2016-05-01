@@ -50,7 +50,7 @@ function _albumPath(name) {
   return `/album/${name}`
 }
 function _albumNameFromPath(path) {
-  return path === '/' ? 'start' : path === '/index.html' ? 'start' : path.split('/')[2]
+  return path === '/' ? 'Home' : path === '/index.html' ? 'Home' : path.split('/')[2]
 }
 
 function _isPathUser(path) {
@@ -98,7 +98,7 @@ function _findAlbum(albums, albumName) {
 }
 
 function _getParentCard(nodeStart) {
-  let node = undefined;
+  let node = undefined
   for (node = nodeStart;
         node.id !== 'root';
         node = node.parentElement) {
@@ -300,6 +300,7 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
                    (album, config) => _albumModel(config, album))
 
   const activity$ = album$
+    .filter(() => _isPathUser(window.location.pathname))
     .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
 
 // Assistant
