@@ -5,7 +5,7 @@ import {
   getQueryStringValueFromPath,
 } from '../pathUtils'
 import render from './view'
-import renderAssistant from './viewAssistant'
+import renderassist from './viewassist'
 import renderActivity from './viewActivity'
 require('../../css/normalize.css')
 require('../../css/main.css')
@@ -57,9 +57,9 @@ function _isPathUser(path) {
   return (path === '/' || path === '/index.html')
 }
 
-function _isPathAssistant(path) {
-  const assistant = '/assistant'
-  return (path === `${assistant}.html` || path.slice(0, assistant.length) === assistant)
+function _isPathassist(path) {
+  const assist = '/assist'
+  return (path === `${assist}.html` || path.slice(0, assist.length) === assist)
 }
 
 function _isPathActivity(path) {
@@ -136,7 +136,7 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   .merge(cleanInstall$.filter(() => !_isPathAssistant(window.location.pathname) &&
+   .merge(cleanInstall$.filter(() => !_isPathassist(window.location.pathname) &&
                                      !_isPathActivity(window.location.pathname)))
    .map('/')
 
@@ -303,9 +303,9 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     .filter(() => _isPathUser(window.location.pathname))
     .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
 
-// Assistant
-//  const navAssistant$ = history
-//    .filter(({pathname}) => _isPathAssistant(pathname))
+// assist
+//  const navassist$ = history
+//    .filter(({pathname}) => _isPathassist(pathname))
   const intentLevel0$ = DOM.select('[data-action="level0"]').events('click')
     .map({level: 0})
   const intentLevel1$ = DOM.select('[data-action="level1"]').events('click')
@@ -320,8 +320,8 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
   const changesSet$ = Observable.merge(intentChangesN$, intentChangesY$)
     .startWith({changes: 1})
 
-  const assistantActions$ = Observable.combineLatest(changesSet$, levelSet$, ({changes}, {level}) => ({level, changes}))
-    .filter(() => _isPathAssistant(window.location.pathname))
+  const assistActions$ = Observable.combineLatest(changesSet$, levelSet$, ({changes}, {level}) => ({level, changes}))
+    .filter(() => _isPathassist(window.location.pathname))
 
   // reset handling
   // TODO glitches here? certainly multiple events per click
@@ -336,15 +336,15 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
               .concat(Observable.of('off')))
     .filter(x => x !== 'timeout')
 
-  const resetAssistant$ = resetStates$
-    .filter(() => _isPathAssistant(window.location.pathname))
+  const resetassist$ = resetStates$
+    .filter(() => _isPathassist(window.location.pathname))
     .filter(x => x === 'confirm')
     .map('Reset')
 
-  const screenAssistant$ = assistantActions$
-    .filter(() => _isPathAssistant(window.location.pathname))
-    .map(settings => ({assistant: true, resetReq: false, settings}))
-    .merge(resetStates$.filter(() => _isPathAssistant(window.location.pathname)).withLatestFrom(settings, (r, settings) => ({assistant: true, resetReq: r === "start", settings})))    .do(x=>console.log('sa',x))
+  const screenassist$ = assistActions$
+    .filter(() => _isPathassist(window.location.pathname))
+    .map(settings => ({assist: true, resetReq: false, settings}))
+    .merge(resetStates$.filter(() => _isPathassist(window.location.pathname)).withLatestFrom(settings, (r, settings) => ({assist: true, resetReq: r === "start", settings})))    .do(x=>console.log('sa',x))
 
   const resetActivity$ = resetStates$
     .filter(() => _isPathActivity(window.location.pathname))
@@ -358,10 +358,10 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
 
   // combine
 
-  const view$ = Observable.merge(screen$, screenAssistant$, screenActivity$)
+  const view$ = Observable.merge(screen$, screenassist$, screenActivity$)
     .map(model => {
       console.log('a', model)
-      const renderer = (model.assistant) ? renderAssistant : (model.activity) ? renderActivity : render
+      const renderer = (model.assist) ? renderassist : (model.activity) ? renderActivity : render
       return renderer(model)
     })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
@@ -369,17 +369,17 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
 
   const anyClick$ = DOM.select('#root').events('click')
   const fullScreen$ = anyClick$
-    .filter(() => !_isPathAssistant(window.location.pathname) &&
+    .filter(() => !_isPathassist(window.location.pathname) &&
                   !_isPathActivity(window.location.pathname))
     .map({fullScreen: true})
 
-  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, resetAssistant$)
+  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, resetassist$)
 
   // nb order does matter her as main as cycle loops through
   return {
     activityLog: Observable.merge(resetActivity$, activity$).do(x => console.log("out: activityLog", x)),
     appConfig: config$.do(x => console.log("out: appConfig", x)),
-    settings: Observable.merge(assistantActions$, resetAssistant$).do(x => console.log("out: settings", x)),
+    settings: Observable.merge(assistActions$, resetassist$).do(x => console.log("out: settings", x)),
     DOM: view$.do(x => console.log("out: DOM", x)),
     history: navigate$.do(x => console.log("out: history", x)),
     speech: speech$.do(x => console.log("out: speech", x)),
