@@ -54,7 +54,8 @@ function _albumNameFromPath(path) {
 }
 
 function _isPathUser(path) {
-  return (path === '/' || path === '/index.html')
+  const album = '/album'
+  return (path === '/' || path === '/index.html') || (path === `${album}.html` || path.slice(0, album.length) === album)
 }
 
 function _isPathassist(path) {
