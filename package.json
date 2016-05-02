@@ -19,24 +19,24 @@
     "Cognitive"
   ],
   "scripts": {
-    "clean": "rimraf client/dist/*",
+    "clean": "rimraf dist/*",
 
     "prebuild": "npm run clean -s",
-    "build": "bash -c \"NODE_ENV=production webpack --config client/webpack.config.js\"",
+    "build": "bash -c \"NODE_ENV=production webpack --config webpack.config.js\"",
 
-    "lint": "xo ./client/src/js/**/*.js",
+    "lint": "xo ./src/js/**/*.js",
     "test": "zuul --local 8080 test/test.js",
 
     "open:prod": "opener chrome https://brian.opendirective.net/",
     "open:dev": "opener chrome --remote-debugging-port=9222 http://localhost:8080/",
 
     "_buildanddeploy": "npm run build && npm run _deploy",
-    "_deploy": "bash -c \"GIT_DEPLOY_DIR=client/dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
+    "_deploy": "bash -c \"GIT_DEPLOY_DIR=dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
     "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy -s || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
 
     "preinstall": "nvm use 4.4.3 || echo nvm not found: check node version && pause",
 
-    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config client/webpack.config.js --progress\"",
+    "serve": "bash -c \"DEV_USEHOT=true webpack-dev-server --config webpack.config.js --progress\"",
     "start": "npm install && npm run dev -s",
 
     "dev": "npm run open:dev -s & npm run serve -s",
@@ -56,9 +56,7 @@
     "@cycle/http": "8.2.2",
     "@cycle/isolate": "1.2.0",
     "cycle-restart": "0.0.14",
-    "hapi": "13.3.0",
     "history": "2.0.2",
-    "inert": "3.2.0",
     "lodash": "4.11.1",
     "moment": "^2.13.0",
     "rx": "4.1.0",
