@@ -6,7 +6,7 @@ import mapValues from 'lodash/mapValues'
 function runHot(appFile, App, drivers) {
   const restartableDrivers = mapValues(drivers,
                       v => {
-                        return restartable(v, {pauseSinksWhileReplaying: false})
+                        return restartable(v /*, {pauseSinksWhileReplaying: false}*/)
                       })
   const {sinks, sources} = run(App, restartableDrivers)
   module.hot.accept(appFile, () => {

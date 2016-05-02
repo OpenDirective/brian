@@ -3,7 +3,7 @@ import drivers from './drivers/drivers.js'
 import addGlobalErrorHandler from './utilities/globalError'
 
 import runHot from './utilities/runHot'
-import App from './components/App'
+import AssistApp from './components/AssistApp'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 
@@ -14,7 +14,8 @@ if (!PRODUCTION) {
 
 if (!PRODUCTION && module.hot && false) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
-  runHot('./components/App', App, drivers)
+  runHot('./components/App', AssistApp, drivers)
 } else {
   run(App, drivers)
 }
+
