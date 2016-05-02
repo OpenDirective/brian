@@ -31,7 +31,8 @@
     "open:dev": "opener chrome --remote-debugging-port=9222 http://localhost:8080/",
 
     "_buildanddeploy": "npm run build && npm run _deploy",
-    "_deploy": "bash -c \"GIT_DEPLOY_DIR=dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
+    "z_deploy": "bash -c \"GIT_DEPLOY_DIR=dist GIT_DEPLOY_REPO=git@github.com:OpenDirective/brianLive.git GIT_DEPLOY_BRANCH=gh-pages bash ./scripts/deploy.sh\"",
+    "_deploy": "aws s3 cp ./dist s3://brian.opendirective.net/ --recursive",
     "deploy": "bash -c \"read -n1 -p\\\"Have you commited ready to deploy (yY) \\\"; echo; [[ $REPLY = [yY] ]] && npm run _buildanddeploy -s || { echo \\\"You didn't answer yes, or deploy failed.\\\"; }",
 
     "preinstall": "nvm use 4.4.3 || echo nvm not found: check node version && pause",
