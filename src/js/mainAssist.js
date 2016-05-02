@@ -16,6 +16,5 @@ if (!PRODUCTION && module.hot && false) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
   runHot('./components/App', AssistApp, drivers)
 } else {
-  run(App, drivers)
+  run(AssistApp, drivers)
 }
-
