@@ -1,5 +1,4 @@
 import {Observable} from 'rx'
-import moment from 'moment'
 
 /* TODO check
 function _storageAvailable(type) {
@@ -17,7 +16,11 @@ function _storageAvailable(type) {
 */
 
 function timestamp() {
-  return moment().format('YYYY-MMM-DD hh:mm:ss')
+  const ds = new Date()
+               .toISOString()
+               .replace('T', ' ')
+               .slice(0, -5)
+  return ds
 }
 const key = 'activityLog'
 

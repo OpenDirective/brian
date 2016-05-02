@@ -60,7 +60,6 @@
     "cycle-restart": "0.0.14",
     "history": "2.0.2",
     "lodash": "4.11.1",
-    "moment": "^2.13.0",
     "rx": "4.1.0",
     "switch-path": "1.1.6"
   },
