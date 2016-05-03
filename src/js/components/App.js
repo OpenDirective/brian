@@ -5,8 +5,7 @@ import {
   getQueryStringValueFromPath,
 } from '../utilities/pathUtils'
 import render from './view'
-import renderassist from './viewassist'
-import renderActivity from './viewActivity'
+
 require('../../css/normalize.css')
 require('../../css/main.css')
 
@@ -58,16 +57,6 @@ function _isPathUser(path) {
   return (path === '/' || path === '/index.html') || (path === `${album}.html` || path.slice(0, album.length) === album)
 }
 
-function _isPathassist(path) {
-  const assist = '/assist'
-  return (path === `${assist}.html` || path.slice(0, assist.length) === assist)
-}
-
-function _isPathActivity(path) {
-  const activity = '/activity'
-  return (path === `${activity}.html` || path.slice(0, activity.length) === activity)
-}
-
 
 function _albumConfig(config, album) {
   return config.albums.filter(({name}) => name === album.name)[0]
@@ -104,7 +93,7 @@ function _getParentCard(nodeStart) {
         node.id !== 'root';
         node = node.parentElement) {
     if (node.className === 'card') {
-      break;
+      break
     }
   }
   return node
@@ -126,8 +115,6 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     .subscribe()
   const x2 = history.do(x => console.log("in: history", x))
     .subscribe()
-//  const x3 = activityLog.do(x => console.log("in: activityLog", x))
-//    .subscribe()
 
  // TODO stop this being called at startup
   const navLevel$ = settings
@@ -137,8 +124,7 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   .merge(cleanInstall$.filter(() => !_isPathassist(window.location.pathname) &&
-                                     !_isPathActivity(window.location.pathname)))
+   .merge(cleanInstall$)
    .map('/')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')
@@ -234,10 +220,10 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
   const nextAlbumId$ = appConfig
    .map(({albums}) => albums.length + 1)
 
- const newAlbumClick$ = DOM.select('.addAlbum').events('click')
+  const newAlbumClick$ = DOM.select('.addAlbum').events('click')
    .filter(({currentTarget}) => currentTarget.parentElement !== null) // filter strange second event after button is hidden
 
- const addNewAlbum$ = newAlbumClick$
+  const addNewAlbum$ = newAlbumClick$
    .map(({target}) => {
      const card = _getParentCard(target)
      return {
@@ -304,83 +290,26 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     .filter(() => _isPathUser(window.location.pathname))
     .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
 
-// assist
-//  const navassist$ = history
-//    .filter(({pathname}) => _isPathassist(pathname))
-  const intentLevel0$ = DOM.select('[data-action="level0"]').events('click')
-    .map({level: 0})
-  const intentLevel1$ = DOM.select('[data-action="level1"]').events('click')
-    .map({level: 1})
-  const levelSet$ = Observable.merge(intentLevel0$, intentLevel1$)
-    .startWith({level: 1})
-
-  const intentChangesN$ = DOM.select('[data-action="changesN"]').events('click')
-    .map({changes: 0})
-  const intentChangesY$ = DOM.select('[data-action="changesY"]').events('click')
-    .map({changes: 1})
-  const changesSet$ = Observable.merge(intentChangesN$, intentChangesY$)
-    .startWith({changes: 1})
-
-  const assistActions$ = Observable.combineLatest(changesSet$, levelSet$, ({changes}, {level}) => ({level, changes}))
-    .filter(() => _isPathassist(window.location.pathname))
-
-  // reset handling
-  // TODO glitches here? certainly multiple events per click
-  const intentReset$ = DOM.select('[data-action="reset"]').events('click')
-  const intentConfirmReset$ = DOM.select('[data-action="resetConf"]').events('click')
-
-  const resetStates$ = intentReset$
-    .flatMap(Observable.of('start')
-              .merge(intentConfirmReset$.map('confirm'))
-              .timeout(2000, Observable.of('timeout'))
-              .takeUntil(intentConfirmReset$)
-              .concat(Observable.of('off')))
-    .filter(x => x !== 'timeout')
-
-  const resetassist$ = resetStates$
-    .filter(() => _isPathassist(window.location.pathname))
-    .filter(x => x === 'confirm')
-    .map('Reset')
-
-  const screenassist$ = assistActions$
-    .filter(() => _isPathassist(window.location.pathname))
-    .map(settings => ({assist: true, resetReq: false, settings}))
-    .merge(resetStates$.filter(() => _isPathassist(window.location.pathname)).withLatestFrom(settings, (r, settings) => ({assist: true, resetReq: r === "start", settings})))    .do(x=>console.log('sa',x))
-
-  const resetActivity$ = resetStates$
-    .filter(() => _isPathActivity(window.location.pathname))
-    .filter(x => x === 'confirm')
-    .map('Reset')
-
-  const screenActivity$ = activityLog
-    .filter(() => _isPathActivity(window.location.pathname))
-    .map(log => ({activity: true, resetReq: false, log}))
-    .merge(resetStates$.filter(() => _isPathActivity(window.location.pathname)).withLatestFrom(activityLog, (r, log) => ({activity: true, resetReq: r === "start", log})))
-
   // combine
 
-  const view$ = Observable.merge(screen$, screenassist$, screenActivity$)
+  const view$ = screen$
     .map(model => {
       console.log('a', model)
-      const renderer = (model.assist) ? renderassist : (model.activity) ? renderActivity : render
-      return renderer(model)
+      return render(model)
     })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
   const speech$ = Observable.merge(touchSpeech$)
 
   const anyClick$ = DOM.select('#root').events('click')
   const fullScreen$ = anyClick$
-    .filter(() => !_isPathassist(window.location.pathname) &&
-                  !_isPathActivity(window.location.pathname))
     .map({fullScreen: true})
 
-  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$, resetassist$)
+  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$)
 
   // nb order does matter her as main as cycle loops through
   return {
-    activityLog: Observable.merge(resetActivity$, activity$).do(x => console.log("out: activityLog", x)),
+    activityLog: activity$.do(x => console.log("out: activityLog", x)),
     appConfig: config$.do(x => console.log("out: appConfig", x)),
-    settings: Observable.merge(assistActions$, resetassist$).do(x => console.log("out: settings", x)),
     DOM: view$.do(x => console.log("out: DOM", x)),
     history: navigate$.do(x => console.log("out: history", x)),
     speech: speech$.do(x => console.log("out: speech", x)),
