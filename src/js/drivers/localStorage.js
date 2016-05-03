@@ -15,6 +15,9 @@ function _storageAvailable(type) {
 }
 */
 
+// We get events whenever another storage object changes the storage
+// That ends up being another tab.
+// Unfortunately we don't get the event ourselves which stops us using event driven model
 const storage$ = Observable.fromEvent(window, 'storage')
 
 function makeLocalStorageDriver(key, initialValue) {
