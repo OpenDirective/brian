@@ -46,7 +46,8 @@ const common = {
         exclude: /node_modules/,
         query: {
           presets: ['es2015'],
-          plugins: ['transform-object-rest-spread']
+          plugins: ['transform-object-rest-spread'],
+          compact : true
         }
       }
     ]

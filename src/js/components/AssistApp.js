@@ -1,9 +1,9 @@
 import {Observable} from 'rx'
+import addUser from '../drivers/awsCognitoIdentity'
 import renderAssist from './viewassist'
 
 require('../../css/normalize.css')
 require('../../css/main.css')
-
 
 
 function App({DOM, history, speech, appConfig, settings}) {
@@ -61,6 +61,12 @@ function App({DOM, history, speech, appConfig, settings}) {
   const screenAssist$ = assistActions$
     .map(settings => ({assist: true, resetReq: false, settings}))
     .merge(resetStates$.withLatestFrom(settings, (r, settings) => ({assist: true, resetReq: r === "start", settings})))
+
+
+  // Add user
+  const intentAddUser$ = DOM.select('[data-action="addUser"]').events('click')
+    .do(() => addUser())
+    .subscribe()
 
   // combine
 
