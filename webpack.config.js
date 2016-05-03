@@ -10,6 +10,10 @@ const PRODUCTION = (process.env.NODE_ENV === 'production')
 const USEHOT = (!PRODUCTION && process.env.DEV_USEHOT === 'true')
 const USESOURCEMAPS = true
 
+console.log(`PRODUCTION: ${PRODUCTION}`)
+console.log(`USEHOT: ${USEHOT}`)
+console.log(`USESOURCEMAPS: ${USESOURCEMAPS}`)
+
 const PATHS = {
   src: path.join(__dirname, 'src'),
   js: path.join(__dirname, 'src', 'js'),
@@ -128,7 +132,7 @@ if (PRODUCTION) {
                               inject: true,
                               chunks: ['indexEntry']
                             }),
-  /*    new HtmlWebpackPlugin({filename: 'assist.html',
+      new HtmlWebpackPlugin({filename: 'assist.html',
                               template: path.join(PATHS.src, 'assist.html'),
                               inject: true,
                               chunks: ['assistEntry']
@@ -138,7 +142,7 @@ if (PRODUCTION) {
                               inject: true,
                               chunks: ['activityEntry']
                             })
-   */ ]
+    ]
   })
 
   if (USEHOT) {
