@@ -1,12 +1,15 @@
-// limited availablity see caniuse
-
-// TODO test if (window.SpeechSynthesisUtterance === undefined) {
-// Add fallback
+// Minimal speech driver - just speech, no options or events
+//
+// Limited availablity see caniuse
+//
+// TODO Add fallback or error
 
 function speechDriver(speechText$) {
   speechText$.subscribe(text => {
-    const utterance = new SpeechSynthesisUtterance(text)
-    window.speechSynthesis.speak(utterance)
+    if (window.SpeechSynthesisUtterance !== undefined) {
+      const utterance = new SpeechSynthesisUtterance(text)
+      window.speechSynthesis.speak(utterance)
+    }
   })
 }
 
