@@ -35,6 +35,11 @@ function makeLocalStorageDriver(key, initialValue) {
     .share()
     .startWith(JSON.parse(localStorage.getItem(key)) || {})
 
+  // a way to get at the current value - effectively a way to poll
+  keyStorage$.current = function () {
+    return Observable.just(JSON.parse(localStorage.getItem(key)) || {})
+  }
+
   return function localStorageDriver(payload$) {
     payload$.subscribe(payload => {
       if (payload === "Reset") {

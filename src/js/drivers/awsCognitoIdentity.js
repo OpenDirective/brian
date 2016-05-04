@@ -2,7 +2,7 @@
 // Non federated auth with login/out in app
 
 /*
-// this is failing to work so are loaded as global scripts in asssit.html
+// Couldn't get webpack script-loader to work so all deps are loaded as scripts in asssit.html
 require("script!./vendor/jsbn.js")
 require("script!./vendor/jsbn2.js")
 require("script!./vendor/sjcl.js")
@@ -15,7 +15,7 @@ require("script!./vendor/amazon-cognito-identity.min.js")
 /* global AWS, AWSCognito */
 /* eslint-disable immutable/no-mutation */
 
-function addUser () {
+function addUser() {
   AWS.config.region = 'us-east-1' // Region
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: 'us-east-1:9127624e-b818-45ed-99da-b1a2016dd8a3' // your identity pool id here

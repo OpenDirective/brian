@@ -6,6 +6,7 @@
 
 function speechDriver(speechText$) {
   speechText$.subscribe(text => {
+    console.log('sss')
     if (window.SpeechSynthesisUtterance !== undefined) {
       const utterance = new SpeechSynthesisUtterance(text)
       window.speechSynthesis.speak(utterance)

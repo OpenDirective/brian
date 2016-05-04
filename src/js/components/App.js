@@ -45,31 +45,32 @@ function _togglePathAdding(path) {
   return (_isPathAdding(path) ? stripQueryStringValueFromPath(path, ADDING_KEY)
                             : addQueryStringValueToPath(path, ADDING_KEY, 'true'))
 }
-function _albumPath(name) {
-  return `/album/${name}`
+function _albumPath(id) {
+  return `/album/${id}`
 }
 function _albumNameFromPath(path) {
   return path === '/' ? 'Home' : path === '/index.html' ? 'Home' : path.split('/')[2]
 }
-
-function _isPathUser(path) {
-  const album = '/album'
-  return (path === '/' || path === '/index.html') || (path === `${album}.html` || path.slice(0, album.length) === album)
+function _albumIdFromPath(path) {
+  return path === '/' ? 1 : path === '/index.html' ? 1 : parseInt(path.split('/')[2], 10)
 }
 
 
 function _albumConfig(config, album) {
-  return config.albums.filter(({name}) => name === album.name)[0]
+  return config.albums.filter(({id}) => id === album.id)[0]
 }
 
 function _albumModel(config, album) {
   //console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
-  const albumList = config.albums.map(a => a.name).concat(['[Show Nothing]'])
-                      .filter(name => name !== albumConfig.name)
+  const albumList = config.albums.map(a => ({id: a.id, name: a.name})).concat([{id: 0, name: '[Show Nothing]'}])
+                      .filter(({id}) => id !== albumConfig.id)
+
+  const albumName = albumConfig.name || `Album_${albumConfig.id}`
   return {
-    name: albumConfig.name,
-    title: `${album.edit ? '' : `Touch the photos to see more. `}This is "${albumConfig.name}".`,
+    id: albumConfig.id,
+    name: albumName,
+    title: `${album.edit ? '' : `This is "${albumName}".  Touch the photos to see more.`}.`,
     cards: albumConfig.cards.map(({label, image, album}) => {
       const image2 = (image.slice(0, 4) === 'blob' ? image : `${image}`)
       return {label, image: image2, album}
@@ -83,8 +84,8 @@ function _albumModel(config, album) {
   }
 }
 
-function _findAlbum(albums, albumName) {
-  return albums.filter(({name}) => name === albumName)[0]
+function _findAlbum(albums, albumId) {
+  return albums.filter(({id}) => id === albumId)[0]
 }
 
 function _getParentCard(nodeStart) {
@@ -142,13 +143,24 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
       return _setPathItem(path, nextItem)
     })
 
+  const blurAlbumLabel$ = DOM.select('.labelEdit').events('blur')
+    .map(({currentTarget}) => ({
+      album: parseInt(currentTarget.dataset.album, 10),
+      value: currentTarget.value
+    }))
+    .withLatestFrom(appConfig, (update, config) => {
+      const newConfig = Object.assign({}, config)
+      const album = _findAlbum(newConfig.albums, update.album)
+      album.name = update.value
+      return newConfig
+    })
+
   const blurLabel$ = DOM.select('.cardLabelEdit').events('blur')
     .map(({currentTarget}) => {
-//      console.dir('#', currentTarget)
       const card = _getParentCard(currentTarget)
       return {
-        album: card.dataset.album,
-        index: card.dataset.card,
+        album: parseInt(card.dataset.album, 10),
+        index: parseInt(card.dataset.card, 10),
         value: currentTarget.value
       }})
    .withLatestFrom(appConfig, (update, config) => {
@@ -158,14 +170,15 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
      return newConfig
    })
 
+
   const blurOption$ = DOM.select('.cardOption').events('change')
     .do(e => e.stopPropagation())
     .map(({currentTarget}) => {
       const card = _getParentCard(currentTarget)
       return {
-        album: card.dataset.album,
-        index: card.dataset.card,
-        value: currentTarget.value
+        album: parseInt(card.dataset.album, 10),
+        index: parseInt(card.dataset.card, 10),
+        value: parseInt(currentTarget.value, 10)
       }})
    .withLatestFrom(appConfig, (update, config) => {
      const newConfig = Object.assign({}, config)
@@ -188,8 +201,8 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
       const file = currentTarget.files[0]
       image.src = window.URL.createObjectURL(file) // eslint immutable/no-mutation: "off"
       const card = _getParentCard(currentTarget)
-      return {album: card.dataset.album,
-              index: card.dataset.card,
+      return {album: parseInt(card.dataset.album, 10),
+              index: parseInt(card.dataset.card, 10),
               URL: image.src,
       }})
   .withLatestFrom(appConfig, (update, config) => {
@@ -217,40 +230,44 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
    })
    .subscribe()
 
-  const nextAlbumId$ = appConfig
-   .map(({albums}) => albums.length + 1)
 
   const newAlbumClick$ = DOM.select('.addAlbum').events('click')
    .filter(({currentTarget}) => currentTarget.parentElement !== null) // filter strange second event after button is hidden
+
+  const nextAlbumId$ = newAlbumClick$
+    .flatMapLatest(() => appConfig.current())
+    .map(({albums}) => albums.length + 1)
 
   const addNewAlbum$ = newAlbumClick$
    .map(({target}) => {
      const card = _getParentCard(target)
      return {
-       album: card.dataset.album,
-       index: card.dataset.card,
+       album: parseInt(card.dataset.album, 10),
+       index: parseInt(card.dataset.card, 10)
      }
    })
   .withLatestFrom(appConfig, nextAlbumId$, (update, config, nextID) => {
     const newConfig = Object.assign({}, config)
-    newConfig.albums.push({id: nextID,
-      name: `Album ${nextID}`,
-      cards: [{label: "One", image: "", album: ""},
-      {label: "Two", image: "", album: ""},
-      {label: "Three", image: "", album: ""},
-      {label: "Four", image: "", album: ""}]})
+    newConfig.albums.push({
+      id: nextID,
+      name: `Album_${nextID}`,
+      cards: [
+        {label: `Image_${nextID}_1`, image: '', album: 0},
+        {label: `Image_${nextID}_2`, image: '', album: 0},
+        {label: `Image_${nextID}_3`, image: '', album: 0},
+        {label: `Image_${nextID}_4`, image: '', album: 0}]})
     const album = _findAlbum(newConfig.albums, update.album)
-    album.cards[update.index].album = `Album ${nextID}`
+    album.cards[update.index].album = nextID
     return newConfig
   })
   .share()  // DOM is cold
 
   const navNewAlbum$ = addNewAlbum$
-    .withLatestFrom(nextAlbumId$, (config, nextID) => ({name: `Album ${nextID}`}))
+    .withLatestFrom(nextAlbumId$, (config, nextID) => ({id: nextID}))
     .withLatestFrom(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
-    .map(albumConfig => _togglePathAdding(_togglePathEdit(_albumPath(albumConfig.name))))
+    .map(albumConfig => _togglePathAdding(_togglePathEdit(_albumPath(albumConfig.id))))
 
   const cardClick$ = DOM.select('[data-view]').events('click')
     // stop being processed in capture phase so children get a look in
@@ -258,23 +275,18 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
 
   const navScreen$ = cardClick$
     .map(({currentTarget}) => {
-      return {name: currentTarget.dataset.view}
+      return {id: parseInt(currentTarget.dataset.view, 10)}
     })
     .withLatestFrom(appConfig,
                    (album, config) => _albumConfig(config, album))
     .filter(x => x !== undefined)
-    .map(albumConfig => _albumPath(albumConfig.name))
-
-//  const naveHome$ = history
-//      .filter(({pathname}) => _isPathUser(pathname))
-//      .map(({search}) => `/album/start${search}`)
+    .map(albumConfig => _albumPath(albumConfig.id))
 
   const album$ = history
-
-    .filter(({pathname}) => (pathname.slice(0, 6) === '/album' || _isPathUser(pathname)))
+    .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
     .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
-      return {name: _albumNameFromPath(decodeURI(pathname)),
+      return {id: _albumIdFromPath(decodeURI(pathname)),
               edit: _isPathEdit(search),
               adding: _isPathAdding(search),
               level: _pathLevel(search),
@@ -286,15 +298,14 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     .withLatestFrom(appConfig,
                    (album, config) => _albumModel(config, album))
 
-  const activity$ = album$
-    .filter(() => _isPathUser(window.location.pathname))
+  const activity$ = screen$
     .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
 
   // combine
 
   const view$ = screen$
     .map(model => {
-      console.log('a', model)
+      console.log('model', model)
       return render(model)
     })
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
@@ -304,7 +315,7 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
   const fullScreen$ = anyClick$
     .map({fullScreen: true})
 
-  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurOption$, changeImage$, addNewAlbum$)
+  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$, addNewAlbum$)
 
   // nb order does matter her as main as cycle loops through
   return {

@@ -1,10 +1,11 @@
 import {section, header, main, nav, div, button, img, p, input, select, option, span} from '@cycle/dom'
 
-function render({edit, level, showCard, changes, adding, cards, name, title, albumList}) {
+function render({edit, level, showCard, changes, adding, cards, id: albumId, name, title, albumList}) {
+  console.log("view")
   let vdom = undefined
   function optionAttribs(value, selectedValue) {
     let attr = {value}
-    if (selectedValue === value || (!selectedValue && value === '[Show Nothing]')) {
+    if (selectedValue === value || (!selectedValue && value === 0 /*'[Show Nothing]'*/)) {
       attr.selected = 'selected' // eslint-disable immutable/no-mutation
     }
     return attr
@@ -17,10 +18,10 @@ function render({edit, level, showCard, changes, adding, cards, name, title, alb
         section('.content',
           cards.map(({label, image, album}) =>
             div(`.card ${cardID !== showCard ? '.hidden' : ''}`,
-                {dataset: {edit, view: album, album: name, card: cardID++ }}, [
+                {dataset: {edit, view: album, album: albumId, card: cardID++ }}, [
                   edit ? "Change text" : "",
                   img('.cardImage', {src: image}),
-                  edit ? input('.cardLabel', {type: "text", attributes: {value: label}}) : p('.cardLabel', label)
+                  edit ? input('.cardLabel', {type: "text", props: {value: label}}) : p('.cardLabel', label)
                 ])
           )
         ),
@@ -33,8 +34,9 @@ function render({edit, level, showCard, changes, adding, cards, name, title, alb
   } else {
     let cardID = 0
     vdom = div('.screen', [
-//      edit ? input('.title', {type: "text", attributes: {value: screen.album}}) : header('.title', screen.title),
-      header('.title', title),
+      header('.title', {dataset: edit ? {} : {action: 'speak'}},
+              edit ? span(['This album is: ', input('.labelEdit', {type: "text", dataset: {album: albumId}, value: name})]) :
+              title),
       main('.main', [
         nav('.nav', [
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
@@ -44,14 +46,13 @@ function render({edit, level, showCard, changes, adding, cards, name, title, alb
         ]),
         section('.content', [
           cards.map(({label, image, album}) =>
-            button('.card', {dataset: {edit, view: album, album: name, card: cardID++}}, [
-//              edit ? "Change picture or text" : "",
+            button('.card', {dataset: {edit, view: album, album: albumId, card: cardID++}}, [
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
               img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
-              edit ? input('.cardLabelEdit', {type: "text", attributes: {value: label}}) : p('.cardLabel', label),
+              edit ? input('.cardLabelEdit', {type: "text", value: label}) : p('.cardLabel', label),
               edit ? span('.selectView', [
-                select('.cardOption', albumList.map(a => option(optionAttribs(a, album), `${a}`))),
-                (adding) ? '' : button('.addAlbum', {dataset: {action: 'addAlbum'}}, 'Add')
+                select('.cardOption', albumList.map(a => option(optionAttribs(a.id, album), `${a.name}`))),
+                button('.addAlbum', {dataset: {action: 'addAlbum'}}, 'More')
               ]) : ''
             ])
           )]
