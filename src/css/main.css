@@ -196,7 +196,7 @@ textarea {
   flex: 1 1;
   margin: 1%;
   align-self: stretch;
-  text-align: center;
+  /*text-align: center;*/
 }
 
 .card .selectView {
