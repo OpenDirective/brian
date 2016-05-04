@@ -27,6 +27,9 @@ function addUser () {
   })
 /* eslint-enable immutable/no-mutation */
 
+  // need these dummy credentials  - though enabling unauthorised access also works
+  AWSCognito.config.update({accessKeyId: 'dummy', secretAccessKey: 'dummy'})
+
   const poolData = {
     UserPoolId: 'us-east-1_4suI6ClSV',
     ClientId: '3mn5hcp6edn2li2hgksl44nst2'
