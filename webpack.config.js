@@ -7,7 +7,7 @@ const path = require('path')
 
 // build / run options
 const PRODUCTION = (process.env.NODE_ENV === 'production')
-const USEHOT = (false && !PRODUCTION && process.env.DEV_USEHOT === 'true')
+const USEHOT = (!PRODUCTION && process.env.DEV_USEHOT === 'true')
 const USESOURCEMAPS = true
 
 console.log(`PRODUCTION: ${PRODUCTION}`)

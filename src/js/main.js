@@ -1,5 +1,5 @@
 import {run} from '@cycle/core'
-import drivers from './drivers/drivers.js'
+import sources from './drivers/sources.js'
 import addGlobalErrorHandler from './utilities/globalError'
 
 import runHot from './utilities/runHot'
@@ -14,7 +14,7 @@ if (!PRODUCTION) {
 
 if (!PRODUCTION && module.hot && false) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
-  runHot('./components/App', App, drivers)
+  runHot('./components/App', App, sources)
 } else {
-  run(App, drivers)
+  run(App, sources)
 }

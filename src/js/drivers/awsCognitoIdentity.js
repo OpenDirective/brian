@@ -15,15 +15,20 @@ require("script!./vendor/amazon-cognito-identity.min.js")
 /* global AWS, AWSCognito */
 /* eslint-disable immutable/no-mutation */
 
+const REGION = 'us-east-1'
+const IDENTITYPOOLID = 'us-east-1:78992aa9-f2cf-4a9b-a673-c018bcaac300'
+const POOLID = 'us-east-1_A2HeABQfl'
+const CLIENTID = '7m5nr6pgpe7en26q55jnic16t6'
+
 function addUser() {
-  AWS.config.region = 'us-east-1' // Region
+  AWS.config.region = REGION // Region
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'us-east-1:9127624e-b818-45ed-99da-b1a2016dd8a3' // your identity pool id here
+    IdentityPoolId: IDENTITYPOOLID // your identity pool id here
   })
 
-  AWSCognito.config.region = 'us-east-1'
+  AWSCognito.config.region = REGION
   AWSCognito.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'us-east-1:9127624e-b818-45ed-99da-b1a2016dd8a3' // your identity pool id here
+    IdentityPoolId: IDENTITYPOOLID // your identity pool id here
   })
 /* eslint-enable immutable/no-mutation */
 
@@ -31,8 +36,8 @@ function addUser() {
   AWSCognito.config.update({accessKeyId: 'dummy', secretAccessKey: 'dummy'})
 
   const poolData = {
-    UserPoolId: 'us-east-1_4suI6ClSV',
-    ClientId: '3mn5hcp6edn2li2hgksl44nst2'
+    UserPoolId: POOLID,
+    ClientId: CLIENTID
   }
   const userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData)
 
@@ -44,7 +49,7 @@ function addUser() {
 
   const attributeList = [attributeName]
 
-  userPool.signUp('username', 'password', attributeList, null, (err, result) => {
+  userPool.signUp('username', 'password', null, null, (err, result) => {
     if (err) {
       alert(err)
       return

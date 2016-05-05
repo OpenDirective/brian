@@ -4,12 +4,6 @@ require('../../css/normalize.css')
 require('../../css/main.css')
 
 
-function _isPathActivity(path) {
-  const activity = '/activity'
-  return (path === `${activity}.html` || path.slice(0, activity.length) === activity)
-}
-
-
 function App({DOM, settings, activityLog}) {
 
 // log inputs

@@ -15,7 +15,7 @@ const history = supportsHistory() ?
   createHistory() : createHashHistory()
 
 
-const drivers = {
+const sources = {
   DOM: makeDOMDriver('#root'),
   history: makeHistoryDriver(history, {capture: false}),
   speech: speechDriver,
@@ -25,4 +25,4 @@ const drivers = {
 //  fullScreen: fullScreenDriver
 }
 
-export default drivers
+export default sources
