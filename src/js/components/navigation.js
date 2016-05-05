@@ -37,7 +37,7 @@ function _albumIdFromPath(path) {
 }
 
 
-const routing = {
+export const routing = {
   _levelFromPath,
   _albumIdFromPath,
   _itemFromPath,
@@ -68,7 +68,8 @@ function _albumNameFromPath(path) {
   return path === '/' ? 'Home' : path === '/index.html' ? 'Home' : path.split('/')[2]
 }
 */
-function navigation(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$) {
+
+export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
@@ -78,10 +79,6 @@ function navigation(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$) {
       const loc = window.location
       return _setPathLevel(`${decodeURI(loc.pathname)}${loc.search}`, level)
     })
-
-  const cleanInstall$ = appConfig
-    .filter(({cleanInstall}) => cleanInstall)
-    .map(config => Object.assign({}, config, {cleanInstall: false}))
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
    .merge(cleanInstall$)
@@ -117,9 +114,7 @@ function navigation(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$) {
     .map(({currentTarget}) => {
       return parseInt(currentTarget.dataset.view, 10)
     })
-/*    .withLatestFrom(appConfig,
-                   (album, config) => _albumConfig(config, album))
-    .filter(x => x !== undefined)*/
+    .filter(albumId => albumId !== 0)
     .map(albumId => _albumPath(albumId))
 
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
@@ -127,4 +122,3 @@ function navigation(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$) {
   return navigate$
 }
 
-export default {navigation, routing}

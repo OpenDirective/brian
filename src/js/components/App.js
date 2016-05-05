@@ -1,6 +1,6 @@
 import {Observable} from 'rx'
 import render from './view'
-import {navigation, routing} from './navigation'
+import {navigator, routing} from './navigation'
 require('../../css/normalize.css')
 require('../../css/main.css')
 
@@ -13,10 +13,12 @@ function _albumConfig(config, album) {
 function _albumModel(config, album) {
   //console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
+  console.log(config, album)
   const albumList = config.albums.map(a => ({id: a.id, name: a.name})).concat([{id: 0, name: '[Show Nothing]'}])
                       .filter(({id}) => id !== albumConfig.id)
 
   const albumName = albumConfig.name || `Album_${albumConfig.id}`
+  console.log(albumList, albumName)
   return {
     id: albumConfig.id,
     name: albumName,
@@ -52,8 +54,6 @@ function _getParentCard(nodeStart) {
 
 
 function App({DOM, history, speech, appConfig, settings, activityLog}) {
-
-  const navigation$ = navigation(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$)
 
  // log inputs
   const x = appConfig.do(x => console.log("in: appConfig`", x))
@@ -186,14 +186,15 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
 
   const album$ = history
     .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
-    .withLatestFrom(settings, ({pathname, query, action}, {changes}) => ({pathname, query, action, changes}))
-    .map(({pathname, query, action, changes}) => {
+    .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
+    .map(({pathname, search, action, changes}) => {
+      console.log(pathname, search, action, changes)
       return {id: routing._albumIdFromPath(decodeURI(pathname)),
-              edit: routing._isPathEdit(query),
-              adding: routing._isPathAdding(query),
-              level: routing._levelFromPath(query),
+              edit: routing._isPathEdit(search),
+              adding: routing._isPathAdding(search),
+              level: routing._levelFromPath(search),
               changes,
-              showCard: routing._pathItem(query)}})
+              showCard: routing._itemFromPath(search)}})
      .share()
 
   const screen$ = album$
@@ -217,6 +218,7 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     .map({fullScreen: true})
 
   const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
+  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$)
 
   // nb order does matter her as main as cycle loops through
   return {

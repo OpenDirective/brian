@@ -48,7 +48,7 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
           cards.map(({label, image, album}) =>
             button('.card', {dataset: {edit, view: album, album: albumId, card: cardID++}}, [
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
-              img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
+              img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.svg'}}),
               edit ? input('.cardLabelEdit', {type: "text", value: label}) : p('.cardLabel', label),
               edit ? span('.selectView', [
                 select('.cardOption', albumList.map(a => option(optionAttribs(a.id, album), `${a.name}`))),
