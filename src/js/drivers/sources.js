@@ -6,6 +6,7 @@ import {createHistory, createHashHistory} from 'history'
 import defaultConfig from '../config/defaultConfig.js'
 import defaultSettings from '../config/defaultSettings.js'
 
+import makeAuthDriver from './auth'
 import speechDriver from './speech'
 // import fullScreenDriver from './fullScreen'
 import activityLogDriver from './activityLog.js'
@@ -21,7 +22,8 @@ const sources = {
   speech: speechDriver,
   appConfig: mkLocalStorageDriver('config', defaultConfig),
   settings: mkLocalStorageDriver('setting', defaultSettings),
-  activityLog: activityLogDriver
+  activityLog: activityLogDriver,
+  auth: makeAuthDriver()
 //  fullScreen: fullScreenDriver
 }
 

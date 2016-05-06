@@ -42,7 +42,7 @@ function makeLocalStorageDriver(key, initialValue) {
 
   return function localStorageDriver(payload$) {
     payload$.subscribe(payload => {
-      if (payload === "Reset") {
+      if (payload === 'Reset') {
         _reset()
       } else {
         localStorage.setItem(key, JSON.stringify(payload))

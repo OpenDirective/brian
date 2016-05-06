@@ -1,21 +1,23 @@
 import {Observable} from 'rx'
-import addUser from '../drivers/awsCognitoIdentity'
+import addUser from '../drivers/auth'
 import renderAssist from './viewassist'
 
 require('../../css/normalize.css')
 require('../../css/main.css')
 
 
-function App({DOM, history, speech, appConfig, settings}) {
+function App({DOM, auth, history, speech, appConfig, settings}) {
 
 // log inputs
-  const x = appConfig.do(x => console.log("in: appConfig`", x))
+  const x0 = auth.do(x => console.log('in: auth', x))
     .subscribe()
-  const x1 = settings.do(x => console.log("in: settings", x))
+  const x = appConfig.do(x => console.log('in: appConfig`', x))
     .subscribe()
-  const x2 = history.do(x => console.log("in: history", x))
+  const x1 = settings.do(x => console.log('in: settings', x))
     .subscribe()
-//  const x3 = activityLog.do(x => console.log("in: activityLog", x))
+  const x2 = history.do(x => console.log('in: history', x))
+    .subscribe()
+//  const x3 = activityLog.do(x => console.log('in: activityLog', x))
 //    .subscribe()
 
   const touchSpeech$ = DOM.select('[data-action="speak"]').events('click')
@@ -60,19 +62,24 @@ function App({DOM, history, speech, appConfig, settings}) {
 
   const screenAssist$ = assistActions$
     .map(settings => ({assist: true, resetReq: false, settings}))
-    .merge(resetStates$.withLatestFrom(settings, (r, settings) => ({assist: true, resetReq: r === "start", settings})))
+    .merge(resetStates$.withLatestFrom(settings, (r, settings) => ({assist: true, resetReq: r === 'start', settings})))
 
 
   // Add user
   const intentAddUser$ = DOM.select('[data-action="addUser"]').events('click')
-    .do(() => addUser())
-    .subscribe()
+    .map(() => ({action: 'addUser', username: 'fred', password: 'password'}))
+  const intentSignIn$ = DOM.select('[data-action="signIn"]').events('click')
+    .map(() => ({action: 'signIn', username: 'fred', password: 'password'}))
+  const intentSignOut$ = DOM.select('[data-action="signOut"]').events('click')
+    .map(() => ({action: 'signOut'}))
+
+  const authActions$ = Observable.merge(intentAddUser$, intentSignIn$, intentSignOut$)
 
   // combine
 
   const view$ = screenAssist$
     .map(model => {
-      console.log('a', model)
+      console.log('model', model)
       return renderAssist(model)
     })
   const speech$ = Observable.merge(touchSpeech$)
@@ -83,10 +90,11 @@ function App({DOM, history, speech, appConfig, settings}) {
 
   // nb order does matter her as main as cycle loops through
   return {
-    appConfig: resetAssist$.do(x => console.log("out: appConfig", x)),
-    settings: Observable.merge(assistActions$, resetAssist$).do(x => console.log("out: settings", x)),
-    DOM: view$.do(x => console.log("out: DOM", x)),
-    speech: speech$.do(x => console.log("out: speech", x)),
+    auth: authActions$,
+    appConfig: resetAssist$.do(x => console.log('out: appConfig', x)),
+    settings: Observable.merge(assistActions$, resetAssist$).do(x => console.log('out: settings', x)),
+    DOM: view$.do(x => console.log('out: DOM', x)),
+    speech: speech$.do(x => console.log('out: speech', x))
     //fullScreen: fullScreen$
   }
 }
