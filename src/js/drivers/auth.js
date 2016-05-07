@@ -1,44 +1,26 @@
 import {ReplaySubject} from 'rx'
 import makeAWSCognitoAuthImpl from './authAWSCognitoUserPool'
 
-
 /*
-
 # source$ = historyDriver(sink$)
-sink actions
+sink authActions
 return { auth: Observable.just({action: "addUser", user: "", password: ""})}
 return { auth: Observable.just({action: "signIn", user: "", password: ""})}
 return { auth: Observable.just({action: "signOut"})}
 
-source events
-{event: "added", user: "" }
-{event: "signedIn", user: "" }
-{event: "signedOut", }
-*/
-
-/* duck typing for the auth interface
-function addUser(username, password) {
-  return {user, error}
-}
-
-function signInUser(username, password) {
-  return {user, error}
-}
-
-function signOutUser() {
-  return {user, error}
-}
+# source events
+{event: "addedUser", user: "user`" }
+{event: "signedIn", user: "user" }
+{event: "signedOut", user: "user"}s
 */
 
 function makeDoAuthAction(authImpl) {
-  return function doAuthAction(action, user, password) {
-    console.log(authImpl, authImpl[action])
-    return authImpl[action](user, password)
+  return function doAuthAction(authAction, callback) {
+    authImpl(authAction, callback)
   }
 }
 
 function makeAuthDriver(/* options */) {
-
   const authImpl = makeAWSCognitoAuthImpl()
   const doAuthAction = makeDoAuthAction(authImpl)
 
@@ -53,18 +35,20 @@ function makeAuthDriver(/* options */) {
     }
     */
 
-    sink$.subscribe(({action, username, password}) => {
-      console.log('auth',action, username, password)
-      const {error, username2} = doAuthAction(action, username, password)
-      if (!error && action === 'addUser') {
-        auth$.onNext({event: 'added', username})
-      } else if (!error && action === 'signIn') {
-        auth$.onNext({event: 'signedIn', username})
-      } else if (!error && action === 'signedOut') {
-        auth$.onNext({event: 'signedout', username2})
-      } else {
-        alert(`Auth failed: ${error}`)
-      }
+    sink$.subscribe(authAction => {
+      doAuthAction(authAction, (error, username) => {
+        console.log('cb', error, username)
+        const {action} = authAction
+        if (!error && action === 'addUser') {
+          auth$.onNext({event: 'addedUser', username})
+        } else if (!error && action === 'signIn') {
+          auth$.onNext({event: 'signedIn', username})
+        } else if (!error && action === 'signedOut') {
+          auth$.onNext({event: 'signedout', username})
+        } else {
+
+        }
+      })
     })
 
     return auth$

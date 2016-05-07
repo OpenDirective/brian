@@ -13,7 +13,7 @@ function render(screen) {
         button(`.action ${(changes === 1) ? '.selected' : ''}`, {dataset: {action: 'changesY'}}, 'Show "Make changes" '),
         button(`.action`, {dataset: {action: (resetReq) ? 'resetConf' : 'reset'}}, (resetReq) ? 'Yes, Reset Everything!' : 'Reset Everything!'),
         button(`.action`, {dataset: {action: 'addUser'}}, 'Add a user'),
-        button(`.action`, {dataset: {action: 'signIn'}}, 'Sing In user'),
+        button(`.action`, {dataset: {action: 'signIn'}}, 'Sign In user'),
         button(`.action`, {dataset: {action: 'signOut'}}, 'Sign Out user')
       ]
     )
