@@ -54,7 +54,7 @@ function activityLogDriver(payload$) {
   }
 
   payload$.subscribe(payload => {
-    if (payload === "Reset") {
+    if (payload === 'Reset') {
       _reset()
     } else {
       const {user, album, access} = payload

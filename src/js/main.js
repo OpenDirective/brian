@@ -3,7 +3,7 @@ import sources from './drivers/sources.js'
 import addGlobalErrorHandler from './utilities/globalError'
 
 import runHot from './utilities/runHot'
-import App from './components/App'
+import Top from './components/Top'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 
@@ -12,9 +12,9 @@ if (!PRODUCTION) {
 //  addGlobalErrorHandler()
 }
 
-if (!PRODUCTION && module.hot && false) {   // hot loading enabled in config
+if (false && !PRODUCTION && module.hot && false) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
-  runHot('./components/App', App, sources)
+  runHot('./components/App', Top, sources)
 } else {
-  run(App, sources)
+  run(Top, sources)
 }

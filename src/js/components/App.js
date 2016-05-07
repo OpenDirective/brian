@@ -184,6 +184,10 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     })
     .share()  // DOM is cold
 
+  const route$ = history
+    .map
+
+
   const album$ = history
     .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
     .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))

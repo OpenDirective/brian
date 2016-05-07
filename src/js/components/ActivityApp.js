@@ -45,7 +45,7 @@ function App({DOM, settings, activityLog}) {
 
   const view$ = screenActivity$
     .map(model => {
-      console.log('a', model)
+      console.log('model', model)
       return renderActivity(model)
     })
 
