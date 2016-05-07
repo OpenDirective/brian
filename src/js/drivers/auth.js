@@ -1,5 +1,5 @@
 import {ReplaySubject} from 'rx'
-import makeAWSCognitoAuthImpl from './authAWSCognitoUserPool'
+import makeAWSCognitoAuthImpl from './providers/AWS/authAWSCognitoUserPool'
 
 /*
 # source$ = historyDriver(sink$)

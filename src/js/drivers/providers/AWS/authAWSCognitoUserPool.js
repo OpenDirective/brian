@@ -34,7 +34,7 @@ function _addUser(username, password, callback) {
   console.log (username, password)
 
   const userPool = _getPool(POOLSPEC)
-  userPool.signUp(username, password, null, null, (err, /* result */) => {
+  userPool.signUp(username, password, null, null, (err, result) => {
     if (err) {
       callback(err.message, null)
       return
