@@ -1,5 +1,7 @@
 # Create the Identity Pool - linked to our User Pool
 
+exit
+
 # TODO
 # Check region is correct or always specify it - default should be eu
 # Create User Pool and IAM roles. Or wait for serverless to support User Pools :)
@@ -27,4 +29,23 @@ AWS cognito-identity set-identity-pool-roles \
 --identity-pool-id $IDENTITY_POOL_ID \
 --roles authenticated=$POOL_AUTH_ROLE,unauthenticated=$POOL_UNAUTH_ROLE
 
+# lambda code
 
+exports.handler = function(event, context) {
+    // This is used to introduce custom validation of accounts that have signed up for your service.
+    // This Lambda function returns a flag to indicate if a user should be auto confirmed.
+
+    // Perform any necessary validations.
+    // In this example, a condition that the minimum length of the username is 5 is imposed on all user pools.
+    if (event.userName.length < 6) {
+        context.done("Username length must be 6 or more", event);
+        console.log("Username length must be 6 or more");
+        throw new Error('Username length must be 6 or more.');
+    }
+
+    // confirm
+    event.response.autoConfirmUser = true;
+
+    // Return result to Cognito
+    context.done(null, event);
+}

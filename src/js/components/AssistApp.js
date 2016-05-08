@@ -65,16 +65,6 @@ function App({DOM, auth, history, speech, appConfig, settings}) {
     .merge(resetStates$.withLatestFrom(settings, (r, settings) => ({assist: true, resetReq: r === 'start', settings})))
 
 
-  // Add user
-  const intentAddUser$ = DOM.select('[data-action="addUser"]').events('click')
-    .map(() => ({action: 'addUser', username: 'fred', password: 'password'}))
-  const intentSignIn$ = DOM.select('[data-action="signIn"]').events('click')
-    .map(() => ({action: 'signIn', username: 'fred', password: 'password'}))
-  const intentSignOut$ = DOM.select('[data-action="signOut"]').events('click')
-    .map(() => ({action: 'signOut'}))
-
-  const authActions$ = Observable.merge(intentAddUser$, intentSignIn$, intentSignOut$)
-
   // combine
 
   const view$ = screenAssist$
@@ -90,7 +80,6 @@ function App({DOM, auth, history, speech, appConfig, settings}) {
 
   // nb order does matter her as main as cycle loops through
   return {
-    auth: authActions$,
     appConfig: resetAssist$.do(x => console.log('out: appConfig', x)),
     settings: Observable.merge(assistActions$, resetAssist$).do(x => console.log('out: settings', x)),
     DOM: view$.do(x => console.log('out: DOM', x)),

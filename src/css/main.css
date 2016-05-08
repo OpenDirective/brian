@@ -107,7 +107,7 @@ textarea {
 }
 
 .title {
-  flex: 7;
+  flex: 10;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -117,7 +117,7 @@ textarea {
 }
 
 .main {
-  flex: 93;
+  flex: 90;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-around;
@@ -140,7 +140,7 @@ textarea {
   align-content: stretch;
 }
 
-.action, .activityLog {
+.action, .activityLog, .username, .password{
   margin: 1% 1%;
 }
 .card {
@@ -227,9 +227,31 @@ button[data-action="resetConf"] {
   resize: none;
 }
 
+.username, .password {
+  flex: 1 1 48%;
+}
 
+.authFeedback {
+  margin: 2% 2%;
+  flex: 1 1 99%;
+  color: red;
+  text-align: center;
+}
 
+.action.auth {
+  flex: 1 1 40%;
+}
 
+input[type=text] {
+  border-radius: 10px;
+  border: 2px solid #606060;
+  padding: 0.4%;
+}
+
+input[type=select] {
+  border-radius: 10px;
+  border: 2px solid #606060;
+}
 
 
 

@@ -4,6 +4,7 @@ import addGlobalErrorHandler from './utilities/globalError'
 
 import runHot from './utilities/runHot'
 import Top from './components/Top'
+import App from './components/App'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 

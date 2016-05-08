@@ -33,7 +33,7 @@ function _levelFromPath(path) {
   return getQueryStringValueFromPath(path, keys.LEVEL_KEY)
 }
 function _albumIdFromPath(path) {
-  return path === '/' ? 1 : path === '/index.html' ? 1 : parseInt(path.split('/')[2], 10)
+  return path === '/' ? 1 : path === '/index.html' ? 1 : path === '/album' ? 1 : parseInt(path.split('/')[2], 10)
 }
 
 
@@ -75,6 +75,7 @@ export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, 
 
   // TODO stop this being called at startup
   const navLevel$ = settings
+  .do(x=>console.log('settings'))
     .map(({level}) => {
       const loc = window.location
       return _setPathLevel(`${decodeURI(loc.pathname)}${loc.search}`, level)

@@ -36,21 +36,24 @@ function _addUser(username, password, callback) {
   const userPool = _getPool(POOLSPEC)
   userPool.signUp(username, password, null, null, (err, result) => {
     if (err) {
-      callback(err.message, null)
+      console.log('AWS add user fail', err.message)
+      const msg = err.message.indexOf('password') !== -1 ? 'Check username and password are both least 6 long.' :
+            ' User may already exist.'
+      callback(`Unable to add user. ${msg}`, null)
       return
     }
     callback(null, username)
   })
 }
 
-// a single user can be logged in at any time
-let _cognitoUser = null
+
+var _cognitoUser = null
 
 function _signIn(username, password, callback) {
-  console.log (username, password)
+  console.log(username, password)
 
   if (_cognitoUser) {
-    callback('Someone already logged in', null)
+    callback('Somebody is already logged in', null)
   }
 
   const authenticationData = {
@@ -70,10 +73,14 @@ function _signIn(username, password, callback) {
   cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: result => {
       console.log(result)
-      _cognitoUser = result.user
-      callback(null, 'access token + ' + result.getAccessToken().getJwtToken())
+      _cognitoUser = cognitoUser
+      callback(null, cognitoUser.getUsername())
     },
-    onFailure: err => callback(err.message, null)
+
+    onFailure: err => {
+      console.log('AWS sign in fail', err.message)
+      callback('Unable to sign in user. Check username and password.', null)
+    }
   })
 }
 
@@ -97,7 +104,7 @@ function dispatchAuthAction({action, username, password}, callback) {
   try {
     _handlers[`_${action}`](username, password, callback)
   } catch (err) {
-    throw new Error('AWS Congnito User Pool Auth: unknown action - ' + err)
+    throw new Error(`AWS Congnito User Pool Auth: unknown action - ${err}`)
   }
 }
 export default function makeAWSCognitoAuthImpl() {

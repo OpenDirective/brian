@@ -189,6 +189,8 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
 
 
   const album$ = history
+  .do(
+    x=>console.log('ah', x))
     .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
     .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
@@ -204,13 +206,15 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
   const screen$ = album$
     .withLatestFrom(appConfig,
                    (album, config) => _albumModel(config, album))
+     .share()
 
   const activity$ = screen$
     .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
-
+.share()
   // combine
 
   const view$ = screen$
+  .do(x=>console.log('view'))
     .map(model => {
       console.log('model', model)
       return render(model)

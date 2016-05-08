@@ -39,14 +39,13 @@ function makeAuthDriver(/* options */) {
       doAuthAction(authAction, (error, username) => {
         console.log('cb', error, username)
         const {action} = authAction
-        if (!error && action === 'addUser') {
-          auth$.onNext({event: 'addedUser', username})
-        } else if (!error && action === 'signIn') {
-          auth$.onNext({event: 'signedIn', username})
-        } else if (!error && action === 'signedOut') {
-          auth$.onNext({event: 'signedout', username})
+        const event = action === 'adduser' ? 'addedUser' :
+                      action === 'signIn' ? 'signedIn' :
+                      'signedOut'
+        if (!error) {
+          auth$.onNext({event, username})
         } else {
-
+          auth$.onNext({error, username: ''})
         }
       })
     })
