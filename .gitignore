@@ -276,3 +276,5 @@ typings/
 .vagrant/
 
 dist/
+
+src/js/config/AWS-config.js

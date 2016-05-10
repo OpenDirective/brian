@@ -2,38 +2,36 @@
 // Non federated auth with login/out in app
 
 // Couldn't get webpack script-loader to work so all deps are loaded as scripts in assist.html
+import AWSCONFIG from '../../../config/aws-config'
 
-const POOLSPEC = {
-  region: 'us-east-1',
-  IdentityPoolId: 'eu-west-1:23f3754f-d6d3-47da-af70-5eb83441d510',
-  UserPoolId: 'us-east-1_A2HeABQfl',
-  ClientId: '7m5nr6pgpe7en26q55jnic16t6'
-}
-
-function _getPool({region, IdentityPoolId, UserPoolId, ClientId}) {
+function _getUserPool({identityPoolId, userPoolRegion, userPoolId, clientId}) {
 /* global AWS, AWSCognito */
 /* eslint-disable immutable/no-mutation */
-  AWS.config.region = region
-  AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId})
-
-  AWSCognito.config.region = region
-  AWSCognito.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId})
-  /* eslint-enable immutable/no-mutation */
-
+  AWS.config.region = userPoolRegion
+  AWS.config.credentials = new AWS.CognitoIdentityCredentials({identityPoolId})
   // need these dummy credentials  - though enabling unauthorised access also works
   AWSCognito.config.update({accessKeyId: 'anything', secretAccessKey: 'anything'})
+  /* eslint-enable immutable/no-mutation */
 
   const poolData = {
-    UserPoolId,
-    ClientId
+    userPoolId,
+    clientId
   }
-  return new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData)
+
+  try {
+    return new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(poolData)
+  } catch (err) {
+    return null
+  }
 }
 
 function _addUser(username, password, callback) {
-  console.log (username, password)
+  const userPool = _getUserPool(AWSCONFIG)
+  if (!userPool) {
+    callback(`Unable to find user details.`, null)
+    return
+  }
 
-  const userPool = _getPool(POOLSPEC)
   userPool.signUp(username, password, null, null, (err, result) => {
     if (err) {
       console.log('AWS add user fail', err.message)
@@ -46,12 +44,9 @@ function _addUser(username, password, callback) {
   })
 }
 
-
 var _cognitoUser = null
 
 function _signIn(username, password, callback) {
-  console.log(username, password)
-
   if (_cognitoUser) {
     callback('Somebody is already logged in', null)
   }
@@ -62,7 +57,11 @@ function _signIn(username, password, callback) {
   }
   const authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData)
 
-  const userPool = _getPool(POOLSPEC)
+  const userPool = _getUserPool(AWSCONFIG)
+  if (!userPool){
+    callback(`Unable to find user details.`, null)
+    return
+  }
 
   const userData = {
     Username: username,
@@ -72,7 +71,6 @@ function _signIn(username, password, callback) {
 
   cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: result => {
-      console.log(result)
       _cognitoUser = cognitoUser
       callback(null, cognitoUser.getUsername())
     },
@@ -100,7 +98,6 @@ function _signOut(usernameNU, passwordNU, callback) {
 const _handlers = {_addUser, _signIn, _signOut}
 
 function dispatchAuthAction({action, username, password}, callback) {
-  console.log(action, `_${action}`)
   try {
     _handlers[`_${action}`](username, password, callback)
   } catch (err) {
