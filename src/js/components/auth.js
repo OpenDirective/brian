@@ -42,8 +42,12 @@ function App({DOM, settings, auth: outcomeAuth}) {
 //  const activity$ = screen$
 //    .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
 
-  const view$ = Observable.just({authMessage: 'Enter your details to sign in or sign up as a new user'})
+  const view$ = Observable.just({authMessage: 'Enter your details to sign in\r\nOr, sign up as a new user'})
     .merge(failAuthMessage$.map(({error}) => ({authMessage: error})))
+//    .withLatestFrom(successAuthMessage$, ({authMessage}, username) => ({
+//      authMessage,
+//      username
+//    }))
     .map(model => {
       console.log('model', model)
       return renderAuth(model)
