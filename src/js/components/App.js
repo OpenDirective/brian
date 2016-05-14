@@ -10,7 +10,7 @@ function _albumConfig(config, album) {
   return config.albums.filter(({id}) => id === album.id)[0]
 }
 
-function _albumModel(config, album) {
+function _albumModel(config, album, currentUser) {
   //console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
   console.log(config, album)
@@ -18,7 +18,6 @@ function _albumModel(config, album) {
                       .filter(({id}) => id !== albumConfig.id)
 
   const albumName = albumConfig.name || `Album_${albumConfig.id}`
-  console.log(albumList, albumName)
   return {
     id: albumConfig.id,
     name: albumName,
@@ -32,7 +31,8 @@ function _albumModel(config, album) {
     level: album.level,
     changes: album.changes,
     showCard: album.showCard,
-    albumList
+    albumList,
+    currentUser,
   }
 }
 
@@ -53,15 +53,21 @@ function _getParentCard(nodeStart) {
 }
 
 
-function App({DOM, history, speech, appConfig, settings, activityLog}) {
+function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
 
  // log inputs
-  const x = appConfig.do(x => console.log("in: appConfig`", x))
+  appConfig.do(x => console.info('in: appConfig`', x))
     .subscribe()
-  const x1 = settings.do(x => console.log("in: settings", x))
+  settings.do(x => console.info('in: settings', x))
     .subscribe()
-  const x2 = history.do(x => console.log("in: history", x))
+  history.do(x => console.info('in: history', x))
     .subscribe()
+  auth.do(x => console.info('in: auth', x))
+    .subscribe()
+
+  const currentUser$ = auth
+    .map(({username}) => username)
+    .share()
 
   const cleanInstall$ = appConfig
     .filter(({cleanInstall}) => cleanInstall)
@@ -136,7 +142,10 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
   })
 
   const touchSpeech$ = DOM.select('[data-action="speak"]').events('click')
-  .map(({currentTarget}) => currentTarget.textContent)
+    .map(({currentTarget}) => currentTarget.textContent)
+
+  const intentLeaveBrian$ = DOM.select('[data-action="leaveBrian"]').events('click')
+    .map('')
 
 /*
      const key$ = DOM.select('.screen').events('keydown')
@@ -184,17 +193,11 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     })
     .share()  // DOM is cold
 
-  const route$ = history
-    .map
-
-
   const album$ = history
-  .do(
-    x=>console.log('ah', x))
     .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
     .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
-      console.log(pathname, search, action, changes)
+      console.info(pathname, search, action, changes)
       return {id: routing._albumIdFromPath(decodeURI(pathname)),
               edit: routing._isPathEdit(search),
               adding: routing._isPathAdding(search),
@@ -204,19 +207,19 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
      .share()
 
   const screen$ = album$
-    .withLatestFrom(appConfig,
-                   (album, config) => _albumModel(config, album))
-     .share()
+    .withLatestFrom(appConfig, currentUser$,
+                   (album, config, currentUser) => _albumModel(config, album, currentUser))
+    .share()
 
   const activity$ = screen$
-    .map(({name}, {edit}) => ({user: 'Jo', album: name, access: edit ? 'change' : 'view'}))
+    .map(({name, edit, currentUser}) => ({user: currentUser, album: name, access: edit ? 'change' : 'view'}))
 .share()
   // combine
 
   const view$ = screen$
-  .do(x=>console.log('view'))
+//  .merge(userChanged$)
     .map(model => {
-      console.log('model', model)
+      console.info('model', model)
       return render(model)
     })
   const speech$ = Observable.merge(touchSpeech$)
@@ -226,15 +229,18 @@ function App({DOM, history, speech, appConfig, settings, activityLog}) {
     .map({fullScreen: true})
 
   const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
-  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$)
+  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, intentLeaveBrian$)
+
+  const auth$ = Observable.just({action: 'getCurrent'})
 
   // nb order does matter her as main as cycle loops through
   return {
-    activityLog: activity$.do(x => console.log("out: activityLog", x)),
-    appConfig: config$.do(x => console.log("out: appConfig", x)),
-    DOM: view$.do(x => console.log("out: DOM", x)),
-    history: navigation$.do(x => console.log("out: history", x)),
-    speech: speech$.do(x => console.log("out: speech", x)),
+    activityLog: activity$.do(x => console.info('out: activityLog', x)),
+    appConfig: config$.do(x => console.info('out: appConfig', x)),
+    auth: auth$.do(x => console.info('out: auth', x)),
+    DOM: view$.do(x => console.info('out: DOM', x)),
+    history: navigation$.do(x => console.info('out: history', x)),
+    speech: speech$.do(x => console.info('out: speech', x)),
     //fullScreen: fullScreen$
   }
 }

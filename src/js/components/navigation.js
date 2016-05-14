@@ -69,7 +69,7 @@ function _albumNameFromPath(path) {
 }
 */
 
-export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$) {
+export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, intentLeaveBrian$) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
@@ -117,6 +117,13 @@ export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, 
     })
     .filter(albumId => albumId !== 0)
     .map(albumId => _albumPath(albumId))
+
+  const navSignout$ = intentLeaveBrian$
+    //.flatMap(() => Observable.of('/auth.html', {type: 'go', value: 0}))
+    .do(() => {
+      document.location.href = '/auth'
+    })
+    .subscribe()
 
   const navigate$ = Observable.merge(navHome$, navBack$, navScreen$, navNextItem$, navEditMode$, navLevel$, navNewAlbum$)
 

@@ -37,15 +37,15 @@ function makeAuthDriver(/* options */) {
 
     sink$.subscribe(authAction => {
       doAuthAction(authAction, (error, username) => {
-        console.log('cb', error, username)
         const {action} = authAction
         const event = action === 'adduser' ? 'addedUser' :
                       action === 'signIn' ? 'signedIn' :
+                      action === 'getCurrent' ? 'signedIn' :
                       'signedOut'
         if (!error) {
-          auth$.onNext({event, username})
+          auth$.onNext({event, error: null, username})
         } else {
-          auth$.onNext({error, username: ''})
+          auth$.onNext({event, error, username: ''})
         }
       })
     })

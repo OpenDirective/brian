@@ -18,12 +18,12 @@ const history = supportsHistory() ?
 
 const sources = {
   DOM: makeDOMDriver('#root'),
+  auth: makeAuthDriver(),
   history: makeHistoryDriver(history, {capture: false}),
   speech: speechDriver,
   appConfig: mkLocalStorageDriver('config', defaultConfig),
   settings: mkLocalStorageDriver('setting', defaultSettings),
-  activityLog: activityLogDriver,
-  auth: makeAuthDriver()
+  activityLog: activityLogDriver
 //  fullScreen: fullScreenDriver
 }
 

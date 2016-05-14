@@ -1,6 +1,6 @@
 import {section, header, main, nav, div, button, img, p, input, select, option, span} from '@cycle/dom'
 
-function render({edit, level, showCard, changes, adding, cards, id: albumId, name, title, albumList}) {
+function render({edit, level, showCard, changes, adding, cards, id: albumId, name, title, albumList, currentUser}) {
   console.log("view")
   let vdom = undefined
   function optionAttribs(value, selectedValue) {
@@ -34,9 +34,12 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
   } else {
     let cardID = 0
     vdom = div('.screen', [
-      header('.title', {dataset: edit ? {} : {action: 'speak'}},
+      div({attributes: {role: 'banner'}}, [
+        header('.title', {dataset: edit ? {} : {action: 'speak'}},
               edit ? span(['This album is: ', input('.labelEdit', {type: "text", dataset: {album: albumId}, value: name})]) :
               title),
+        button('.currentuser', {dataset: {action: 'leaveBrian'}}, currentUser),
+      ]),
       main('.main', [
         nav('.nav', [
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
@@ -48,7 +51,7 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
           cards.map(({label, image, album}) =>
             button('.card', {dataset: {edit, view: album, album: albumId, card: cardID++}}, [
               edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
-              img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.svg'}}),
+              img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
               edit ? input('.cardLabelEdit', {type: "text", value: label}) : p('.cardLabel', label),
               edit ? span('.selectView', [
                 select('.cardOption', albumList.map(a => option(optionAttribs(a.id, album), `${a.name}`))),

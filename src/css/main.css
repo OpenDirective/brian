@@ -107,14 +107,26 @@ textarea {
   touch-action: none;
 }
 
-.title {
+[role="banner"] {
   flex: 10;
   display: flex;
+  flex-flow: row nowrap;
+}
+
+.title, .currentuser {
+  flex: 1;
+  display: flex;
+  color:blue;
   justify-content: center;
   align-items: center;
-  margin: 0.6% 0.6%;
+  margin: 0.5% 0.5%;
+  padding: .6% .6%;
   border-radius: 20px;
   border: 10px solid #606060;
+}
+
+.currentuser {
+  flex: 0;
 }
 
 .main {
@@ -188,8 +200,8 @@ textarea {
 
 .card .cardImage {
   flex: 7 1;
-  object-fit: contain;
   max-width: 85%;
+  object-fit: contain;
   align-self: center;
 }
 
@@ -235,12 +247,26 @@ button[data-action="resetConf"] {
 .authFeedback {
   margin: 2% 2%;
   flex: 1 1 99%;
+  max-height: 10%;
   color: red;
   text-align: center;
 }
 
 .action.auth {
   flex: 1 1 40%;
+}
+
+.signout {
+  display: flex;
+  flex: column;
+  align-content: center;
+  align-items: center
+}
+
+button[data-action="signOut"] {
+  flex: 0 1 50%;
+  width: 50vw;
+  height: 50vh;
 }
 
 input[type=text] {

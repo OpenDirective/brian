@@ -8,6 +8,9 @@ import AWSCONFIG from '../../../config/aws-config'
 function _getUserPool({IdentityPoolId, UserPoolRegion, UserPoolId, ClientId}) {
 /* global AWS, AWSCognito */
 /* eslint-disable immutable/no-mutation */
+  // TODO this a global object so should only need to be set once
+  AWS.config.logger = console
+  //AWS.config.sslEnabled = true
   AWS.config.region = UserPoolRegion
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId})
 
@@ -48,64 +51,84 @@ function _addUser(username, password, callback) {
   })
 }
 
-function _getCurrentUser({UserPoolId, ClientId}) {
-  const data = {
-    UserPoolId,
-    ClientId
+function _getCurrent(x, xx, callback) {
+  const userPool = _getUserPool(AWSCONFIG)
+  if (!userPool) {
+    callback(`Unable to find your user details.`, null)
+    return null
   }
-  const userPool = new AWSCognito.CognitoIdentityServiceProvider.CognitoUserPool(data)
+
   const cognitoUser = userPool.getCurrentUser()
-  return cognitoUser
+  if (cognitoUser === null) {
+    callback(null, null)
+    return
+  }
+  cognitoUser.getSession((err, session) => {
+    if (err) {
+      console.error(err.message)
+      callback(`Unable to find your user details.`, null)
+      return
+    }
+    console.info(`session validity: ${session.isValid()}`)
+    const username = session.isValid() ? cognitoUser.getUsername() : null
+    callback(null, username)
+  })
 }
 
 function _signIn(username, password, callback) {
-  if (_getCurrentUser(AWSCONFIG)) {
-    callback('Somebody is already logged in', null)
-    return
-  }
-
   const userPool = _getUserPool(AWSCONFIG)
   if (!userPool) {
     callback(`Something happend so we could not find your user details\r\nPlease try again`, null)
     return
   }
 
-  const userData = {
-    Username: username,
-    Pool: userPool
-  }
-  const cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData)
-
-  const authenticationData = {
-    Username: username,
-    Password: password
-  }
-  const authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData)
-  cognitoUser.authenticateUser(authenticationDetails, {
-    onSuccess: result => {
-      callback(null, cognitoUser.getUsername())
-    },
-
-    onFailure: err => {
-      console.error('AWS sign in fail', err.message)
-      callback('Unable to sign you in\r\nDid you sign up?\r\nPlease check the username and password you entered.', null)
+  _getCurrent(null, null, (err, usernameCurrent) => {
+    let cognitoUser
+    if (!err && usernameCurrent) {
+      cognitoUser = userPool.getCurrentUser() // assume OK
+      cognitoUser.signOut()
+      callback(null, null)
+    } else {
+      const userData = {
+        Username: username,
+        Pool: userPool
+      }
+      console.debug(userData)
+      cognitoUser = new AWSCognito.CognitoIdentityServiceProvider.CognitoUser(userData)
     }
+    const authenticationData = {
+      Username: username,
+      Password: password
+    }
+    const authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData)
+    cognitoUser.authenticateUser(authenticationDetails, {
+      onSuccess: result => {
+        callback(null, cognitoUser.getUsername())
+      },
+
+      onFailure: err => {
+        console.error('AWS sign in fail', err.message)
+        callback('Unable to sign you in\r\nDid you sign up?\r\nPlease check the username and password you entered.', null)
+      }
+    })
   })
 }
 
 function _signOut(usernameNU, passwordNU, callback) {
-  const currentUser = _getCurrentUser(AWSCONFIG)
-  if (!currentUser) {
-    callback('No one is logged in', null)
+  const userPool = _getUserPool(AWSCONFIG)
+  if (!userPool) {
+    callback(`Something happend so we could not find your user details\r\nPlease try again`, null)
     return
   }
 
-  currentUser.signOut()
-
-  callback(null, null)
+  _getCurrent(null, null, (err, usernameCurrent) => {
+    const cognitoUser = userPool.getCurrentUser() // assume OK
+    cognitoUser.signOut()
+    callback(null, null)
+  })
 }
 
-const _handlers = {_addUser, _signIn, _signOut}
+const _handlers = {_addUser, _getCurrent, _signIn, _signOut}
 
 function dispatchAuthAction({action, username, password}, callback) {
   try {
