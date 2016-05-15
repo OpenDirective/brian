@@ -1,5 +1,5 @@
-import App from '../components/App'
-import Auth from '../components/Auth'
+import App from '../components/app'
+import Auth from '../components/auth'
 
 function unknownRoute() {
   console.log('unknown route')

@@ -28,8 +28,8 @@ const common = {
 
   entry: {
     "indexEntry": path.join(PATHS.js, 'main.js'),
-    "assistEntry": path.join(PATHS.js, 'mainAssist.js'),
-    "activityEntry": path.join(PATHS.js, 'mainActivity.js')
+    "assistEntry": path.join(PATHS.js, 'assist-main.js'),
+    "activityEntry": path.join(PATHS.js, 'activity-main.js')
   },
 
   output: {

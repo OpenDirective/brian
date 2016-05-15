@@ -3,7 +3,7 @@ import {
   getQueryStringValueFromPath,
   addQueryStringValueToPath,
   stripQueryStringValueFromPath,
-} from '../utilities/pathUtils'
+} from '../utilities/path-utils'
 
 function updateQueryStringValueFromPath(path, item, value) {
   const path2 = stripQueryStringValueFromPath(path, item)

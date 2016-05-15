@@ -1,6 +1,6 @@
 import {Observable} from 'rx'
 import addUser from '../drivers/auth'
-import renderAssist from './viewassist'
+import renderAssist from './assist-view'
 
 require('../../css/normalize.css')
 require('../../css/main.css')

@@ -1,5 +1,5 @@
 import {Observable} from 'rx'
-import renderAuth from './viewAuth'
+import renderAuth from './auth-view'
 require('../../css/normalize.css')
 require('../../css/main.css')
 

@@ -1,10 +1,10 @@
 import {run} from '@cycle/core'
 import sources from './drivers/sources.js'
-import addGlobalErrorHandler from './utilities/globalError'
+import addGlobalErrorHandler from './utilities/global-error'
 
-import runHot from './utilities/runHot'
-import Top from './components/Top'
-import App from './components/App'
+import runHot from './utilities/run-hot'
+import Top from './components/top'
+import App from './components/app'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 

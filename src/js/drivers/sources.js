@@ -3,14 +3,14 @@ import {makeDOMDriver} from '@cycle/dom'
 import {makeHistoryDriver, supportsHistory} from '@cycle/history'
 import {createHistory, createHashHistory} from 'history'
 
-import defaultConfig from '../config/defaultConfig.js'
-import defaultSettings from '../config/defaultSettings.js'
+import defaultConfig from '../config/default-config.js'
+import defaultSettings from '../config/default-settings.js'
 
 import makeAuthDriver from './auth'
 import speechDriver from './speech'
 // import fullScreenDriver from './fullScreen'
-import activityLogDriver from './activityLog.js'
-import mkLocalStorageDriver from './localStorage'
+import activityLogDriver from './activity-log.js'
+import mkLocalStorageDriver from './local-storage'
 
 const history = supportsHistory() ?
   createHistory() : createHashHistory()

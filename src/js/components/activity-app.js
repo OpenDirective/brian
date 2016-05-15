@@ -1,5 +1,5 @@
 import {Observable} from 'rx'
-import renderActivity from './viewActivity'
+import renderActivity from './activity-view'
 require('../../css/normalize.css')
 require('../../css/main.css')
 

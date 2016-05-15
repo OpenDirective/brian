@@ -1,9 +1,9 @@
 import {run} from '@cycle/core'
 import sources from './drivers/sources.js'
-import addGlobalErrorHandler from './utilities/globalError'
+import addGlobalErrorHandler from './utilities/global-error'
 
-import runHot from './utilities/runHot'
-import ActivityApp from './components/ActivityApp'
+import runHot from './utilities/run-hot'
+import ActivityApp from './components/activity-app'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 
