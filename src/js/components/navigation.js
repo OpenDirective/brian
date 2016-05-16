@@ -28,18 +28,13 @@ function _isPathEdit(path) {
 function _isPathAdding(path) {
   return getQueryStringValueFromPath(path, keys.ADDING_KEY) === 'true'
 }
-
 function _levelFromPath(path) {
   return getQueryStringValueFromPath(path, keys.LEVEL_KEY)
-}
-function _albumIdFromPath(path) {
-  return path === '/' ? 1 : path === '/index.html' ? 1 : path === '/album' ? 1 : parseInt(path.split('/')[2], 10)
 }
 
 
 export const routing = {
   _levelFromPath,
-  _albumIdFromPath,
   _itemFromPath,
   _isPathEdit,
   _isPathAdding

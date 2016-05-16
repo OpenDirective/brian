@@ -38,19 +38,20 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
         header('.title', {dataset: edit ? {} : {action: 'speak'}},
               edit ? span(['This album is: ', input('.labelEdit', {type: "text", dataset: {album: albumId}, value: name})]) :
               title),
-        button('.currentuser', {dataset: {action: 'leaveBrian'}}, currentUser),
+        header('.currentuser', {dataset: {action: 'speak'}}, currentUser),
       ]),
       main('.main', [
         nav('.nav', [
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
           button(`.action ${changes ? '' : '.hidden'}`, {dataset: {action: 'edit'}},
-                  adding ? 'See other album changes' : edit ? 'See your changes' : 'Make changes')
+                  adding ? 'See other album changes' : edit ? 'See your changes' : 'Make changes'),
+          button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'leaveBrian'}}, 'Finish using Brian')
         ]),
         section('.content', [
           cards.map(({label, image, album}) =>
             button('.card', {dataset: {edit, view: album, album: albumId, card: cardID++}}, [
-              edit ? input('.fileElem', {type: "file", accept: "image/*", style: {display: "none"}}) : "",
+              edit ? input('.fileElem', {type: 'file', accept: 'image/*', style: {display: 'none'}}) : '',
               img('.cardImage', {src: image, onerror: function (ev) {this.onerror=null; this.src='/img/noImage.jpg'}}),
               edit ? input('.cardLabelEdit', {type: "text", value: label}) : p('.cardLabel', label),
               edit ? span('.selectView', [

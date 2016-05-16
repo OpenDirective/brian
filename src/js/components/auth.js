@@ -27,10 +27,7 @@ function App({DOM, settings, auth: outcomeAuth}) {
 
   const navHome$ = signedOut$
     .merge(intentNavBack$)
-    .do(() => {
-      document.location.href = '/'
-    })
-    .subscribe()
+    .map('/')
 
   const intentUsername$ = DOM.select('.username').events('blur')
   const username$ = intentUsername$
@@ -73,11 +70,13 @@ function App({DOM, settings, auth: outcomeAuth}) {
 
   // nb order does matter her as main as cycle loops through
   return {
-    //history: navBack$.do(x => console.info('out: nav', x)),
+    history: navHome$.do(x => console.info('out: nav', x)),
     auth: auth$.do(x => console.info('out: auth', x)),
-//    activityLog: activity$.do(x => console.info("out: activityLog", x)),
     DOM: view$.do(x => console.info('out: DOM', x)),
     speech: speech$.do(x => console.info('out: speech', x)),
+    settings: Observable.empty(),
+    activityLog: Observable.empty(),
+    appConfig: Observable.empty()
   }
 }
 

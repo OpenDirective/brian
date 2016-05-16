@@ -9,7 +9,7 @@ function unknownRoute() {
 const routes = {
   '/': App,
   '/album': App,
-//  '/screen/:id': z => console.log(z),
+  '/album/:id': null,
   '/auth': Auth,
   '*': unknownRoute,
 }

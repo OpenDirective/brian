@@ -24,9 +24,6 @@ function App({DOM, auth, history, speech, appConfig, settings}) {
   .map(({currentTarget}) => currentTarget.textContent)
 
 
-// assist
-//  const navassist$ = history
-//    .filter(({pathname}) => _isPathassist(pathname))
   const intentLevel0$ = DOM.select('[data-action="level0"]').events('click')
     .map({level: 0})
   const intentLevel1$ = DOM.select('[data-action="level1"]').events('click')

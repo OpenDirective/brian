@@ -7,6 +7,8 @@ sink authActions
 return { auth: Observable.just({action: "addUser", user: "", password: ""})}
 return { auth: Observable.just({action: "signIn", user: "", password: ""})}
 return { auth: Observable.just({action: "signOut"})}
+return { auth: Observable.just({action: "getCurrent"})}
+
 
 # source events
 {event: "addedUser", user: "user`" }
@@ -50,7 +52,7 @@ function makeAuthDriver(/* options */) {
       })
     })
 
-    return auth$
+    return auth$.startWith({action:'signedIn', username: 'guest'})
   }
 }
 

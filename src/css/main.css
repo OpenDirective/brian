@@ -253,7 +253,7 @@ button[data-action="resetConf"] {
 }
 
 .action.auth {
-  flex: 1 1 40%;
+  flex: 1 1 100%;
 }
 
 .signout {

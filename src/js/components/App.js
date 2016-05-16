@@ -11,8 +11,9 @@ function _albumConfig(config, album) {
 }
 
 function _albumModel(config, album, currentUser) {
-  //console.log('model', config, album, album.showCard)
+  console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
+  console.log('al',albumConfig)
   console.log(config, album)
   const albumList = config.albums.map(a => ({id: a.id, name: a.name})).concat([{id: 0, name: '[Show Nothing]'}])
                       .filter(({id}) => id !== albumConfig.id)
@@ -194,11 +195,10 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
     .share()  // DOM is cold
 
   const album$ = history
-    .do(({pathname, search, action}) => console.info('Location', pathname, search, action))
-    .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
-    .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
-    .map(({pathname, search, action, changes}) => {
-      return {id: routing._albumIdFromPath(decodeURI(pathname)),
+    .do(({pathname, search, action, id}) => console.info('Location', pathname, search, action, id))
+    .withLatestFrom(settings, ({search, id}, {changes}) => ({search, id, changes}))
+    .map(({search, id, changes}) => {
+      return {id: parseInt(id),
               edit: routing._isPathEdit(search),
               adding: routing._isPathAdding(search),
               level: routing._levelFromPath(search),
@@ -241,6 +241,7 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
     DOM: view$.do(x => console.info('out: DOM', x)),
     history: navigation$.do(x => console.info('out: history', x)),
     speech: speech$.do(x => console.info('out: speech', x)),
+    settings: Observable.empty()
     //fullScreen: fullScreen$
   }
 }

@@ -15,7 +15,7 @@ function render(screen) {
   return div('.screen', [
     div({attributes: {role: 'banner'}}, [
       header('.title', {dataset: {action: 'speak'}}, title),
-      header('.currentuser', {dataset: {action: 'speak'}}, screen.currentUser),
+      screen.currentUser ? header('.currentuser', {dataset: {action: 'speak'}}, screen.currentUser) : '',
     ]),
     screen.currentUser ?
       main('.main', [
@@ -30,8 +30,8 @@ function render(screen) {
         section('.content .auth', [
           div('.authFeedback', p(_breakLine(screen.authMessage))),
           input('.username', {type: 'text', placeholder: 'Enter your Username'}),
-          button(`.action .auth`, {dataset: {action: 'signIn'}}, 'Sign in'),
           input('.password', {type: 'text', placeholder: 'Enter your Password'}),
+          button(`.action .auth`, {dataset: {action: 'signIn'}}, 'Sign in'),
           button(`.action .auth`, {dataset: {action: 'signUp'}}, 'Sign up as a new user'),
         ])
       ])

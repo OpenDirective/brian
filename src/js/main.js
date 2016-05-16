@@ -17,5 +17,6 @@ if (false && !PRODUCTION && module.hot && false) {   // hot loading enabled in c
   console.log('Hot reloading enabled')
   runHot('./components/App', Top, sources)
 } else {
+  console.debug('Load')
   run(Top, sources)
 }
