@@ -194,10 +194,10 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
     .share()  // DOM is cold
 
   const album$ = history
+    .do(({pathname, search, action}) => console.info('Location', pathname, search, action))
     .filter(({pathname}) => pathname === '/' || (pathname.slice(0, 6) === '/album'))
     .withLatestFrom(settings, ({pathname, search, action}, {changes}) => ({pathname, search, action, changes}))
     .map(({pathname, search, action, changes}) => {
-      console.info(pathname, search, action, changes)
       return {id: routing._albumIdFromPath(decodeURI(pathname)),
               edit: routing._isPathEdit(search),
               adding: routing._isPathAdding(search),
