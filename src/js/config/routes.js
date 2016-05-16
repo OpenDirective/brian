@@ -2,7 +2,7 @@ import App from '../components/app'
 import Auth from '../components/auth'
 
 function unknownRoute() {
-  console.log('unknown route')
+  console.error('unknown route')
   return {}
 }
 
