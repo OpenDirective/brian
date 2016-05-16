@@ -77,8 +77,9 @@ if (PRODUCTION) {
               new CopyWebpackPlugin([{from: path.join(PATHS.src, 'favicon.ico'), to: '..'},
                                      {from: path.join(PATHS.src, 'manifest.json'), to: '..'},
                                      {from: path.join(PATHS.src, 'CNAME'), to: '..'},
-                                     {from: path.join(PATHS.src, 'img'), to: '../img'}]), // abs paths to: don't work
-              new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'activity.html'),
+                                     {from: path.join(PATHS.src, 'img'), to: '../img'}, // abs paths to: don't work
+                                     {from: path.join(PATHS.src, 'js/vendor'), to: './vendor'}]), // abs paths to: don't work
+       new HtmlWebpackPlugin({filename: path.join(PATHS.dist, 'activity.html'),
                           template: path.join(PATHS.src, 'activity.html'),
                           inject: true,
                           chunks: ['activityEntry']
