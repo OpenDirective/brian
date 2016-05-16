@@ -1,7 +1,6 @@
 import {section, header, main, nav, div, button, img, p, input, select, option, span} from '@cycle/dom'
 
 function render({edit, level, showCard, changes, adding, cards, id: albumId, name, title, albumList, currentUser}) {
-  console.log("view")
   let vdom = undefined
   function optionAttribs(value, selectedValue) {
     let attr = {value}
@@ -19,7 +18,7 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
           cards.map(({label, image, album}) =>
             div(`.card ${cardID !== showCard ? '.hidden' : ''}`,
                 {dataset: {edit, view: album, album: albumId, card: cardID++ }}, [
-                  edit ? "Change text" : "",
+                  edit ? 'Change text' : "",
                   img('.cardImage', {src: image}),
                   edit ? input('.cardLabel', {type: "text", props: {value: label}}) : p('.cardLabel', label)
                 ])
@@ -45,8 +44,10 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'home'}}, 'Home'),
           button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'back'}}, 'Back to previous screen'),
           button(`.action ${changes ? '' : '.hidden'}`, {dataset: {action: 'edit'}},
-                  adding ? 'See other album changes' : edit ? 'See your changes' : 'Make changes'),
-          button(`.action ${edit ? '.hidden' : ''}`, {dataset: {action: 'leaveBrian'}}, 'Finish using Brian')
+                  (adding) ? 'See other album changes' : edit ? 'See your changes' : 'Make changes'),
+          button(`.action ${edit ? '.hidden' : ''}`,
+                  {dataset: {action: (currentUser) ? 'signOut' : 'signIn'}},
+                  (currentUser) ? 'Finish using Brian' : 'Sign in to Brian')
         ]),
         section('.content', [
           cards.map(({label, image, album}) =>

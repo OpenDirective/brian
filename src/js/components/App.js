@@ -11,10 +11,7 @@ function _albumConfig(config, album) {
 }
 
 function _albumModel(config, album, currentUser) {
-  console.log('model', config, album, album.showCard)
   const albumConfig = _albumConfig(config, album)
-  console.log('al',albumConfig)
-  console.log(config, album)
   const albumList = config.albums.map(a => ({id: a.id, name: a.name})).concat([{id: 0, name: '[Show Nothing]'}])
                       .filter(({id}) => id !== albumConfig.id)
 
@@ -117,12 +114,6 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
      return newConfig
    })
 
-
- /* const load$ = DOM.select('.cardImage').events('load')
-    .do(({currentTarget}) => {window.URL.revokeObjectURL(currentTarget.src)})
-    .subscribe(x => console.log('revoked', x))
-*/
-
  // TODO find a way to persist links to local files - may be impossible
   const changeImage$ = DOM.select('.fileElem').events('change')
   .filter(({currentTarget}) => currentTarget.files.length)
@@ -145,8 +136,10 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
   const touchSpeech$ = DOM.select('[data-action="speak"]').events('click')
     .map(({currentTarget}) => currentTarget.textContent)
 
-  const intentLeaveBrian$ = DOM.select('[data-action="leaveBrian"]').events('click')
-    .map('')
+  const intentSignOut$ = DOM.select('[data-action="signOut"]').events('click')
+  const intentSignIn$ = DOM.select('[data-action="signIn"]').events('click')
+  const navAuth$ = intentSignIn$.merge(intentSignOut$)
+    .map('/auth')
 
 /*
      const key$ = DOM.select('.screen').events('keydown')
@@ -195,7 +188,6 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
     .share()  // DOM is cold
 
   const album$ = history
-    .do(({pathname, search, action, id}) => console.info('Location', pathname, search, action, id))
     .withLatestFrom(settings, ({search, id}, {changes}) => ({search, id, changes}))
     .map(({search, id, changes}) => {
       return {id: parseInt(id),
@@ -229,7 +221,7 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
     .map({fullScreen: true})
 
   const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
-  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, intentLeaveBrian$)
+  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, navAuth$)
 
   const auth$ = Observable.just({action: 'getCurrent'})
 

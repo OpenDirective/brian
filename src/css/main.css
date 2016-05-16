@@ -263,7 +263,7 @@ button[data-action="resetConf"] {
   align-items: center
 }
 
-button[data-action="signOut"] {
+button[data-action="signOut"].auth {
   flex: 0 1 50%;
   width: 50vw;
   height: 50vh;
