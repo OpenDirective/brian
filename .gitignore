@@ -277,4 +277,4 @@ typings/
 
 dist/
 
-src/js/config/AWS-config.js
+src/js/config/aws-config.js
