@@ -39,7 +39,7 @@ function _findAlbum(albums, albumId) {
 }
 
 function _getParentCard(nodeStart) {
-  let node = undefined
+  let node
   for (node = nodeStart;
         node.id !== 'root';
         node = node.parentElement) {
@@ -51,8 +51,7 @@ function _getParentCard(nodeStart) {
 }
 
 
-function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
-
+function App({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}) {
  // log inputs
   appConfig.do(x => console.info('in: appConfig`', x))
     .subscribe()
@@ -138,8 +137,10 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
 
   const intentSignOut$ = DOM.select('[data-action="signOut"]').events('click')
   const intentSignIn$ = DOM.select('[data-action="signIn"]').events('click')
-  const navAuth$ = intentSignIn$.merge(intentSignOut$)
-    .map('/auth')
+  const auth$ = Observable.merge(
+    intentSignIn$.map('signin'),
+    intentSignOut$.map('signout')
+  )
 
 /*
      const key$ = DOM.select('.screen').events('keydown')
@@ -221,20 +222,18 @@ function App({DOM, history, speech, appConfig, settings, auth, activityLog}) {
     .map({fullScreen: true})
 
   const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
-  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, navAuth$)
-
-  const auth$ = Observable.just({action: 'getCurrent'})
+  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, auth$)
 
   // nb order does matter her as main as cycle loops through
   return {
     activityLog: activity$.do(x => console.info('out: activityLog', x)),
     appConfig: config$.do(x => console.info('out: appConfig', x)),
-    auth: auth$.do(x => console.info('out: auth', x)),
+    auth: Observable.empty(),
     DOM: view$.do(x => console.info('out: DOM', x)),
     history: navigation$.do(x => console.info('out: history', x)),
     speech: speech$.do(x => console.info('out: speech', x)),
     settings: Observable.empty()
-    //fullScreen: fullScreen$
+    // fullScreen: fullScreen$
   }
 }
 

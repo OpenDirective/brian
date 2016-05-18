@@ -121,9 +121,12 @@ function _signOut(usernameNU, passwordNU, callback) {
     return
   }
 
-  _getCurrent(null, null, (err, usernameCurrent) => {
-    const cognitoUser = userPool.getCurrentUser() // assume OK
-    cognitoUser.signOut()
+  _getCurrent(null, null, () => {
+    const cognitoUser = userPool.getCurrentUser()
+    if (cognitoUser) {
+      cognitoUser.signOut()
+    }
+
     callback(null, null)
   })
 }

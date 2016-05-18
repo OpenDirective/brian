@@ -4,16 +4,16 @@ import makeAWSCognitoAuthImpl from './providers/aws/auth-aws-cognito-user-pool'
 /*
 # source$ = historyDriver(sink$)
 sink authActions
-return { auth: Observable.just({action: "addUser", user: "", password: ""})}
-return { auth: Observable.just({action: "signIn", user: "", password: ""})}
-return { auth: Observable.just({action: "signOut"})}
-return { auth: Observable.just({action: "getCurrent"})}
-
-
-# source events
-{event: "addedUser", user: "user`" }
-{event: "signedIn", user: "user" }
-{event: "signedOut", user: "user"}s
+return { auth: Observable.just({action: 'addUser', user: '', password: ''})}
+  => {event: 'userAdded', user: 'user' }
+  => {error: 'xxxx'}
+return { auth: Observable.just({action: 'signIn', user: '', password: ''})}
+  => {event: 'userChanged', user: 'user' }
+  => {error: 'xxxx'}
+return { auth: Observable.just({action: 'signOut'})}
+  => {event: 'userChanged', user: '' }
+return { auth: Observable.just({action: 'getCurrent'})}
+  => {event: 'userChanged', user: 'user' }
 */
 
 function makeDoAuthAction(authImpl) {
@@ -29,30 +29,24 @@ function makeAuthDriver(/* options */) {
   return function authDriver(sink$) {
     const auth$ = new ReplaySubject(1)
 
-    /*
-    const _dispose = history$.dispose
-    history$.dispose = () => {
-      // signOut if possible - might be too late
-      _dispose.apply(history$)
-    }
-    */
-
     sink$.subscribe(authAction => {
       doAuthAction(authAction, (error, username) => {
         const {action} = authAction
         const event = action === 'adduser' ? 'addedUser' :
-                      action === 'signIn' ? 'signedIn' :
-                      action === 'getCurrent' ? 'signedIn' :
-                      'signedOut'
+                      action === 'signIn' ? 'userChanged' :
+                      action === 'signOut' ? 'userChanged' :
+                      action === 'getCurrent' ? 'userChanged' :
+                      'userChanged'
         if (!error) {
-          auth$.onNext({event, error: null, username})
+          auth$.onNext({event, username})
         } else {
-          auth$.onNext({event, error, username: ''})
+          auth$.onNext({error, username})
         }
       })
     })
 
-    return auth$.startWith({action:'signedIn', username: 'guest'})
+
+    return auth$
   }
 }
 

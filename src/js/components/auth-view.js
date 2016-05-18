@@ -1,4 +1,4 @@
-import {section, header, main, div, button, p, input, br, nav} from '@cycle/dom'
+import {section, header, main, div, button, p, input, br, nav, label, form} from '@cycle/dom'
 import flatten from 'lodash/flatten'
 
 function _breakLine(str) {
@@ -11,13 +11,14 @@ function _breakLine(str) {
 }
 
 function render(screen) {
-  const title = screen.currentUser ? 'Sign out to do something else' : 'Sign in to use Brian'
+  const {username, message} = screen
+  const title = (username) ? 'Sign out to do something else' : 'Sign in to see photos'
   return div('.screen', [
     div({attributes: {role: 'banner'}}, [
       header('.title', {dataset: {action: 'speak'}}, title),
-      screen.currentUser ? header('.currentuser', {dataset: {action: 'speak'}}, screen.currentUser) : '',
+      (username) ? header('.currentuser', {dataset: {action: 'speak'}}, username) : '',
     ]),
-    screen.currentUser ?
+    (username) ?
       main('.main', [
         nav('.nav', [
           button(`.action`, {dataset: {action: 'home'}}, 'Back to Photos')
@@ -27,12 +28,18 @@ function render(screen) {
         ])
       ]) :
       main('.main', [
-        section('.content .auth', [
-          div('.authFeedback', p(_breakLine(screen.authMessage))),
-          input('.username', {type: 'text', placeholder: 'Enter your Username'}),
-          input('.password', {type: 'text', placeholder: 'Enter your Password'}),
-          button(`.action .auth`, {dataset: {action: 'signIn'}}, 'Sign in'),
-          button(`.action .auth`, {dataset: {action: 'signUp'}}, 'Sign up as a new user'),
+        form('.content .auth', {onsubmit: function () {return false}}, [
+          div('.authMessage', p(_breakLine(message))),
+          div('.textEntry', [
+            label({attributes: {for: 'username'}, dataset: {action: 'speak'}}, 'Enter your Username:'),
+            input('.username', {id: 'username', type: 'text'})
+          ]),
+          div('.textEntry', [
+            label({attributes: {for: 'password'}, dataset: {action: 'speak'}}, 'Enter your Password'),
+            input('.password', {id: 'password', type: 'text'}),
+          ]),
+          button(`.action .auth`, {type: 'submit', dataset: {action: 'signIn'}}, 'Sign in'),
+          button(`.action .auth`, {type: 'button', dataset: {action: 'signUp'}}, 'Sign up as a new user'),
         ])
       ])
   ])
