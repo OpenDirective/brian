@@ -240,11 +240,25 @@ button[data-action="resetConf"] {
   resize: none;
 }
 
-.username, .password {
-  flex: 1 1 48%;
+.textEntry {
+  display: flex;
+  flex-flow: row nowrap;
+  flex: 1 0 100%;
 }
 
-.authFeedback {
+.username,
+.password{
+  flex: 3 1;
+  margin: 1% 1%;
+}
+
+label[for="username"],
+label[for="password"] {
+  flex: 1 1;
+  margin: 1% 1%;
+}
+
+.authMessage {
   margin: 2% 2%;
   flex: 1 1 99%;
   max-height: 10%;
@@ -268,6 +282,7 @@ button[data-action="signOut"].auth {
   width: 50vw;
   height: 50vh;
 }
+
 
 input[type=text] {
   border-radius: 10px;
