@@ -31,20 +31,31 @@ function router(sources) {
   const decoratedHistory$ = sources.history
     .map(location => {
       var id = 1
+
       const routes = {
-        '/': App,
+        '/': '/signin',
+        '/signin': Auth,
+        '/signout': Auth,
         '/album': App,
-        '/album/:id': _id => {id = _id},
-        '/auth': Auth,
-        '*': null,
+        '/album/:id': _id => {
+          id = _id
+        },
+        '*': Auth
       }
+
       const {pathname, search, hash, state, action} = location
-      const {path, value} = switchPath(pathname, routes)
-      const newPathname = (value) ? path : '/'
-      const screen = (value) ? value : App
+      let {path: newPathname, value} = switchPath(pathname, routes)
+      if (typeof value === 'string') {
+        // redirect if value is a string
+        const route = switchPath(value, routes)
+        newPathname = route.path
+        value = route.value
+      }
+      const screen = value
+      console.info('history', `${newPathname}${search ? '?' : ''}${search}${hash ? '#' : ''}${hash}`)
       return ({pathname: newPathname, search, hash, state, action, screen, id}) // looks like a Location
     })
-    .share()
+    .shareReplay(1)
 
   const newSources = {...sources, history: decoratedHistory$}
 
@@ -54,15 +65,13 @@ function router(sources) {
       return {screen, changed}
     }, {screen: null, changed: false})
     .filter(({changed}) => changed)
+    .do(({screen}) => console.info('New screen', screen.name))
     .map(({screen}) => {
       //    const Component = isolate(component);
-      console.info('New screen', screen)
       const sinks = screen(newSources)
-      console.info('Screen done', sinks)
       return sinks
     })
     .shareReplay(1) // make sure sinks are hot
-
 
   return {
     DOM: sinks$.flatMapLatest(s => s.DOM),
