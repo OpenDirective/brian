@@ -31,12 +31,10 @@ function SignIn({DOM, history, settings, auth}) {
     .map(({currentTarget}) => currentTarget.value)
 
   const intentSignIn$ = DOM.select('[data-action="signIn"]').events('click')
-  .do(x=>console.log(x))
   const signIn$ = intentSignIn$
     .withLatestFrom(username$, password$, (x, username, password) => {
       return {action: 'signIn', username, password}
     })
-  .do(x=>console.log(x))
 
   const intentSignUp$ = DOM.select('[data-action="signUp"]').events('click')
   const signUp$ = intentSignUp$
