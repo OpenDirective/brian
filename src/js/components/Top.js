@@ -1,7 +1,7 @@
-import contentRouter from '../content-router'
+import router from './router'
 
 function main(sources) {
-  const sinks = contentRouter(sources)
+  const sinks = router(sources)
   return sinks
 }
 

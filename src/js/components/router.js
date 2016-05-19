@@ -1,9 +1,10 @@
 import switchPath from 'switch-path'
 // import isolate    from '@cycle/isolate'
 
-import App from './components/app'
-import Auth from './components/auth'
-
+import routes from '../config/routes'
+import App from './app'
+import SignIn from './signin'
+import SignOut from './signout'
 
 /*
   // For each item in sources we return the sink stream if it exists or O.empty()
@@ -30,19 +31,6 @@ function router(sources) {
 
   const decoratedHistory$ = sources.history
     .map(location => {
-      var id = 1
-
-      const routes = {
-        '/': '/signin',
-        '/signin': Auth,
-        '/signout': Auth,
-        '/album': App,
-        '/album/:id': _id => {
-          id = _id
-        },
-        '*': Auth
-      }
-
       const {pathname, search, hash, state, action} = location
       let {path: newPathname, value} = switchPath(pathname, routes)
       if (typeof value === 'string') {
@@ -51,11 +39,11 @@ function router(sources) {
         newPathname = route.path
         value = route.value
       }
-      const screen = value
-      console.info('history', `${newPathname}${search ? '?' : ''}${search}${hash ? '#' : ''}${hash}`)
+      const {screen, id} = value
+      console.info('router', `${newPathname}${search}${hash ? '#' : ''}${hash} ${screen.name}:${id}`)
       return ({pathname: newPathname, search, hash, state, action, screen, id}) // looks like a Location
     })
-    .shareReplay(1)
+    .share()
 
   const newSources = {...sources, history: decoratedHistory$}
 
