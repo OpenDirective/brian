@@ -47,7 +47,7 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
                   (adding) ? 'See other album changes' : edit ? 'See your changes' : 'Make changes'),
           button(`.action ${edit ? '.hidden' : ''}`,
                   {dataset: {action: (currentUser) ? 'signOut' : 'signIn'}},
-                  (currentUser) ? 'Finish using Brian' : 'Sign in to Brian')
+                  (currentUser) ? 'Finish with photos' : 'Sign in to Brian')
         ]),
         section('.content', [
           cards.map(({label, image, album}) =>
