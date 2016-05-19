@@ -5,9 +5,8 @@ require('../../css/main.css')
 
 
 function App({DOM, settings, activityLog}) {
-
 // log inputs
-  const x1 = settings.do(x => console.log("in: settings", x))
+  settings.do(x => console.log('in: settings', x))
     .subscribe()
 
   const touchSpeech$ = DOM.select('[data-action="speak"]').events('click')
@@ -39,7 +38,7 @@ function App({DOM, settings, activityLog}) {
 
   const screenActivity$ = activityLog
     .map(log => ({activity: true, resetReq: false, log}))
-    .merge(resetStates$.withLatestFrom(activityLog, (r, log) => ({activity: true, resetReq: r === "start", log})))
+    .merge(resetStates$.withLatestFrom(activityLog, (r, log) => ({activity: true, resetReq: r === 'start', log})))
 
   // combine
 
@@ -50,16 +49,17 @@ function App({DOM, settings, activityLog}) {
     })
 
   const speech$ = touchSpeech$
-  const anyClick$ = DOM.select('#root').events('click')
-  const fullScreen$ = anyClick$
-    .map({fullScreen: true})
+
+//  const anyClick$ = DOM.select('#root').events('click')
+//  const fullScreen$ = anyClick$
+//    .map({fullScreen: true})
 
   // nb order does matter her as main as cycle loops through
   return {
-    activityLog: resetActivity$.do(x => console.log("out: activityLog", x)),
-    DOM: view$.do(x => console.log("out: DOM", x)),
-    speech: speech$.do(x => console.log("out: speech", x)),
-    //fullScreen: fullScreen$
+    activityLog: resetActivity$.do(x => console.log('out: activityLog', x)),
+    DOM: view$.do(x => console.log('out: DOM', x)),
+    speech: speech$.do(x => console.log('out: speech', x)),
+    // fullScreen: fullScreen$
   }
 }
 

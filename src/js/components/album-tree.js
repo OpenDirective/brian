@@ -38,7 +38,7 @@ function _findAlbum(albums, albumId) {
 }
 
 function _getParentCard(nodeStart) {
-  let node
+  let node      // eslint-disable-line immutable/no-let
   for (node = nodeStart;
         node.id !== 'root';
         node = node.parentElement) {
@@ -77,7 +77,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
     .withLatestFrom(appConfig, (update, config) => {
       const newConfig = Object.assign({}, config)
       const album = _findAlbum(newConfig.albums, update.album)
-      album.name = update.value
+      album.name = update.value   // eslint-disable-line immutable/no-mutation
       return newConfig
     })
 
@@ -92,7 +92,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
    .withLatestFrom(appConfig, (update, config) => {
      const newConfig = Object.assign({}, config)
      const album = _findAlbum(newConfig.albums, update.album)
-     album.cards[update.index].label = update.value
+     album.cards[update.index].label = update.value // eslint-disable-line immutable/no-mutation
      return newConfig
    })
 
@@ -108,7 +108,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
    .withLatestFrom(appConfig, (update, config) => {
      const newConfig = Object.assign({}, config)
      const album = _findAlbum(newConfig.albums, update.album)
-     album.cards[update.index].album = update.value
+     album.cards[update.index].album = update.value // eslint-disable-line immutable/no-mutation
      return newConfig
    })
 
@@ -118,7 +118,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
     .map(({currentTarget}) => {
       const image = currentTarget.nextSibling
       const file = currentTarget.files[0]
-      image.src = window.URL.createObjectURL(file) // eslint immutable/no-mutation: "off"
+      image.src = window.URL.createObjectURL(file) // eslint-disable-line immutable/no-mutation
       const card = _getParentCard(currentTarget)
       return {album: parseInt(card.dataset.album, 10),
               index: parseInt(card.dataset.card, 10),
@@ -127,7 +127,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
   .withLatestFrom(appConfig, (update, config) => {
     const newConfig = Object.assign({}, config)
     const album = _findAlbum(newConfig.albums, update.album)
-    album.cards[update.index].image = update.URL
+    album.cards[update.index].image = update.URL  // eslint-disable-line immutable/no-mutation
     return newConfig
   })
 
@@ -148,7 +148,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
 */
 
   // If editing hand click over to hidden file picker
-  const selectImage$ = DOM.select('.cardImage').events('click')
+  /* const selectImage$ = */ DOM.select('.cardImage').events('click')
    .filter(({target}) => target.previousSibling.className === 'fileElem')
    .do(e => {
      e.stopPropagation()
@@ -182,7 +182,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
           {label: `Image_${nextID}_3`, image: '', album: 0},
           {label: `Image_${nextID}_4`, image: '', album: 0}]})
       const album = _findAlbum(newConfig.albums, update.album)
-      album.cards[update.index].album = nextID
+      album.cards[update.index].album = nextID    // eslint-disable-line immutable/no-mutation
       return newConfig
     })
     .share()  // DOM is cold
@@ -217,9 +217,9 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
     })
   const speech$ = Observable.merge(touchSpeech$)
 
-  const anyClick$ = DOM.select('#root').events('click')
-  const fullScreen$ = anyClick$
-    .map({fullScreen: true})
+//  const anyClick$ = DOM.select('#root').events('click')
+//  const fullScreen$ = anyClick$
+//    .map({fullScreen: true})
 
   const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
   const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, auth$)

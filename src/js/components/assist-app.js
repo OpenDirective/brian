@@ -9,13 +9,13 @@ require('../../css/main.css')
 function App({DOM, auth, history, speech, appConfig, settings}) {
 
 // log inputs
-  const x0 = auth.do(x => console.log('in: auth', x))
+  auth.do(x => console.log('in: auth', x))
     .subscribe()
-  const x = appConfig.do(x => console.log('in: appConfig`', x))
+  appConfig.do(x => console.log('in: appConfig`', x))
     .subscribe()
-  const x1 = settings.do(x => console.log('in: settings', x))
+  settings.do(x => console.log('in: settings', x))
     .subscribe()
-  const x2 = history.do(x => console.log('in: history', x))
+  history.do(x => console.log('in: history', x))
     .subscribe()
 //  const x3 = activityLog.do(x => console.log('in: activityLog', x))
 //    .subscribe()
@@ -71,9 +71,9 @@ function App({DOM, auth, history, speech, appConfig, settings}) {
     })
   const speech$ = Observable.merge(touchSpeech$)
 
-  const anyClick$ = DOM.select('#root').events('click')
-  const fullScreen$ = anyClick$
-    .map({fullScreen: true})
+//  const anyClick$ = DOM.select('#root').events('click')
+//  const fullScreen$ = anyClick$
+//    .map({fullScreen: true})
 
   // nb order does matter her as main as cycle loops through
   return {
@@ -81,7 +81,7 @@ function App({DOM, auth, history, speech, appConfig, settings}) {
     settings: Observable.merge(assistActions$, resetAssist$).do(x => console.log('out: settings', x)),
     DOM: view$.do(x => console.log('out: DOM', x)),
     speech: speech$.do(x => console.log('out: speech', x))
-    //fullScreen: fullScreen$
+    // fullScreen: fullScreen$
   }
 }
 

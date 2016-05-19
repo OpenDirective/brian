@@ -48,12 +48,12 @@ function _setPathLevel(path, level) {
   return updateQueryStringValueFromPath(path, keys.LEVEL_KEY, level)
 }
 function _togglePathEdit(path) {
-  return (_isPathEdit(path) ? stripQueryStringValueFromPath(path, keys.EDIT_KEY)
-                            : addQueryStringValueToPath(path, keys.EDIT_KEY, 'true'))
+  return (_isPathEdit(path) ? stripQueryStringValueFromPath(path, keys.EDIT_KEY) :
+                              addQueryStringValueToPath(path, keys.EDIT_KEY, 'true'))
 }
 function _togglePathAdding(path) {
-  return (_isPathAdding(path) ? stripQueryStringValueFromPath(path, keys.ADDING_KEY)
-                            : addQueryStringValueToPath(path, keys.ADDING_KEY, 'true'))
+  return (_isPathAdding(path) ? stripQueryStringValueFromPath(path, keys.ADDING_KEY) :
+                                addQueryStringValueToPath(path, keys.ADDING_KEY, 'true'))
 }
 function _albumPath(id) {
   return `/album/${id}`
@@ -70,7 +70,6 @@ export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, 
 
   // TODO stop this being called at startup
   const navLevel$ = settings
-  .do(x=>console.log('settings'))
     .map(({level}) => {
       const loc = window.location
       return _setPathLevel(`${decodeURI(loc.pathname)}${loc.search}`, level)

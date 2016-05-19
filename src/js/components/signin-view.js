@@ -1,4 +1,4 @@
-import {section, header, main, div, button, p, input, br, nav, label, form} from '@cycle/dom'
+import {header, main, div, button, p, input, br, label, form} from '@cycle/dom'
 import flatten from 'lodash/flatten'
 
 function _breakLine(str) {
@@ -11,14 +11,14 @@ function _breakLine(str) {
 }
 
 function render(screen) {
-  const {username, message} = screen
+  const {message} = screen
   const title = 'Sign in to see photos'
   return div('.screen', [
     div({attributes: {role: 'banner'}}, [
       header('.title', {dataset: {action: 'speak'}}, title)
     ]),
     main('.main', [
-      form('.content .auth', {onsubmit: function () {return false}}, [
+      form('.content .auth', {onsubmit: () => false}, [
         div('.authMessage', p(_breakLine(message))),
         div('.textEntry', [
           label({attributes: {for: 'username'}, dataset: {action: 'speak'}}, 'Enter your Username:'),
