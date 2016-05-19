@@ -64,7 +64,7 @@ function _albumNameFromPath(path) {
 }
 */
 
-export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, auth$) {
+export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, auth$) {
   const navBack$ = DOM.select('[data-action="back"]').events('click')
   .map({type: 'go', value: -1})
 
@@ -76,7 +76,6 @@ export function navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, 
     })
 
   const navHome$ = DOM.select('[data-action="home"]').events('click')
-   .merge(cleanInstall$)
    .map('/album')
 
   const navEditMode$ = DOM.select('[data-action="edit"]').events('click')

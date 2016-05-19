@@ -1,28 +1,29 @@
 import AWSCONFIG from '../../../config/aws-config'
 
 /* global AWS, AWSCognito */
-const dataSet = 'myDatasetName'
+
+const dataSet = 'brianUserData'
 
 function _get(key, callback) {
-  AWS.config.region = AWSCONFIG.SyncIdentityRegion
+ AWS.config.region = AWSCONFIG.SyncIdentityRegion
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AWSCONFIG.SyncIdentityPool
   })
 
   AWS.config.credentials.get(() => {
     const client = new AWS.CognitoSyncManager()
-
     client.openOrCreateDataset(dataSet, (err, dataset) => {
       if (err) {
         console.error('Dataset', err)
         callback(undefined)
+        return
       }
       dataset.get(key, (err, value) => {
         if (err) {
           console.error('Get', err)
           callback(undefined)
+          return
         }
-        console.debug(key, value)
         callback(value)
       })
     })
@@ -36,20 +37,19 @@ function _put(key, value, callback) {
   })
 
   AWS.config.credentials.get(() => {
-    const client = new AWS.CognitoSyncManager()
-
-    client.openOrCreateDataset(dataSet, (err, dataset) => {
+    const syncManager = new AWS.CognitoSyncManager()
+    syncManager.openOrCreateDataset(dataSet, (err, dataset) => {
       if (err) {
         console.error('Dataset`', err)
         callback(undefined)
+        return
       }
-      console.log('put')
       dataset.put(key, value, (err, value) => {
         if (err) {
           console.error('Get', err)
-          //callback(undefined)
+          // callback(undefined)
+          return
         }
-        console.debug(key, value)
       })
     })
   })
@@ -63,9 +63,9 @@ function _sync(callback) {
   })
 
   AWS.config.credentials.get(() => {
-    const client = new AWS.CognitoSyncManager()
+    const syncManager = new AWS.CognitoSyncManager()
 
-    client.openOrCreateDataset(dataSet, (err, dataset) => {
+    syncManager.openOrCreateDataset(dataSet, (err, dataset) => {
       dataset.synchronize({
 
         onSuccess: (dataset, newRecords) => {

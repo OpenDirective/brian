@@ -56,18 +56,14 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
     .subscribe()
   settings.do(x => console.info('in: settings', x))
     .subscribe()
- // history.do(x => console.info('in: history', x))
- //   .subscribe()
- // auth.do(x => console.info('in: auth', x))
- //   .subscribe()
+  history.do(x => console.info('in: history', x))
+    .subscribe()
+  auth.do(x => console.info('in: auth', x))
+    .subscribe()
 
   const currentUser$ = auth
     .map(({username}) => username)
     .share()
-
-  const cleanInstall$ = appConfig
-    .filter(({cleanInstall}) => cleanInstall)
-    .map(config => Object.assign({}, config, {cleanInstall: false}))
 
   const blurAlbumLabel$ = DOM.select('.labelEdit').events('blur')
     .map(({currentTarget}) => ({
@@ -220,18 +216,18 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
 //  const fullScreen$ = anyClick$
 //    .map({fullScreen: true})
 
-  const config$ = Observable.merge(addNewAlbum$, cleanInstall$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
-  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, cleanInstall$, auth$)
+  const config$ = Observable.merge(addNewAlbum$, blurLabel$, blurAlbumLabel$, blurOption$, changeImage$)
+  const navigation$ = navigator(DOM, appConfig, settings, addNewAlbum$, nextAlbumId$, auth$)
 
   // nb order does matter her as main as cycle loops through
   return {
     activityLog: activity$.do(x => console.info('out: activityLog', x)),
-    appConfig: config$.do(x => console.info('out: appConfig', x)),
-    auth: Observable.empty(),
+    appConfig: config$.startWith('Get').do(x => console.info('out: appConfig', x)),
+    auth: Observable.just({action: 'getCurrent'}),
     DOM: view$.do(x => console.info('out: DOM', x)),
     history: navigation$.do(x => console.info('out: history', x)),
     speech: speech$.do(x => console.info('out: speech', x)),
-    settings: Observable.empty()
+    settings: Observable.just('Get')
     // fullScreen: fullScreen$
   }
 }
