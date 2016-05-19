@@ -12,11 +12,10 @@ function _breakLine(str) {
 
 function render(screen) {
   const {username, message} = screen
-  const title = (username) ? 'Sign out to do something else' : 'Sign in to see photos'
+  const title = 'Sign in to see photos'
   return div('.screen', [
     div({attributes: {role: 'banner'}}, [
-      header('.title', {dataset: {action: 'speak'}}, title),
-      (username) ? header('.currentuser', {dataset: {action: 'speak'}}, username) : '',
+      header('.title', {dataset: {action: 'speak'}}, title)
     ]),
     main('.main', [
       form('.content .auth', {onsubmit: function () {return false}}, [

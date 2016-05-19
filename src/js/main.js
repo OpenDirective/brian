@@ -4,7 +4,6 @@ import addGlobalErrorHandler from './utilities/global-error'
 
 import runHot from './utilities/run-hot'
 import Top from './components/top'
-import App from './components/app'
 
 const PRODUCTION = (process.env.NODE_ENV === 'production')
 
@@ -15,7 +14,7 @@ if (!PRODUCTION) {
 
 if (false && !PRODUCTION && module.hot && false) {   // hot loading enabled in config
   console.log('Hot reloading enabled')
-  runHot('./components/App', Top, sources)
+  runHot('./components/Top', Top, sources)
 } else {
   run(Top, sources)
 }

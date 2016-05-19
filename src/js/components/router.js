@@ -2,7 +2,7 @@ import switchPath from 'switch-path'
 // import isolate    from '@cycle/isolate'
 
 import routes from '../config/routes'
-import App from './app'
+import AlbumTree from './album-tree'
 import SignIn from './signin'
 import SignOut from './signout'
 

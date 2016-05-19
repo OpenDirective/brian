@@ -1,9 +1,8 @@
 import {Observable} from 'rx'
-import render from './view'
+import render from './album-tree-view'
 import {navigator, routing} from './navigation'
 require('../../css/normalize.css')
 require('../../css/main.css')
-
 
 
 function _albumConfig(config, album) {
@@ -51,7 +50,7 @@ function _getParentCard(nodeStart) {
 }
 
 
-function App({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}) {
+function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}) {
  // log inputs
   appConfig.do(x => console.info('in: appConfig`', x))
     .subscribe()
@@ -189,7 +188,7 @@ function App({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}
     .share()  // DOM is cold
 
   const album$ = history
-    .filter(({screen}) => screen === App) // TOD stop this being needed
+    .filter(({screen}) => screen === AlbumTree) // TOD stop this being needed
     .withLatestFrom(settings, ({search, id}, {changes}) => ({search, id, changes}))
     .map(({search, id, changes}) => {
       return {id: parseInt(id, 10),
@@ -238,4 +237,4 @@ function App({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}
   }
 }
 
-export default App
+export default AlbumTree
