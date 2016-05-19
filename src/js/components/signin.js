@@ -22,11 +22,11 @@ function SignIn({DOM, history, settings, auth}) {
     .filter(({username}) => username !== null)
     .map('/album')
 
-  const intentUsername$ = DOM.select('.username').events('blur')
+  const intentUsername$ = DOM.select('.username').events('change')
   const username$ = intentUsername$
     .map(({currentTarget}) => currentTarget.value)
 
-  const intentPassword$ = DOM.select('.password').events('blur')
+  const intentPassword$ = DOM.select('.password').events('change')
   const password$ = intentPassword$
     .map(({currentTarget}) => currentTarget.value)
 
