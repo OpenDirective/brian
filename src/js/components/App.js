@@ -57,10 +57,10 @@ function App({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}
     .subscribe()
   settings.do(x => console.info('in: settings', x))
     .subscribe()
-  history.do(x => console.info('in: history', x))
-    .subscribe()
-  auth.do(x => console.info('in: auth', x))
-    .subscribe()
+ // history.do(x => console.info('in: history', x))
+ //   .subscribe()
+ // auth.do(x => console.info('in: auth', x))
+ //   .subscribe()
 
   const currentUser$ = auth
     .map(({username}) => username)
@@ -189,9 +189,10 @@ function App({DOM, history, appConfig, settings, auth/* , speech, activityLog*/}
     .share()  // DOM is cold
 
   const album$ = history
+    .filter(({screen}) => screen === App) // TOD stop this being needed
     .withLatestFrom(settings, ({search, id}, {changes}) => ({search, id, changes}))
     .map(({search, id, changes}) => {
-      return {id: parseInt(id),
+      return {id: parseInt(id, 10),
               edit: routing._isPathEdit(search),
               adding: routing._isPathAdding(search),
               level: routing._levelFromPath(search),
