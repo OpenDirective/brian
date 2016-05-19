@@ -1,6 +1,6 @@
 import {Observable} from 'rx'
 import render from './album-tree-view'
-import {navigator, routing} from './navigation'
+import {navigator, routing} from './album-tree-navigator'
 require('../../css/normalize.css')
 require('../../css/main.css')
 
@@ -189,7 +189,7 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
 
   const album$ = history
     .filter(({screen}) => screen === AlbumTree) // TOD stop this being needed
-    .withLatestFrom(settings, ({search, id}, {changes}) => ({search, id, changes}))
+    .withLatestFrom(settings, ({search, params: {id}}, {changes}) => ({search, id, changes}))
     .map(({search, id, changes}) => {
       return {id: parseInt(id, 10),
               edit: routing._isPathEdit(search),
@@ -210,7 +210,6 @@ function AlbumTree({DOM, history, appConfig, settings, auth/* , speech, activity
   // combine
 
   const view$ = screen$
-//  .merge(userChanged$)
     .map(model => {
       console.info('model', model)
       return render(model)

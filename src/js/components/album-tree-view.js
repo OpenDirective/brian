@@ -53,12 +53,14 @@ function render({edit, level, showCard, changes, adding, cards, id: albumId, nam
           cards.map(({label, image, album}) =>
             button('.card', {dataset: {edit, view: album, album: albumId, card: cardID++}}, [
               edit ? input('.fileElem', {type: 'file', accept: 'image/*', style: {display: 'none'}}) : '',
-              // eslint-disable-next-line immutable/no-this, immutable/no-mutation, brace-style, max-statements-per-line
-              img('.cardImage', {src: image, onerror: () => {this.onerror = null; this.src = '/img/noImage.jpg'}}),
-              edit ? input('.cardLabelEdit', {type: 'text', value: label}) : p('.cardLabel', label),
+              // eslint-disable-next-line immutable/no-this, immutable/no-mutation, brace-style, max-statements-per-line, babel/object-shorthand
+              img('.cardImage', {src: image, onerror: function () {this.onerror = null; this.src = '/img/noImage.jpg'}}),
+              edit ? input('.cardLabelEdit', {type: 'text', value: label}) :
+                     p('.cardLabel', {dataset: {action: 'speak'}}, label),
+              edit ? '' : button('.action .viewLarge', {dataset: {action: 'viewLarge'}}, 'Make Bigger'),
               edit ? span('.selectView', [
                 select('.cardOption', albumList.map(a => option(optionAttribs(a.id, album), `${a.name}`))),
-                button('.addAlbum', {dataset: {action: 'addAlbum'}}, 'More')
+                button('.action .addAlbum', {dataset: {action: 'addAlbum'}}, 'More')
               ]) : ''
             ])
           )]

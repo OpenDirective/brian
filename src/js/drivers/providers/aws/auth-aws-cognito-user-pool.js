@@ -5,12 +5,13 @@
 
 import AWSCONFIG from '../../../config/aws-config'
 
-function _getUserPool({IdentityPoolId, UserPoolRegion, UserPoolId, ClientId}) {
 /* global AWS, AWSCognito */
-/* eslint-disable immutable/no-mutation */
+
+function _getUserPool({IdentityPoolId, UserPoolRegion, UserPoolId, ClientId}) {
+  /* eslint-disable immutable/no-mutation */
   // TODO this a global object so should only need to be set once
   AWS.config.logger = console
-  //AWS.config.sslEnabled = true
+  // AWS.config.sslEnabled = true
   AWS.config.region = UserPoolRegion
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({IdentityPoolId})
 
@@ -102,8 +103,22 @@ function _signIn(username, password, callback) {
     }
     const authenticationDetails = new AWSCognito.CognitoIdentityServiceProvider.AuthenticationDetails(authenticationData)
     cognitoUser.authenticateUser(authenticationDetails, {
-      onSuccess: result => {
-        callback(null, cognitoUser.getUsername())
+      onSuccess: () => {
+        cognitoUser.getSession((err, result) => {
+          if (!err && result) {
+            // Add the User's Id Token to the Cognito credentials login map.
+            var credentials = {
+              IdentityPoolId: AWSCONFIG.IdentityPoolId,
+              Logins: {}
+            }
+            /* eslint-disable immutable/no-mutation */
+            credentials.Logins[AWSCONFIG.loginCredentials] = result.getIdToken().getJwtToken()
+            AWS.config.credentials = new AWS.CognitoIdentityCredentials(credentials)
+            /* eslint-enable immutable/no-mutation */
+
+            callback(null, cognitoUser.getUsername())
+          }
+        })
       },
 
       onFailure: err => {
