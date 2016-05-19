@@ -5,6 +5,7 @@ import routes from '../config/routes'
 import AlbumTree from './album-tree'
 import SignIn from './signin'
 import SignOut from './signout'
+import Viewer from './viewer'
 
 /*
   // For each item in sources we return the sink stream if it exists or O.empty()
@@ -39,11 +40,11 @@ function router(sources) {
         newPathname = route.path
         value = route.value
       }
-      const {screen, id} = value
-      console.info('router', `${newPathname}${search}${hash ? '#' : ''}${hash} ${screen.name}:${id}`)
-      return ({pathname: newPathname, search, hash, state, action, screen, id}) // looks like a Location
+      const {screen, params} = value
+      console.info('router', `${newPathname}${search}${hash ? '#' : ''}${hash}`, screen.name, params)
+      return ({pathname: newPathname, search, hash, state, action, screen, params}) // looks like a Location
     })
-    .share()
+    .shareReplay(1)
 
   const newSources = {...sources, history: decoratedHistory$}
 

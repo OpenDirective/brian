@@ -160,9 +160,15 @@ textarea {
   margin: 0.5% 0.5%;
 }
 
-.card, .action, .activityLog {
+.action, .activityLog {
   border-radius: 20px;
-  border: 10px solid #606060;
+  border: 8px solid #606060;
+}
+
+.card {
+  border-radius: 10px;
+  border: 6px solid #606060;
+  background-color: white;
 }
 
 .action[data-action="edit"] {
@@ -173,6 +179,12 @@ textarea {
 .card, .action {
   /* stop native control styling on iOS*/
   -webkit-appearance: none;
+}
+
+[data-action="speak"] {
+  border-radius: 10px;
+  border: 5px solid #505050;
+  color:blue
 }
 
 .selected {
@@ -196,6 +208,7 @@ textarea {
   flex-flow: column nowrap;
   justify-content: space-between;
   align-items: stretch;
+  text-align: center;
 }
 
 .card .cardImage {
@@ -204,8 +217,15 @@ textarea {
   object-fit: contain;
   align-self: center;
 }
+.card .cardImageLarge {
+  flex: 7 1;
+  max-width: 85%;
+  width: 85%;
+  object-fit: contain;
+  align-self: center;
+}
 
-.card .cardLabel, .cardLabelEdit {
+.card .cardLabel, .card .cardLabelLarge, .cardLabelEdit {
   flex: 1 1;
   margin: 1%;
   align-self: stretch;

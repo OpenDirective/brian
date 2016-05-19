@@ -107,9 +107,9 @@ function _signIn(username, password, callback) {
         cognitoUser.getSession((err, result) => {
           if (!err && result) {
             // Add the User's Id Token to the Cognito credentials login map.
-            var credentials = {
+            let credentials = {
               IdentityPoolId: AWSCONFIG.IdentityPoolId,
-              Logins: {}
+              Logins: {}  // updated below
             }
             /* eslint-disable immutable/no-mutation */
             credentials.Logins[AWSCONFIG.loginCredentials] = result.getIdToken().getJwtToken()
