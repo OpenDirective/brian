@@ -8,10 +8,10 @@ function SignIn({DOM, history, appConfig, settings, auth}) {
 // log inputs
     appConfig.do(x => console.info('in: appConfig', x))
     .subscribe()
-//  auth.do(x => console.info('in: auth', x))
-//    .subscribe()
- // history.do(x => console.info('in: history', x))
- //   .subscribe()
+  auth.do(x => console.info('in: auth', x))
+    .subscribe()
+  history.do(x => console.info('in: history', x))
+    .subscribe()
 
   const authFailure$ = auth
     .filter(({error}) => error !== undefined)
@@ -53,7 +53,9 @@ function SignIn({DOM, history, appConfig, settings, auth}) {
     .map(() => ({message: 'Please wait...', username: null}))
 
   const modelAuthOutcome$ = Observable.merge(authFailure$, userChanged$)
-    .map(({error, username}) => ({message: (error) ? error : '', username}))
+    .map(({error, username}) => ({message: (error) ? error : (username) ? '' :
+                                 'Enter you details and select "sign in" or "sign up"',
+                                  username}))
 
   const view$ = Observable.merge(modelAuthAction$, modelAuthOutcome$)
     .map(model => {
