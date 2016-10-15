@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The HTML5 Herald</title>
+  <meta name="description" content="Brian">
+  <meta name="author" content="Steve Lee">
+
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <meta name="google-signin-client_id" content="565029808164-fnpc091ed2l5a03bhmq4apanav362a7h.apps.googleusercontent.com">
+</head>
+
+<body>
+<p>Brian login test</p>
+
+<script>function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
+  var id_token = googleUser.getAuthResponse().id_token;
+  console.log('token: ' + id_token);
+}
+</script>
+
+<div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+</body>
+</html>
