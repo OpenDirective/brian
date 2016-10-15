@@ -24,13 +24,13 @@
       var id_token = googleUser.getAuthResponse().id_token;
       console.log('token: ' + id_token);
     
-      var gpreq = "https://picasaweb.google.com/data/feed/api/user/steve@opendirective.com?kind=album&access=private&alt=json"
+      var gpreq = "https://picasaweb.google.com/data/feed/api/user/steve@opendirective.com?kind=album&access=visible&alt=json"
   
       var xhr = new XMLHttpRequest();
       xhr.open('get', gpreq);
-    xhr.setRequestHeader('GData-Version', '2');
-    xhr.setRequestHeader('Authorization', 'Bearer ' + id_token);
-
+//    xhr.setRequestHeader('GData-Version', '2');
+//    xhr.setRequestHeader('Authorization', 'Bearer ' + id_token);
+      
     xhr.onload = function() {
       var jsonPretty = JSON.stringify(JSON.parse(xhr.responseText),null,2);  
       console.log('Output:\n' + jsonPretty);
