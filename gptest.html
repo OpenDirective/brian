@@ -21,21 +21,30 @@
     function onSuccess(googleUser) {
       var profile = googleUser.getBasicProfile();
       console.log('Logged in as: ' + profile.getName() + ' ' + profile.getEmail());
-      var id_token = googleUser.getAuthResponse().id_token;
-      console.log('token: ' + id_token);
+      var authresp = googleUser.getAuthResponse();
+      console.log('id_token: ' + authresp.id_token);
+      console.info('access_token: ' + authresp.access_token);
     
-      var gpreq = "https://picasaweb.google.com/data/feed/api/user/steve@opendirective.com?kind=album&access=visible&alt=json"
-  
+      var gpreq = "https://picasaweb.google.com/data/feed/api/user/steve@opendirective.com?kind=album&access=private&alt=json"
+
+      // validate token and check client id is correct
       var xhr = new XMLHttpRequest();
-      xhr.open('get', gpreq);
-      xhr.setRequestHeader('GData-Version', '2');
-      xhr.setRequestHeader('Authorization', 'Bearer ' + id_token);
-      
-    xhr.onload = function() {
-      var jsonPretty = JSON.stringify(JSON.parse(xhr.responseText),null,2);  
-      console.log('Output:\n' + jsonPretty);
-    };
+      xhr.open('get', 'https://www.googleapis.com/oauth2/v3/tokeninfo?access_token='+authresp.access_token);
+      xhr.onload = function() {
+        var jsonPretty = JSON.stringify(JSON.parse(xhr.responseText),null,2);  
+        console.log('Output:\n' + jsonPretty);
+      };
     xhr.send();
+      
+      var xhr2 = new XMLHttpRequest();
+      xhr2.open('get', gpreq);
+      xhr2.setRequestHeader('GData-Version', '2');
+      xhr2.setRequestHeader('Authorization', 'Bearer ' + authresp.access_token);
+      xhr2.onload = function() {
+        var jsonPretty = JSON.stringify(JSON.parse(xhr2.responseText),null,2);  
+        console.log('Output:\n' + jsonPretty);
+      };
+    xhr2.send();
       
     }
     function onFailure(error) {
