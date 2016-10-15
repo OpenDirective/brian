@@ -34,8 +34,8 @@
         console.log('Output:\n' + jsonPretty);
       
         var xhr2 = new XMLHttpRequest();
-        xhr2.open('POST', "https://picasaweb.google.com/data/feed/api/user/default?kind=album&access=private&alt=json&access_token=" + authresp.access_token);
-        xhr2.setRequestHeader('GData-Version', '2');
+        xhr2.open('POST', "https://picasaweb.google.com/data/feed/api/user/default?alt=json&access_token=" + authresp.access_token);
+  //      xhr2.setRequestHeader('GData-Version', '2');
 //        xhr2.setRequestHeader('Authorization', 'Bearer ' + authresp.access_token);
         xhr2.onload = function() {
           var jsonPretty2 = JSON.stringify(JSON.parse(xhr2.responseText),null,2);  
