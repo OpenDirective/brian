@@ -16,21 +16,23 @@
 <p>Brian login test</p>
 
 
-
-  
-}
-</script>
-
     <script>
     function onSuccess(googleUser) {
       var profile = googleUser.getBasicProfile();
       console.log('Logged in as: ' + profile.getName() + ' ' + profile.getEmail());
       var id_token = googleUser.getAuthResponse().id_token;
       console.log('token: ' + id_token);
-      
-      
+    
       var gpreq = "https://picasaweb.google.com/data/feed/api/user/steve@opendirective.com?kind=album&access=visible&alt=json"
+  
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', gpreq);
+    //xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      console.log('Output: ' + xhr.responseText);
+    };
       
+xhr.send('idtoken=' + id_token);   
     }
     function onFailure(error) {
       console.log(error);
