@@ -28,7 +28,7 @@
   
       var xhr = new XMLHttpRequest();
       xhr.open('get', gpreq);
-//    xhr.setRequestHeader('GData-Version', '2');
+      xhr.setRequestHeader('GData-Version', '2');
 //    xhr.setRequestHeader('Authorization', 'Bearer ' + id_token);
       
     xhr.onload = function() {
