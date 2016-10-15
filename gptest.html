@@ -15,7 +15,8 @@
 <body>
 <p>Brian login test</p>
 
-
+<div id="my-signin2" class="my-signin2"></div>
+  
     <script>
     function onSuccess(googleUser) {
       var profile = googleUser.getBasicProfile();
@@ -31,13 +32,14 @@
     xhr.onload = function() {
       console.log('Output: ' + xhr.responseText);
     };
+    xhr.send();
       
-xhr.send('idtoken=' + id_token);   
     }
     function onFailure(error) {
-      console.log(error);
+      console.log('fail '+error);
     }
     function renderButton() {
+      console.log('a');
       gapi.signin2.render('my-signin2', {
         'scope': 'profile email https://www.googleapis.com/auth/drive.photos.readonly',
         'width': 240,
@@ -47,12 +49,11 @@ xhr.send('idtoken=' + id_token);
         'onsuccess': onSuccess,
         'onfailure': onFailure
       });
+      console.log('b');
     }
 
   </script>
 
-<div id="my-signin2" class="my-signin2"></div>
-  
 <a href="#" onclick="signOut();">Sign out</a>
 <script>
   function signOut() {
