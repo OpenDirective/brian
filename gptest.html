@@ -34,7 +34,7 @@
         console.log('Output:\n' + jsonPretty);
       
         var xhr2 = new XMLHttpRequest();
-        xhr2.open('POST', "https://picasaweb.google.com/data/feed/api/user/default?alt=json&access_token=" + authresp.access_token);
+        xhr2.open('GET', "https://picasaweb.google.com/data/feed/api/user/default?access_token=" + authresp.access_token);
   //      xhr2.setRequestHeader('GData-Version', '2');
 //        xhr2.setRequestHeader('Authorization', 'Bearer ' + authresp.access_token);
         xhr2.onload = function() {
