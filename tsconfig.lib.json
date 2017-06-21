@@ -1,0 +1,24 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "module": "ES6",
+        "moduleResolution": "node",
+        "jsx": "preserve",
+        "target": "ES2015",
+        "lib": [
+            "ES2016",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "outDir": "lib",
+        "sourceMap": true,
+        "declaration": true,
+        "declarationDir": "lib/types",
+        "typeRoots": [
+            "node_modules/@types"
+        ]
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
