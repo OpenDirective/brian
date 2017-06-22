@@ -1,26 +1,19 @@
 import { setup, run } from '@cycle/run'
-import { restartable, rerunner } from 'cycle-restart'
+import { rerunner } from 'cycle-restart'
 import isolate from '@cycle/isolate'
 import onionify from 'cycle-onionify'
 
-import { drivers, Component } from './drivers'
+import { mkDrivers, Component } from './drivers'
 import { App } from './app'
 
 const main: Component = onionify(App)
 
 /// #if PRODUCTION
-run(main as any, drivers)
+run(main as any, mkDrivers())
 
 /// #else
-const driverFn = () => ({
-    ...drivers,
-    DOM: restartable(drivers.DOM, {
-        pauseSinksWhileReplaying: false
-    }),
-    HTTP: restartable(drivers.HTTP)
-})
 
-const rerun = rerunner(setup, driverFn, isolate)
+const rerun = rerunner(setup, mkDrivers, isolate)
 rerun(main as any)
 
 if (module.hot) {

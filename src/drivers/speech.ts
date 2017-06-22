@@ -14,7 +14,7 @@ export default function speechDriver(speechText$: Stream<string>): void {
                 window.speechSynthesis.speak(utterance)
             }
         },
-        error: () => {},
-        complete: () => {}
+        error: () => undefined,
+        complete: () => undefined
     })
 }
