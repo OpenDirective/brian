@@ -13,8 +13,13 @@
 *.txt eol=lf
 *.md eol=lf
 *.js eol=lf
+*.jsx eol=lf
+*.ts eol=lf
+*.tsx eol=lf
 *.json eol=lf
+*.ejs eol=lf
 *.css eol=lf
+*.scss eol=lf
 *.html eol=lf
 LICENCE eol=lf
 NOTICE eol=lf
@@ -28,5 +33,8 @@ NOTICE eol=lf
 # see "npm run lsBinary"
 *.png binary
 *.jpg binary
+*.pdf binary
+*.bmpr binary
+*.ico binary
 *.pdf binary
 *.bmpr binary
