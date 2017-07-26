@@ -11,7 +11,7 @@ import onionify from 'cycle-onionify'
 import { App } from '../src/app'
 
 const testOptions: Options = {
-    tests: 10,
+    tests: 60,
     size: 200
 }
 
@@ -22,6 +22,7 @@ describe('app tests', () => {
             <span>Counter: ${count}</span>
             <button>Increase</button>
             <button>Decrease</button>
+            <button>Wibble</button>
         </div>
     `
 
