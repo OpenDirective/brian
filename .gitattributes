@@ -24,7 +24,7 @@
 LICENCE eol=lf
 NOTICE eol=lf
 CODE_OF_CONDUCT eol=lf
-*.yaml eol=lf
+*.yml eol=lf
 
 # Declare files that will always have CRLF line endings on checkout.
 # see "npm run lsCRLF"
