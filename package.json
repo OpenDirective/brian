@@ -49,7 +49,7 @@
     },
     "devDependencies": {
         "cycle-restart": "^0.2.2",
-        "cycle-scripts-one-fits-all": "^3.2.4",
+        "cycle-scripts-one-fits-all": "^3.2.5",
         "cyclejs-test-helpers": "^1.3.0",
         "html-looks-like": "^1.0.3",
         "jsverify": "^0.8.2",
