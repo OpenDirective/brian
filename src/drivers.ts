@@ -3,6 +3,12 @@ import { restartable } from 'cycle-restart'
 import { makeDOMDriver, VNode, DOMSource } from '@cycle/dom'
 import { makeHTTPDriver, HTTPSource, RequestOptions } from '@cycle/http'
 import { timeDriver, TimeSource } from '@cycle/time'
+import { makeRouterDriver, RouterSource, RouteMatcher } from 'cyclic-router'
+import { createBrowserHistory } from 'history'
+import switchPath from 'switch-path'
+//import storageDriver from '@cycle/storage'
+const storageDriver = require('@cycle/storage').default // TODO PR to add missing typeings
+
 import speechDriver from './drivers/speech'
 
 let mkDriversCond: any
@@ -10,8 +16,12 @@ let mkDriversCond: any
 mkDriversCond = () => ({
     DOM: makeDOMDriver('#app'),
     HTTP: makeHTTPDriver(),
-    Time: timeDriver,
-    Speech: speechDriver
+    time: timeDriver,
+    router: makeRouterDriver(
+        createBrowserHistory(),
+        switchPath as RouteMatcher
+    ),
+    speech: speechDriver
 })
 
 /// #else
@@ -20,8 +30,13 @@ mkDriversCond = () => ({
         pauseSinksWhileReplaying: false
     }),
     HTTP: restartable(makeHTTPDriver()),
-    Time: timeDriver,
-    Speech: speechDriver
+    time: timeDriver,
+    router: makeRouterDriver(
+        createBrowserHistory(),
+        switchPath as RouteMatcher
+    ),
+    storage: storageDriver,
+    speech: speechDriver
 })
 /// #endif
 export const mkDrivers = mkDriversCond
@@ -29,16 +44,15 @@ export const mkDrivers = mkDriversCond
 export type DriverSources = {
     DOM: DOMSource
     HTTP: HTTPSource
-    Time: TimeSource
+    time: TimeSource
+    router: RouterSource
 }
 
-export type DriverSinks = {
+export type DriverSinks = Partial<{
     DOM: Stream<VNode>
     HTTP: Stream<RequestOptions>
-    Speech: Stream<string>
-}
+    speech: Stream<string>
+    router: Stream<any>
+}>
 
-//export const driverNames: string[] = Object.keys(drivers)
-export type Sources = DriverSources
-export type Sinks = Partial<DriverSinks>
-export type Component = (s: Sources) => Sinks
+export type Component = (s: DriverSources) => DriverSinks
