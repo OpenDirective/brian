@@ -21,6 +21,7 @@ mkDriversCond = () => ({
         createBrowserHistory(),
         switchPath as RouteMatcher
     ),
+    storage: storageDriver,
     speech: speechDriver
 })
 
@@ -46,13 +47,15 @@ export type DriverSources = {
     HTTP: HTTPSource
     time: TimeSource
     router: RouterSource
+    storage: any
 }
 
 export type DriverSinks = Partial<{
     DOM: Stream<VNode>
     HTTP: Stream<RequestOptions>
-    speech: Stream<string>
     router: Stream<any>
+    storage: Stream<any>
+    speech: Stream<string>
 }>
 
 export type Component = (s: DriverSources) => DriverSinks
