@@ -3,19 +3,13 @@ import { rerunner } from 'cycle-restart'
 import isolate from '@cycle/isolate'
 import onionify from 'cycle-onionify'
 import storageify from 'cycle-storageify'
+import { protect as auth0ify } from 'cyclejs-auth0' // TODO PR to add missing typeings
 
 import { mkDrivers, Component } from './drivers'
 import { App } from './app'
 
-// TODO PR upstream - 2nd,3rd options should be optional
-declare type StorageifyOptions = {
-    key: string
-    serialize(state: any): string
-    deserialize(stateStr: string): any
-}
-
 const main: Component = onionify(
-    storageify(App, { key: 'brian-state' } as StorageifyOptions)
+    storageify(auth0ify(App), { key: 'brian-state' })
 )
 
 /// #if PRODUCTION

@@ -46,7 +46,9 @@
         "@cycle/storage": "^4.0.0",
         "@cycle/time": "^0.8.0",
         "cycle-onionify": "^3.3.0",
-        "cycle-storageify": "^3.0.0",
+        "cycle-storageify": "^3.1.0",
+        "cyclejs-auth0": "file:../cyclejs-auth0",
+        "cyclejs-utils": "^1.0.4",
         "cyclic-router": "^4.0.5",
         "switch-path": "^1.2.0",
         "xstream": "^10.9.0"

@@ -5,13 +5,15 @@ import { StateSource } from 'cycle-onionify'
 import { DriverSources, DriverSinks } from '../drivers'
 
 export interface State {
-    count: number
+    text: string
 }
+const defaultState: State = { text: 'Edit me!' }
+
 export type Reducer = (prev: State) => State | undefined
 export type Sources = DriverSources & { onion: StateSource<State> }
 export type Sinks = DriverSinks & { onion: Stream<Reducer> }
 
-export function Page2(sources: Sources): Sinks {
+export function Speaker(sources: Sources): Sinks {
     const action$: Stream<Reducer> = intent(sources.DOM)
     const vdom$: Stream<VNode> = view(sources.onion.state$)
 
@@ -26,50 +28,47 @@ export function Page2(sources: Sources): Sinks {
         .events('click')
         .mapTo('/')
 
+    const logout$ = sources.DOM
+        .select('[data-action="logout"]')
+        .events('click')
+        .mapTo({ action: 'logout' })
+
     return {
         DOM: vdom$,
         speech: touchSpeech$,
         onion: action$,
-        router: routes$
+        router: routes$,
+        auth0: logout$
     }
 }
 
 function intent(DOM: DOMSource): Stream<Reducer> {
     //const init$: Stream<Reducer> = xs.of<Reducer>(p => ({ count: 10 }))
-    const init$ = xs.of(
-        (prevState: State): State =>
-            typeof prevState === 'undefined' ? { count: 30 } : prevState
+    const init$ = xs.of<Reducer>(
+        prevState => (prevState === undefined ? defaultState : prevState)
     )
 
-    const add$: Stream<Reducer> = DOM.select('.add')
-        .events('click')
-        .mapTo<Reducer>(state => ({ ...state, count: state.count + 1 }))
+    const textValue$: Stream<Reducer> = DOM.select('#text')
+        .events('input')
+        .map((ev: any) => ev.target.value)
+        .map<Reducer>(value => () => ({ text: value }))
 
-    const subtract$: Stream<Reducer> = DOM.select('.subtract')
-        .events('click')
-        .mapTo<Reducer>(state => ({ ...state, count: state.count - 1 }))
-
-    return xs.merge(init$, add$, subtract$)
+    return xs.merge(init$, textValue$)
 }
 
 function view(state$: Stream<State>): Stream<VNode> {
-    return state$.map(s => s.count).map(count =>
+    return state$.map(s => s.text).map(text =>
         <div>
-            <h2>Page 2</h2>
-            <span>
-                {'Counter: ' + count}
-            </span>
-            <button type="button" className="add">
-                Increase
-            </button>
-            <button type="button" className="subtract">
-                Decrease
-            </button>
+            <h2>My Awesome Cycle.js app - Page 2</h2>
+            <textarea id="text" rows="3" value={text} />
             <button type="button" data-action="speak">
-                Wobble
+                Speak to Me!
             </button>
             <button type="button" data-action="navigate">
                 Page 1
+            </button>
+            <button type="button" data-action="logout">
+                Logout
             </button>
         </div>
     )
