@@ -18,3 +18,6 @@ export default function speechDriver(speechText$: Stream<string>): void {
         complete: () => undefined
     })
 }
+
+export interface SpeechSource {}
+export type SpeechSink = Stream<string>

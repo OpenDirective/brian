@@ -1,4 +1,6 @@
 import xs, { Stream } from 'xstream'
+import { Sources as BaseSources, Sinks as BaseSinks } from '@cycle/run'
+export { Sources as BaseSources, Sinks as BaseSinks } from '@cycle/run'
 import { makeDOMDriver, VNode, DOMSource } from '@cycle/dom'
 import { makeHTTPDriver, HTTPSource, RequestOptions } from '@cycle/http'
 import { timeDriver, TimeSource } from '@cycle/time'
@@ -10,9 +12,10 @@ import { makeAuth0Driver } from 'cyclejs-auth0'
 
 import speechDriver from './drivers/speech'
 
-export type DriverThunk = [string, () => any] // Can't make Readonly and destructure, seems to be TS bug
+export type DriverThunk = Readonly<[string, () => any]> & [string, () => any] // work around readonly
 export type DriverThunkMapper = (t: DriverThunk) => DriverThunk
 
+// Set of Drivers used in this App
 const driverThunks: ReadonlyArray<DriverThunk> = [
     ['DOM', () => makeDOMDriver('#app')],
     ['HTTP', () => makeHTTPDriver()],
@@ -42,23 +45,4 @@ export const buildDrivers = (fn: DriverThunkMapper) =>
 
 export const driverNames = driverThunks.map(([n, t]) => n).concat(['onion'])
 
-export type DriverSources = {
-    DOM: DOMSource
-    HTTP: HTTPSource
-    time: TimeSource
-    router: RouterSource
-    storage: any
-    auth0: Auth0Source
-}
-
-export type DriverSinks = Partial<{
-    DOM: Stream<VNode>
-    HTTP: Stream<RequestOptions>
-    router: Stream<any>
-    storage: Stream<any>
-    speech: Stream<string>
-    auth0: Stream<Auth0Actions>
-}>
-
-export type Component = (s: DriverSources) => DriverSinks
-export type ComponentWrapper = (c: Component) => Component
+export type Component = (s: BaseSources) => BaseSinks

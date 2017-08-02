@@ -14,7 +14,7 @@ const main: Component = onionify(
 )
 
 /// #idef !PRODUCTION
-run(main as any, buildDrivers(([k, t]) => [k, t()]))
+run(main, buildDrivers(([k, t]) => [k, t()]))
 
 /// #else
 const mkDrivers = () =>
