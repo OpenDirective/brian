@@ -1,5 +1,4 @@
 import xs, { Stream } from 'xstream'
-import { restartable } from 'cycle-restart'
 import { makeDOMDriver, VNode, DOMSource } from '@cycle/dom'
 import { makeHTTPDriver, HTTPSource, RequestOptions } from '@cycle/http'
 import { timeDriver, TimeSource } from '@cycle/time'
@@ -11,44 +10,37 @@ import { makeAuth0Driver } from 'cyclejs-auth0'
 
 import speechDriver from './drivers/speech'
 
-let mkDriversCond: any
-/// #if PRODUCTION
-mkDriversCond = () => ({
-    DOM: makeDOMDriver('#app'),
-    HTTP: makeHTTPDriver(),
-    time: timeDriver,
-    router: makeRouterDriver(
-        createBrowserHistory(),
-        switchPath as RouteMatcher
-    ),
-    storage: storageDriver,
-    speech: speechDriver,
-    auth0: makeAuth0Driver(
-        'CoDxjf3YK5wB9y14G0Ee9oXlk03zFuUF',
-        'odbrian.eu.auth0.com'
-    )
-})
+export type DriverThunk = [string, () => any] // Can't make Readonly and destructure, seems to be TS bug
+export type DriverThunkMapper = (t: DriverThunk) => DriverThunk
 
-/// #else
-mkDriversCond = () => ({
-    DOM: restartable(makeDOMDriver('#app'), {
-        pauseSinksWhileReplaying: false
-    }),
-    HTTP: restartable(makeHTTPDriver()),
-    time: timeDriver,
-    router: makeRouterDriver(
-        createBrowserHistory(),
-        switchPath as RouteMatcher
-    ),
-    storage: storageDriver,
-    speech: speechDriver,
-    auth0: makeAuth0Driver(
-        'CoDxjf3YK5wB9y14G0Ee9oXlk03zFuUF',
-        'odbrian.eu.auth0.com'
-    )
-})
-/// #endif
-export const mkDrivers = mkDriversCond
+const driverThunks: ReadonlyArray<DriverThunk> = [
+    ['DOM', () => makeDOMDriver('#app')],
+    ['HTTP', () => makeHTTPDriver()],
+    ['time', () => timeDriver],
+    [
+        'router',
+        () =>
+            makeRouterDriver(createBrowserHistory(), switchPath as RouteMatcher)
+    ],
+    ['storage', () => storageDriver],
+    ['speech', () => speechDriver],
+    [
+        'auth0',
+        () =>
+            makeAuth0Driver(
+                'CoDxjf3YK5wB9y14G0Ee9oXlk03zFuUF',
+                'odbrian.eu.auth0.com'
+            )
+    ]
+]
+
+export const buildDrivers = (fn: DriverThunkMapper) =>
+    driverThunks
+        .map(fn)
+        .map(([n, t]: DriverThunk) => ({ [n]: t }))
+        .reduce((a, c) => Object.assign(a, c), {})
+
+export const driverNames = driverThunks.map(([n, t]) => n).concat(['onion'])
 
 export type DriverSources = {
     DOM: DOMSource
@@ -70,4 +62,3 @@ export type DriverSinks = Partial<{
 
 export type Component = (s: DriverSources) => DriverSinks
 export type ComponentWrapper = (c: Component) => Component
-export const driverNames: string[] = Object.keys(mkDrivers()).concat(['onion'])
