@@ -13,7 +13,7 @@ const main: Component = onionify(
     storageify(auth0ify(App), { key: 'brian-state' })
 )
 
-/// #idef !PRODUCTION
+/// #idef PRODUCTION
 run(main, buildDrivers(([k, t]) => [k, t()]))
 
 /// #else
