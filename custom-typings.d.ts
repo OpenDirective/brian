@@ -1,12 +1,11 @@
 // tslint:disable-next-line
 /// <reference path="node_modules/snabbdom-pragma/snabbdom-pragma.d.ts" />
 declare module 'cycle-restart'
+declare module '@cycle/storage' // TODO PR to add missing typeings
+declare module 'cyclejs-auth0' // TODO PR to add missing typeings
 
 declare var Snabbdom: any //Automaticly imported into every filet
 
-declare module '@cycle/storage' // TODO PR to add missing typeings
-
-declare module 'cyclejs-auth0' // TODO PR to add missing typeings
 declare class Stream<T> {}
 type Auth0Action = object
 interface Auth0Source {

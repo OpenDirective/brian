@@ -2,22 +2,14 @@ import xs, { Stream } from 'xstream'
 import { VNode, DOMSource } from '@cycle/dom'
 import { StateSource } from 'cycle-onionify'
 
-import { BaseSources, BaseSinks } from '../drivers'
-import { SpeechSource, SpeechSink } from '../drivers/speech'
+import { BaseSources, BaseSinks } from '../interfaces'
 
 // Types
 export interface Sources extends BaseSources {
-    DOM: DOMSource
-}
-interface AllSources extends Sources {
     onion: StateSource<State>
 }
 export interface Sinks extends BaseSinks {
-    DOM: Stream<VNode>
-    router: RouterSink
-}
-interface AllSinks extends Sinks {
-    onion: Stream<Reducer>
+    onion?: Stream<Reducer>
 }
 
 // State
@@ -29,12 +21,11 @@ const defaultState: State = {
 }
 export type Reducer = (prev: State) => State | undefined
 
-export function Counter(sources: AllSources): AllSinks {
-    const action$: Stream<Reducer> = intent(sources.DOM)
-    const vdom$: Stream<VNode> = view(sources.onion.state$)
+export function Counter({ DOM, onion }: Sources): Sinks {
+    const action$: Stream<Reducer> = intent(DOM)
+    const vdom$: Stream<VNode> = view(onion.state$)
 
-    const routes$ = sources.DOM
-        .select('[data-action="navigate"]')
+    const routes$ = DOM.select('[data-action="navigate"]')
         .events('click')
         .mapTo('/p2')
 

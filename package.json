@@ -49,7 +49,7 @@
         "cycle-storageify": "^3.1.0",
         "cyclejs-auth0": "file:../cyclejs-auth0",
         "cyclejs-utils": "^1.0.4",
-        "cyclic-router": "^4.0.5",
+        "cyclic-router": "^4.0.6",
         "switch-path": "^1.2.0",
         "typescript": "^2.4.2",
         "xstream": "^10.9.0"

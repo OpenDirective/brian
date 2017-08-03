@@ -1,6 +1,5 @@
 import xs, { Stream } from 'xstream'
 import { Sources as BaseSources, Sinks as BaseSinks } from '@cycle/run'
-export { Sources as BaseSources, Sinks as BaseSinks } from '@cycle/run'
 import { makeDOMDriver } from '@cycle/dom'
 import { makeHTTPDriver } from '@cycle/http'
 import { timeDriver } from '@cycle/time'
@@ -9,7 +8,6 @@ import { createBrowserHistory } from 'history'
 import switchPath from 'switch-path'
 import storageDriver from '@cycle/storage'
 import { makeAuth0Driver } from 'cyclejs-auth0'
-
 import speechDriver from './drivers/speech'
 
 export type DriverThunk = Readonly<[string, () => any]> & [string, () => any] // work around readonly
@@ -44,5 +42,3 @@ export const buildDrivers = (fn: DriverThunkMapper) =>
         .reduce((a, c) => Object.assign(a, c), {})
 
 export const driverNames = driverThunks.map(([n, t]) => n).concat(['onion'])
-
-export type Component = (s: BaseSources) => BaseSinks

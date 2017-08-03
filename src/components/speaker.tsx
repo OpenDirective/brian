@@ -3,26 +3,13 @@ import { VNode, DOMSource } from '@cycle/dom'
 import { StateSource } from 'cycle-onionify'
 import { RouterSource, RouteMatcher } from 'cyclic-router'
 
-import { BaseSources, BaseSinks } from '../drivers'
-import { SpeechSource, SpeechSink } from '../drivers/speech'
+import { BaseSources, BaseSinks } from '../interfaces'
 
 // Types
 export interface Sources extends BaseSources {
-    DOM: DOMSource
-}
-interface AllSources extends Sources {
     onion: StateSource<State>
 }
 export interface Sinks extends BaseSinks {
-    DOM: Stream<VNode>
-    speech: SpeechSink
-    router: RouterSink
-    auth0: Auth0Sink
-}
-interface AllSources extends Sources {
-    onion: StateSource<State>
-}
-interface AllSinks extends Sinks {
     onion: Stream<Reducer>
 }
 
@@ -33,23 +20,20 @@ export interface State {
 const defaultState: State = { text: 'Edit me!' }
 export type Reducer = (prev?: State) => State | undefined
 
-export function Speaker(sources: AllSources): AllSinks {
-    const action$: Stream<Reducer> = intent(sources.DOM)
-    const vdom$: Stream<VNode> = view(sources.onion.state$)
+export function Speaker({ DOM, onion }: Sources): Sinks {
+    const action$: Stream<Reducer> = intent(DOM)
+    const vdom$: Stream<VNode> = view(onion.state$)
 
-    const touchSpeech$ = sources.DOM
-        .select('[data-action="speak"]')
+    const touchSpeech$ = DOM.select('[data-action="speak"]')
         .events('click')
         .map(({ currentTarget }) => (currentTarget as Element).textContent)
         .map(text => (typeof text === 'string' ? text : ''))
 
-    const routes$ = sources.DOM
-        .select('[data-action="navigate"]')
+    const routes$ = DOM.select('[data-action="navigate"]')
         .events('click')
         .mapTo('/')
 
-    const logout$ = sources.DOM
-        .select('[data-action="logout"]')
+    const logout$ = DOM.select('[data-action="logout"]')
         .events('click')
         .mapTo({ action: 'logout' })
 
