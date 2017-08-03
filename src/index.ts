@@ -16,10 +16,10 @@ function wrapMain(main: Component): Component {
     return onionify(storageify(auth0ify(main, { key: 'brian-state' })))
 }
 
-const main = wrapMain(App)
+const main: Component = wrapMain(App)
 
 /// #if PRODUCTION
-run(main, buildDrivers(([k, t]) => [k, t()]))
+run(main as any, buildDrivers(([k, t]) => [k, t()]))
 
 /// #else
 const mkDrivers = () =>
