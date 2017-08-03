@@ -8,7 +8,7 @@ import { mockDOMSource, VNode } from '@cycle/dom'
 import { mockTimeSource } from '@cycle/time'
 import onionify from 'cycle-onionify'
 
-import { App } from '../src/app'
+import { App } from '../src/components/app'
 
 const testOptions: Options = {
     tests: 60,

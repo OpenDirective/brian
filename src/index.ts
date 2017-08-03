@@ -27,7 +27,7 @@ const mkDrivers = () =>
         if (k === 'DOM') {
             return [k, restartable(t(), { pauseSinksWhileReplaying: false })]
         }
-        if (k === 'time') {
+        if (k === 'time' || k === 'router') {
             return [k, t()]
         }
         return [k, restartable(t())]
