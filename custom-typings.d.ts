@@ -15,5 +15,3 @@ interface Auth0Source {
 declare type Auth0Sink = Stream<Auth0Action>
 type Auth0Driver = (action$: Stream<Auth0Action>) => Auth0Source
 declare function makeAuth0Driver(appkey: string, appdomain: string): Auth0Driver
-
-declare type RouterSink = Stream<string | object> // TODO PR upstream
