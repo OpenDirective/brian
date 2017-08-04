@@ -56,7 +56,6 @@
         "xstream": "^10.9.0"
     },
     "devDependencies": {
-        "@types/history": "^4.6.0",
         "cycle-restart": "^0.2.2",
         "cycle-scripts-one-fits-all": "^4.1.1",
         "cyclejs-test-helpers": "^1.4.0",
