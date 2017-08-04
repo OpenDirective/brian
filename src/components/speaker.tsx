@@ -24,7 +24,8 @@ export type Reducer = (prev?: State) => State | undefined
 // Actions
 const SPEECH = 'speech',
     NAVIGATE = 'navigate',
-    UPDATE = 'update'
+    UPDATE = 'update',
+    LOGOUT = 'logout'
 interface SpeechAction {
     type: typeof SPEECH
 }
@@ -35,7 +36,10 @@ interface UpdateAction {
     type: typeof UPDATE
     reducer: Reducer
 }
-type Action = SpeechAction | NavigationAction | UpdateAction
+interface LogoutAction {
+    type: typeof LOGOUT
+}
+type Action = SpeechAction | NavigationAction | UpdateAction | LogoutAction
 
 export function Speaker({ DOM, onion }: Sources): Sinks {
     const action$: Stream<Action> = intent(DOM)
@@ -44,8 +48,15 @@ export function Speaker({ DOM, onion }: Sources): Sinks {
         DOM: view(onion.state$),
         speech: speech(action$, onion.state$),
         onion: onionFn(action$),
-        router: router(action$)
+        router: router(action$),
+        auth0: logout(action$)
     }
+}
+
+function logout(action$: Stream<Action>): Stream<Auth0Action> {
+    return action$
+        .filter(({ type }) => type === LOGOUT)
+        .mapTo({ action: 'logout' })
 }
 
 function router(action$: Stream<Action>): Stream<string> {
@@ -79,7 +90,11 @@ function intent(DOM: DOMSource): Stream<Action> {
         .events('click')
         .mapTo<Action>({ type: NAVIGATE })
 
-    return xs.merge(updateText$, speech$, navigation$)
+    const logout$: Stream<Action> = DOM.select('[data-action="logout"]')
+        .events('click')
+        .mapTo<Action>({ type: LOGOUT })
+
+    return xs.merge(updateText$, speech$, navigation$, logout$)
 }
 
 function onionFn(action$: Stream<Action>): Stream<Reducer> {
