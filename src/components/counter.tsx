@@ -1,7 +1,6 @@
 import xs, { Stream } from 'xstream'
 import { VNode, DOMSource } from '@cycle/dom'
 import { StateSource } from 'cycle-onionify'
-import { HistoryAction } from 'cyclic-router'
 
 import { BaseSources, BaseSinks } from '../interfaces'
 
@@ -26,9 +25,7 @@ export function Counter({ DOM, onion }: Sources): Sinks {
     const action$: Stream<Reducer> = intent(DOM)
     const vdom$: Stream<VNode> = view(onion.state$)
 
-    const routes$: Stream<HistoryAction> = DOM.select(
-        '[data-action="navigate"]'
-    )
+    const routes$ = DOM.select('[data-action="navigate"]')
         .events('click')
         .mapTo('/p2')
 
