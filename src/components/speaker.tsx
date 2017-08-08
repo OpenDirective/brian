@@ -42,8 +42,7 @@ interface LogoutAction {
 }
 type Action = SpeechAction | NavigationAction | UpdateAction | LogoutAction
 
-export function Speaker(sources: Sources): Sinks {
-    const { DOM, onion } = sources
+export function Speaker({ DOM, onion }: Sources): Sinks {
     const action$: Stream<Action> = intent(DOM)
 
     return {
