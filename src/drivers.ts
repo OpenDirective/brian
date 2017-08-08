@@ -7,8 +7,12 @@ import { makeRouterDriver, RouteMatcher } from 'cyclic-router'
 import { createBrowserHistory } from 'history'
 import switchPath from 'switch-path'
 import storageDriver from '@cycle/storage'
-import { makeAuth0Driver } from 'cyclejs-auth0'
 import speechDriver from './drivers/speech'
+import { makeAuth0Driver, protect as auth0ify } from 'cyclejs-auth0'
+
+import onionify from 'cycle-onionify'
+import storageify from 'cycle-storageify'
+import { Component } from './interfaces'
 
 export type DriverThunk = Readonly<[string, () => any]> & [string, () => any] // work around readonly
 export type DriverThunkMapper = (t: DriverThunk) => DriverThunk
@@ -42,3 +46,24 @@ export const buildDrivers = (fn: DriverThunkMapper) =>
         .reduce((a, c) => Object.assign(a, c), {})
 
 export const driverNames = driverThunks.map(([n, t]) => n).concat(['onion'])
+
+const auth0ifyOptions = {
+    decorators: {
+        //let's decorate the HTTP sink
+        //the decorate function is given each produced value of the
+        //initial sink + the user's token
+        speech: (request: any, tokens: any) => {
+            console.log('decorator', request, tokens)
+            return request
+        }
+    },
+    wibble: 'wobble'
+}
+
+export function wrapMain(main: Component): Component {
+    return onionify(
+        storageify(auth0ify(main, auth0ifyOptions) as any, {
+            key: 'brian-state'
+        })
+    )
+}
