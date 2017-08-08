@@ -3,6 +3,7 @@ import sampleCombine from 'xstream/extra/sampleCombine'
 import { VNode, DOMSource } from '@cycle/dom'
 import { StateSource } from 'cycle-onionify'
 import { RouterSource, RouteMatcher } from 'cyclic-router'
+import { Auth0Request, Logout } from 'cyclejs-auth0'
 
 import { BaseSources, BaseSinks } from '../interfaces'
 
@@ -41,7 +42,8 @@ interface LogoutAction {
 }
 type Action = SpeechAction | NavigationAction | UpdateAction | LogoutAction
 
-export function Speaker({ DOM, onion }: Sources): Sinks {
+export function Speaker(sources: Sources): Sinks {
+    const { DOM, onion } = sources
     const action$: Stream<Action> = intent(DOM)
 
     return {
@@ -53,10 +55,10 @@ export function Speaker({ DOM, onion }: Sources): Sinks {
     }
 }
 
-function logout(action$: Stream<Action>): Stream<Auth0Action> {
+function logout(action$: Stream<Action>): Stream<Auth0Request> {
     return action$
         .filter(({ type }) => type === LOGOUT)
-        .mapTo({ action: 'logout' })
+        .mapTo({ action: 'logout' } as Logout)
 }
 
 function router(action$: Stream<Action>): Stream<string> {
