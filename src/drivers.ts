@@ -11,6 +11,7 @@ import { makeAuth0Driver, protect as auth0ify } from 'cyclejs-auth0'
 import onionify from 'cycle-onionify'
 import storageify from 'cycle-storageify'
 import { Component } from './interfaces'
+import { AUTH0_APP, AUTH0_DOMAIN } from './config/client-config'
 
 import speechDriver from './drivers/speech'
 
@@ -25,14 +26,7 @@ const driverThunks: ReadonlyArray<DriverThunk> = [
     ['history', () => makeHistoryDriver()],
     ['storage', () => storageDriver],
     ['speech', () => speechDriver],
-    [
-        'auth0',
-        () =>
-            makeAuth0Driver(
-                'CoDxjf3YK5wB9y14G0Ee9oXlk03zFuUF',
-                'odbrian.eu.auth0.com'
-            )
-    ]
+    ['auth0', () => makeAuth0Driver(AUTH0_APP, AUTH0_DOMAIN)]
 ]
 
 export const buildDrivers = (fn: DriverThunkMapper) =>
