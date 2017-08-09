@@ -11,7 +11,11 @@ import { makeAuth0Driver, protect as auth0ify } from 'cyclejs-auth0'
 import onionify from 'cycle-onionify'
 import storageify from 'cycle-storageify'
 import { Component } from './interfaces'
-import { AUTH0_APP, AUTH0_DOMAIN } from './config/client-config'
+import {
+    AUTH0_APPKEY,
+    AUTH0_DOMAIN,
+    AUTH0_LOCKOPTIONS
+} from './config/client-config'
 
 import speechDriver from './drivers/speech'
 
@@ -26,7 +30,10 @@ const driverThunks: ReadonlyArray<DriverThunk> = [
     ['history', () => makeHistoryDriver()],
     ['storage', () => storageDriver],
     ['speech', () => speechDriver],
-    ['auth0', () => makeAuth0Driver(AUTH0_APP, AUTH0_DOMAIN)]
+    [
+        'auth0',
+        () => makeAuth0Driver(AUTH0_APPKEY, AUTH0_DOMAIN, AUTH0_LOCKOPTIONS)
+    ]
 ]
 
 export const buildDrivers = (fn: DriverThunkMapper) =>
@@ -39,7 +46,7 @@ export const driverNames = driverThunks
     .map(([n, t]) => n)
     .concat(['onion', 'router']) // these are added through decoration
 
-const auth0ifyOptions = {
+const AUTH0IFY_OPTIONS = {
     decorators: {
         speech: (request: any, tokens: any) => {
             console.log('decorator', request, tokens)
@@ -52,7 +59,7 @@ const auth0ifyOptions = {
 export function wrapMain(main: Component): Component {
     return routerify(
         onionify(
-            storageify(auth0ify(main, auth0ifyOptions) as any, {
+            storageify(auth0ify(main, AUTH0IFY_OPTIONS) as any, {
                 key: 'brian-state',
                 debounce: 100 // wait for 100ms without state change before writing to localStorage
             })
