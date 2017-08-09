@@ -39,6 +39,7 @@
     },
     "dependencies": {
         "@cycle/dom": "^18.0.0",
+        "@cycle/history": "^6.3.0",
         "@cycle/http": "^14.0.0",
         "@cycle/isolate": "^3.0.0",
         "@cycle/run": "^3.1.0",
@@ -49,7 +50,7 @@
         "cycle-storageify": "^3.2.0",
         "cyclejs-auth0": "4.2.0",
         "cyclejs-utils": "^1.0.4",
-        "cyclic-router": "^5.0.0",
+        "cyclic-router": "^5.1.0",
         "history": "^4.6.3",
         "switch-path": "^1.2.0",
         "typescript": "^2.4.2",

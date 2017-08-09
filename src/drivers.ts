@@ -3,16 +3,16 @@ import { Sources as BaseSources, Sinks as BaseSinks } from '@cycle/run'
 import { makeDOMDriver } from '@cycle/dom'
 import { makeHTTPDriver } from '@cycle/http'
 import { timeDriver } from '@cycle/time'
-import { makeRouterDriver, RouteMatcher } from 'cyclic-router'
-import { createBrowserHistory } from 'history'
+import { makeHistoryDriver } from '@cycle/history'
+import { RouteMatcher, routerify } from 'cyclic-router'
 import switchPath from 'switch-path'
 import storageDriver from '@cycle/storage'
-import speechDriver from './drivers/speech'
 import { makeAuth0Driver, protect as auth0ify } from 'cyclejs-auth0'
-
 import onionify from 'cycle-onionify'
 import storageify from 'cycle-storageify'
 import { Component } from './interfaces'
+
+import speechDriver from './drivers/speech'
 
 export type DriverThunk = Readonly<[string, () => any]> & [string, () => any] // work around readonly
 export type DriverThunkMapper = (t: DriverThunk) => DriverThunk
@@ -22,11 +22,7 @@ const driverThunks: ReadonlyArray<DriverThunk> = [
     ['DOM', () => makeDOMDriver('#app')],
     ['HTTP', () => makeHTTPDriver()],
     ['time', () => timeDriver],
-    [
-        'router',
-        () =>
-            makeRouterDriver(createBrowserHistory(), switchPath as RouteMatcher)
-    ],
+    ['history', () => makeHistoryDriver()],
     ['storage', () => storageDriver],
     ['speech', () => speechDriver],
     [
@@ -45,13 +41,12 @@ export const buildDrivers = (fn: DriverThunkMapper) =>
         .map(([n, t]: DriverThunk) => ({ [n]: t }))
         .reduce((a, c) => Object.assign(a, c), {})
 
-export const driverNames = driverThunks.map(([n, t]) => n).concat(['onion'])
+export const driverNames = driverThunks
+    .map(([n, t]) => n)
+    .concat(['onion', 'router']) // these are added through decoration
 
 const auth0ifyOptions = {
     decorators: {
-        //let's decorate the HTTP sink
-        //the decorate function is given each produced value of the
-        //initial sink + the user's token
         speech: (request: any, tokens: any) => {
             console.log('decorator', request, tokens)
             return request
@@ -61,9 +56,13 @@ const auth0ifyOptions = {
 }
 
 export function wrapMain(main: Component): Component {
-    return onionify(
-        storageify(auth0ify(main, auth0ifyOptions) as any, {
-            key: 'brian-state'
-        })
-    )
+    return routerify(
+        onionify(
+            storageify(auth0ify(main, auth0ifyOptions) as any, {
+                key: 'brian-state',
+                debounce: 100 // wait for 100ms without state change before writing to localStorage
+            })
+        ),
+        switchPath as RouteMatcher
+    ) as any
 }

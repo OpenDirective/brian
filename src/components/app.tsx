@@ -41,9 +41,9 @@ export function App(sources: Sources): Sinks {
         prevState => (prevState === undefined ? defaultState : prevState)
     )
 
-    const match$ = sources.router.define(routes)
+    const routeMatch$ = sources.router.define(routes)
 
-    const componentSinks$ = match$.map(
+    const componentSinks$ = routeMatch$.map(
         ({ path, value }: { path: string; value: RouteValue }) => {
             const { component, scope } = value
             return isolate(component, scope)({
