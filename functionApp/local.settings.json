@@ -1,0 +1,20 @@
+{
+  "IsEncrypted": false,
+  "Value": {
+    "WEBSITE_SLOT_NAME": "Production",
+    "ROUTING_EXTENSION_VERSION": "~0.2",
+    "FUNCTIONS_EXTENSION_VERSION": "~1",
+    "ScmType": "OneDrive",
+    "AzureWebJobsSecretStorageType": "disabled",
+    "WEBSITE_AUTH_ENABLED": "False",
+    "REMOTEDEBUGGINGVERSION": "11.0.611103.400",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "0c3a21e0-8c43-4f6b-be1d-525cc39651a1",
+    "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=odbriana7da;AccountKey=ybhEK7icmUt1r3ohHLaL/SftQ1/tx0+ogWBNtICJpBuwowXQfJLAc9GGmf6QOIKUSkGUutF4kocC++ntXethpA==",
+    "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
+    "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "DefaultEndpointsProtocol=https;AccountName=odbriana7da;AccountKey=ybhEK7icmUt1r3ohHLaL/SftQ1/tx0+ogWBNtICJpBuwowXQfJLAc9GGmf6QOIKUSkGUutF4kocC++ntXethpA==",
+    "WEBSITE_CONTENTSHARE": "odbriana7da",
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=odbriana7da;AccountKey=ybhEK7icmUt1r3ohHLaL/SftQ1/tx0+ogWBNtICJpBuwowXQfJLAc9GGmf6QOIKUSkGUutF4kocC++ntXethpA==",
+    "WEBSITE_SITE_NAME": "odbrian",
+    "MY_WEBSITE_SITE_NAME": "odbrian"
+  }
+}
