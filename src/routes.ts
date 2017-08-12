@@ -1,4 +1,5 @@
 import { Component } from './interfaces'
+import { Home } from './components/home'
 import { Counter } from './components/counter'
 import { Speaker } from './components/speaker'
 
@@ -11,8 +12,9 @@ export interface Routes {
 }
 
 export const routes: Routes = {
-    '/': { component: Counter, scope: 'counter' },
-    '/p2': { component: Speaker, scope: 'speaker' }
+    '/': { component: Home, scope: 'home' },
+    '/counter': { component: Counter, scope: 'counter' },
+    '/speaker': { component: Speaker, scope: 'speaker' }
 }
 
 export const initialRoute = '/'
