@@ -33,7 +33,12 @@
         "lsBinary": "bash -c \"grep -ILr --exclude-dir={.git,.vs,node_modules} . ./\"",
         "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\"",
         "deploy:spa": "dotenv cross-env-shell AzCopy /Source:build /Dest:$AZURE_SPA_CONTAINER_URL /DestKey:$AZURE_SPA_STORAGE_KEY /S /Y /SetContentType",
-        "deploy:func": "dotenv cross-env-shell ncp functionApp \"\"\"$FUNCTAPP_DEPLOY_DEST\"\"\" --StopOnErr"
+        "deploy:func": "dotenv cross-env-shell \"ncftpput -R -u $AZURE_FTP_USER -p $AZURE_FTP_PWD $AZURE_FTP_HOST /site/wwwroot functionApp/src/*\"",
+        "deploy": "npm run deploy:spa && npm run deploy:func",
+        "watch:deploy:func": "nodemon --watch functionApp/src -e js,json --exec \"npm run deploy:func\"",
+        "watch:deploy:spa": "nodemon --watch build -e js,json,css,html,pnh,ico --exec \"npm run deploy:spa\"",
+        "ws": "npm run watch:deploy:spa",
+        "wf": "npm run watch:deploy:func"
     },
     "dependencies": {
         "@cycle/dom": "^18.0.0",
@@ -64,6 +69,7 @@
         "html-looks-like": "^1.0.3",
         "jsverify": "^0.8.2",
         "ncp": "^2.0.0",
+        "nodemon": "^1.11.0",
         "opener": "^1.4.3",
         "parallelshell": "^3.0.1",
         "rimraf": "^2.6.1",

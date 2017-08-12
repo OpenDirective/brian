@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json.schemastore.org/proxies",
+    "proxies": {
+        "api": {
+            "matchCondition": {
+                "route": "/api/{*path}"
+            },
+            "backendUri": "%API_URL%/{path}",
+            "responseOverrides": {
+                "response.headers.Content-Type": "application/json"
+            }
+        },
+        "spa root": {
+            "matchCondition": {
+                "route": "/"
+            },
+            "backendUri": "%SPA_BLOB_URL%/index.html"
+        },
+        "spa root default": {
+            "matchCondition": {
+                "route": "{*path}"
+            },
+            "backendUri": "%SPA_BLOB_URL%/index.html"
+        },
+        "spa root file": {
+            "matchCondition": {
+                "route": "/{file}.{ending}"
+            },
+            "backendUri": "%SPA_BLOB_URL%/{file}.{ending}"
+        }
+    }
+}
