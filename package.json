@@ -36,10 +36,14 @@
         "deploy:spa": "dotenv cross-env-shell AzCopy /Source:build /Dest:$AZURE_SPA_CONTAINER_URL /DestKey:$AZURE_SPA_STORAGE_KEY /S /Y /SetContentType",
         "deploy:func": "dotenv cross-env-shell \"ncftpput -R -y -u $AZURE_FTP_USER -p $AZURE_FTP_PWD $AZURE_FTP_HOST /site/wwwroot functionApp/src/*\"",
         "deploy": "npm run deploy:spa && npm run deploy:func",
+        "deploy:func:win": "C:\\projects\\WAWSDeploy\\WAWSDeploy\\bin\\Release\\WAWSDeploy.exe functionApp\\src functionApp.PublishSettings /d",
         "watch:deploy:func": "nodemon --watch functionApp/src -e js,json -C --exec \"npm run deploy:func\"",
         "watch:deploy:spa": "nodemon --watch build -e js,json,css,html,pnh,ico -C --exec \"npm run deploy:spa\"",
         "ws": "npm run watch:deploy:spa",
-        "wf": "npm run watch:deploy:func"
+        "wf": "npm run watch:deploy:func",
+        "df": "npm run deploy:func:win",
+        "ds": "npm run deploy:spa"
+
     },
     "dependencies": {
         "@cycle/dom": "^18.0.0",
