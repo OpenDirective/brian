@@ -1,21 +1,18 @@
-# Test against the latest version of this Node.js version
+branches:
+  only:
+    - master
+
 environment:
   nodejs_version: "LTS"
 
-# Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
-  # install modules
   - npm install
 
-# Post-install test scripts.
 test_script:
-  # Output useful info for debugging.
   - node --version
   - npm --version
-  # run tests
-  - npm test
+  #- npm test
 
-# Don't actually build.
-build: off
+build_script:
+  - npm run build
