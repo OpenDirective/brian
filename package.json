@@ -16,7 +16,11 @@
         "type": "git",
         "url": "git://github.com/OpenDirective/brian"
     },
-    "keywords": ["Access", "Assistive Technology", "Cognitive"],
+    "keywords": [
+        "Access",
+        "Assistive Technology",
+        "Cognitive"
+    ],
     "engines": {
         "node": ">=4.3.2"
     },
@@ -43,8 +47,7 @@
         "wf": "npm run watch:deploy:func",
         "df": "npm run deploy:func:win",
         "ds": "npm run deploy:spa",
-        "preinstall": "npm run prepare",
-        "prepare": "patch-package"
+        "postinstall": "patch-package"
     },
     "dependencies": {
         "@cycle/dom": "^18.1.0",
@@ -83,7 +86,12 @@
         "snabbdom-to-html": "^3.2.0"
     },
     "nyc": {
-        "include": ["src"],
-        "reporter": ["html", "text-summary"]
+        "include": [
+            "src"
+        ],
+        "reporter": [
+            "html",
+            "text-summary"
+        ]
     }
 }
