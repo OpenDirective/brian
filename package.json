@@ -42,7 +42,8 @@
         "ws": "npm run watch:deploy:spa",
         "wf": "npm run watch:deploy:func",
         "df": "npm run deploy:func:win",
-        "ds": "npm run deploy:spa"
+        "ds": "npm run deploy:spa",
+        "prepare": "patch-package"
     },
     "dependencies": {
         "@cycle/dom": "^18.0.0",
@@ -76,6 +77,7 @@
         "nodemon": "^1.11.0",
         "opener": "^1.4.3",
         "parallelshell": "^3.0.1",
+        "patch-package": "^3.3.3",
         "rimraf": "^2.6.1",
         "snabbdom-to-html": "^3.2.0"
     },
