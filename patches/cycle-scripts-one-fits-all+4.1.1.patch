@@ -1,103 +1,17 @@
 diff --git a/node_modules/cycle-scripts-one-fits-all/configs/webpack.config.js b/node_modules/cycle-scripts-one-fits-all/configs/webpack.config.js
-index 0f1072a..7ec38e5 100644
---- a/node_modules/cycle-scripts-one-fits-all/configs/webpack.config.js
-+++ b/node_modules/cycle-scripts-one-fits-all/configs/webpack.config.js
-@@ -88,8 +88,8 @@ module.exports = createConfig([
+index 0f1072a..2057339 100644
+@@ -88,9 +88,11 @@ module.exports = createConfig([
              new CleanWebpackPlugin([appPath('build')], {
                  root: process.cwd()
              }),
 -            new CopyWebpackPlugin([{ from: 'public', to: '' }]),
 -            new webpack.optimize.UglifyJsPlugin()
-+            new CopyWebpackPlugin([{ from: 'public', to: '' }])/*,
++            new CopyWebpackPlugin([
++                { from: 'public', to: '' }
++            ]) /*,
 +            new webpack.optimize.UglifyJsPlugin()*/
          ])
      ]),
      env('test', [tsIfDef(true)])
-diff --git a/node_modules/cycle-scripts-one-fits-all/node_modules/ansi-styles/package.json b/node_modules/cycle-scripts-one-fits-all/node_modules/ansi-styles/package.json
-index 59c4e49..bf669be 100644
---- a/node_modules/cycle-scripts-one-fits-all/node_modules/ansi-styles/package.json
-+++ b/node_modules/cycle-scripts-one-fits-all/node_modules/ansi-styles/package.json
-@@ -2,7 +2,7 @@
-   "_args": [
-     [
-       "ansi-styles@3.2.0",
--      "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900"
-+      "C:\\projects\\brian"
-     ]
-   ],
-   "_development": true,
-@@ -27,7 +27,7 @@
-   ],
-   "_resolved": "https://registry.npmjs.org/ansi-styles/-/ansi-styles-3.2.0.tgz",
-   "_spec": "3.2.0",
--  "_where": "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900",
-+  "_where": "C:\\projects\\brian",
-   "author": {
-     "name": "Sindre Sorhus",
-     "email": "sindresorhus@gmail.com",
-diff --git a/node_modules/cycle-scripts-one-fits-all/node_modules/chalk/package.json b/node_modules/cycle-scripts-one-fits-all/node_modules/chalk/package.json
-index 124cf44..dd5daff 100644
---- a/node_modules/cycle-scripts-one-fits-all/node_modules/chalk/package.json
-+++ b/node_modules/cycle-scripts-one-fits-all/node_modules/chalk/package.json
-@@ -2,7 +2,7 @@
-   "_args": [
-     [
-       "chalk@2.0.1",
--      "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900"
-+      "C:\\projects\\brian"
-     ]
-   ],
-   "_development": true,
-@@ -27,7 +27,7 @@
-   ],
-   "_resolved": "https://registry.npmjs.org/chalk/-/chalk-2.0.1.tgz",
-   "_spec": "2.0.1",
--  "_where": "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900",
-+  "_where": "C:\\projects\\brian",
-   "bugs": {
-     "url": "https://github.com/chalk/chalk/issues"
-   },
-diff --git a/node_modules/cycle-scripts-one-fits-all/node_modules/has-flag/package.json b/node_modules/cycle-scripts-one-fits-all/node_modules/has-flag/package.json
-index c8c4503..4fac0b4 100644
---- a/node_modules/cycle-scripts-one-fits-all/node_modules/has-flag/package.json
-+++ b/node_modules/cycle-scripts-one-fits-all/node_modules/has-flag/package.json
-@@ -2,7 +2,7 @@
-   "_args": [
-     [
-       "has-flag@2.0.0",
--      "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900"
-+      "C:\\projects\\brian"
-     ]
-   ],
-   "_development": true,
-@@ -27,7 +27,7 @@
-   ],
-   "_resolved": "https://registry.npmjs.org/has-flag/-/has-flag-2.0.0.tgz",
-   "_spec": "2.0.0",
--  "_where": "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900",
-+  "_where": "C:\\projects\\brian",
-   "author": {
-     "name": "Sindre Sorhus",
-     "email": "sindresorhus@gmail.com",
-diff --git a/node_modules/cycle-scripts-one-fits-all/node_modules/supports-color/package.json b/node_modules/cycle-scripts-one-fits-all/node_modules/supports-color/package.json
-index 880a7df..6b76b3e 100644
---- a/node_modules/cycle-scripts-one-fits-all/node_modules/supports-color/package.json
-+++ b/node_modules/cycle-scripts-one-fits-all/node_modules/supports-color/package.json
-@@ -2,7 +2,7 @@
-   "_args": [
-     [
-       "supports-color@4.2.1",
--      "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900"
-+      "C:\\projects\\brian"
-     ]
-   ],
-   "_development": true,
-@@ -27,7 +27,7 @@
-   ],
-   "_resolved": "https://registry.npmjs.org/supports-color/-/supports-color-4.2.1.tgz",
-   "_spec": "4.2.1",
--  "_where": "C:\\Users\\steve\\AppData\\Local\\Temp\\tmp-14228qfi5hidrv900",
-+  "_where": "C:\\projects\\brian",
-   "author": {
-     "name": "Sindre Sorhus",
-     "email": "sindresorhus@gmail.com",
+-]);
++])
