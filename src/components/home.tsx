@@ -27,7 +27,7 @@ export type Reducer = (prev: State) => State | undefined
 
 const PHOTOS_URL = `${API_HOST}/api/test?name=foo`
 
-export function Home({ HTTP, DOM, onion }: Sources): Sinks {
+export function Home({ HTTP, DOM, onion, storage }: Sources): Sinks {
     const action$: Stream<Reducer> = intent(HTTP)
     const vdom$: Stream<VNode> = view(onion.state$)
 
@@ -43,16 +43,15 @@ export function Home({ HTTP, DOM, onion }: Sources): Sinks {
         .mapTo('/speaker')
     const routes$ = xs.merge(counterRoute$, speakerRoute$)
 
-    const photosAction$ = DOM.select('[data-action="fetch-photos"]')
-        .events('click')
-        .debug()
-    const request$ = photosAction$
-        .mapTo({
-            url: PHOTOS_URL,
-            method: 'get',
-            category: 'request-photos'
-        })
-        .debug()
+    const photosAction$ = DOM.select('[data-action="fetch-photos"]').events(
+        'click'
+    )
+    const request$ = photosAction$.map(accessToken => ({
+        url: PHOTOS_URL,
+        method: 'get',
+        category: 'request-photos'
+        // bearer header is added by auth0ify
+    }))
 
     return {
         DOM: vdom$,
@@ -77,7 +76,6 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
             })
         )
         .flatten()
-        .debug()
         .map<Reducer>(({ error, body }) => state => ({
             ...state,
             error: error.message,
@@ -88,18 +86,23 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
 }
 
 function view(state$: Stream<State>): Stream<VNode> {
-    return state$.map(({}) =>
-        <div>
-            <h2>Easy access to Photos</h2>
-            <button type="button" data-action="navigate" data-arg="counter">
-                Counter
-            </button>
-            <button type="button" data-action="navigate" data-arg="speaker">
-                Speaker
-            </button>
-            <button type="button" data-action="fetch-photos">
-                Get Photos
-            </button>
-        </div>
-    )
+    return state$
+        .map(state => (state.error ? state.error : state.body))
+        .map(result =>
+            <div>
+                <h2>Easy access to Photos</h2>
+                <button type="button" data-action="navigate" data-arg="counter">
+                    Counter
+                </button>
+                <button type="button" data-action="navigate" data-arg="speaker">
+                    Speaker
+                </button>
+                <button type="button" data-action="fetch-photos">
+                    Get Photos
+                </button>
+                <div className="result">
+                    {result}
+                </div>
+            </div>
+        )
 }
