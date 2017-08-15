@@ -1,13 +1,17 @@
 import xs, { Stream } from 'xstream'
 import { Sources as BaseSources, Sinks as BaseSinks } from '@cycle/run'
 import { makeDOMDriver } from '@cycle/dom'
-import { makeHTTPDriver } from '@cycle/http'
+import { RequestOptions, makeHTTPDriver } from '@cycle/http'
 import { timeDriver } from '@cycle/time'
 import { makeHistoryDriver } from '@cycle/history'
 import { RouteMatcher, routerify } from 'cyclic-router'
 import switchPath from 'switch-path'
 import storageDriver from '@cycle/storage'
-import { makeAuth0Driver, protect as auth0ify } from 'cyclejs-auth0'
+import {
+    Auth0Tokens,
+    makeAuth0Driver,
+    protect as auth0ify
+} from 'cyclejs-auth0'
 import onionify from 'cycle-onionify'
 import storageify from 'cycle-storageify'
 import { Component } from './interfaces'
@@ -46,14 +50,19 @@ export const driverNames = driverThunks
     .map(([n, t]) => n)
     .concat(['onion', 'router']) // these are added through decoration
 
+// decorate drivers
 const AUTH0IFY_OPTIONS = {
     decorators: {
-        speech: (request: any, tokens: any) => {
-            console.log('decorator', request, tokens)
-            return request
+        HTTP: (request: RequestOptions, tokens: Auth0Tokens) => {
+            return {
+                ...request,
+                headers: {
+                    ...request.headers,
+                    Authorization: `Bearer ${tokens.accessToken}`
+                }
+            }
         }
-    },
-    wibble: 'wobble'
+    }
 }
 
 export function wrapMain(main: Component): Component {
