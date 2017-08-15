@@ -27,7 +27,7 @@ export type Reducer = (prev: State) => State | undefined
 
 const PHOTOS_URL = `${API_HOST}/api/test?name=foo`
 
-export function Home({ HTTP, DOM, onion, storage }: Sources): Sinks {
+export function Home({ HTTP, DOM, onion }: Sources): Sinks {
     const action$: Stream<Reducer> = intent(HTTP)
     const vdom$: Stream<VNode> = view(onion.state$)
 
