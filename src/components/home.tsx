@@ -87,12 +87,6 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
     return xs.merge(init$, photos$)
 }
 
-const maybeAddErrors = (response$: any) =>
-    response$.replaceError((error: any) => xs.of(error.response))
-
-const getResponse$ = (category: string, sources: Sources) =>
-    sources.HTTP.select(category).map(maybeAddErrors).flatten()
-
 function view(state$: Stream<State>): Stream<VNode> {
     return state$.map(({}) =>
         <div>
