@@ -1,9 +1,10 @@
-import xs, { Stream } from 'xstream'
+import xs, { MemoryStream, Stream } from 'xstream'
 import { VNode, DOMSource } from '@cycle/dom'
-import { HTTPSource } from '@cycle/HTTP'
+import { ResponseStream, HTTPSource } from '@cycle/HTTP'
 import { StateSource } from 'cycle-onionify'
 
 import { BaseSources, BaseSinks } from '../interfaces'
+import { API_HOST } from '../environment'
 
 // Types
 export interface Sources extends BaseSources {
@@ -15,12 +16,16 @@ export interface Sinks extends BaseSinks {
 
 // State
 export interface State {
-    thing: string
+    error: any
+    body: string
 }
 const defaultState: State = {
-    thing: '30'
+    error: false,
+    body: ''
 }
 export type Reducer = (prev: State) => State | undefined
+
+const PHOTOS_URL = `${API_HOST}/api/test?name=foo`
 
 export function Home({ HTTP, DOM, onion }: Sources): Sinks {
     const action$: Stream<Reducer> = intent(HTTP)
@@ -43,7 +48,8 @@ export function Home({ HTTP, DOM, onion }: Sources): Sinks {
         .debug()
     const request$ = photosAction$
         .mapTo({
-            url: 'http://brian.opendirective.net/api/test?name=foo', // GET method by default
+            url: PHOTOS_URL,
+            method: 'get',
             category: 'request-photos'
         })
         .debug()
@@ -61,13 +67,31 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
         prevState => (prevState === undefined ? defaultState : prevState)
     )
 
-    const photos$ = HTTP.select('request-photos')
+    const response$$ = HTTP.select('request-photos')
+    const photos$ = response$$
+        .map(response$ =>
+            response$.replaceError((error: any) => {
+                return xs.of(
+                    error.response ? error.reponse : { error, body: '' }
+                )
+            })
+        )
         .flatten()
         .debug()
-        .map<Reducer>(({ body }) => state => ({ ...state, thing: body }))
+        .map<Reducer>(({ error, body }) => state => ({
+            ...state,
+            error: error.message,
+            body
+        }))
 
     return xs.merge(init$, photos$)
 }
+
+const maybeAddErrors = (response$: any) =>
+    response$.replaceError((error: any) => xs.of(error.response))
+
+const getResponse$ = (category: string, sources: Sources) =>
+    sources.HTTP.select(category).map(maybeAddErrors).flatten()
 
 function view(state$: Stream<State>): Stream<VNode> {
     return state$.map(({}) =>

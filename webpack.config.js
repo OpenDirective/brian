@@ -1,4 +1,6 @@
 const path = require('path')
+const webpack = require('webpack')
+const Dotenv = require('dotenv-webpack')
 
 const appPath = (...names) => path.join(process.cwd(), ...names)
 
@@ -10,5 +12,11 @@ module.exports = {
     output: {
         filename: 'bundle.[hash].js',
         path: appPath('build')
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        }),
+        new Dotenv()
+    ]
 }
