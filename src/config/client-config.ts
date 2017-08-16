@@ -10,12 +10,13 @@ export const AUTH0_LOCKOPTIONS = {
             'google-oauth2': ['https://picasaweb.google.com/data/']
         },
         params: {
-            scope: 'openid profile photos'
-            //            audience: 'https://API_ID HERE'
-        }
-        //        responseType: 'token'
+            scope: 'openid profile photos',
+            audience: 'https://brianAPI'
+        },
+        responseType: 'id_token token'
     },
     languageDictionary: {
         title: 'Sign into Google'
     }
 }
+export const API_ID = `https://brianAPI`
