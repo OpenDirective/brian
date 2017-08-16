@@ -16,13 +16,9 @@
         "type": "git",
         "url": "git://github.com/OpenDirective/brian"
     },
-    "keywords": [
-        "Access",
-        "Assistive Technology",
-        "Cognitive"
-    ],
+    "keywords": ["Access", "Assistive Technology", "Cognitive"],
     "engines": {
-        "nodenpm start": ">=4.3.2"
+        "node": ">=4.3.2"
     },
     "scripts": {
         "start": "cycle-scripts start",
@@ -89,12 +85,7 @@
         "snabbdom-to-html": "^3.2.0"
     },
     "nyc": {
-        "include": [
-            "src"
-        ],
-        "reporter": [
-            "html",
-            "text-summary"
-        ]
+        "include": ["src"],
+        "reporter": ["html", "text-summary"]
     }
 }
