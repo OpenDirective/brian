@@ -33,7 +33,7 @@ module.exports = options => {
         algorithms: options.algorithms
     })
 
-    return next => {
+    return (requiredScopes, next) => {
         return (context, req) => {
             middleware(req, null, err => {
                 if (err) {
@@ -41,6 +41,18 @@ module.exports = options => {
                         status: err.status || 500,
                         body: {
                             message: err.message
+                        }
+                    }
+
+                    return context.done(null, res)
+                }
+                const allowedScopes = req.user.scope.split(" ")
+                const sufficent = requiredScopes.every((scope) => allowedScopes.indexOf(scope) !== -1)
+                if (!sufficent) {
+                    const res = {
+                        status:  403,
+                        body: {
+                            message: "Forbidden"
                         }
                     }
 
