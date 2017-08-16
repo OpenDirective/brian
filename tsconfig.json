@@ -11,7 +11,8 @@
         "strict": true,
         "allowJs": true,
         "lib": ["es2015", "dom"],
-        "pretty": true
+        "pretty": true,
+        "baseURL": "src"
     },
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "functionApp"]
 }

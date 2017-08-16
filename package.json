@@ -22,10 +22,11 @@
         "Cognitive"
     ],
     "engines": {
-        "node": ">=4.3.2"
+        "nodenpm start": ">=4.3.2"
     },
     "scripts": {
         "start": "cycle-scripts start",
+        "postinstall": "patch-package && cd functionApp\\src && npm install & cd ..",
         "start:func": "cd functionApp\\src && func host start --debug vscode && cd ..\\..",
         "test": "cycle-scripts test",
         "build": "cycle-scripts build",
@@ -47,8 +48,7 @@
         "ws": "npm run watch:deploy:spa",
         "wf": "npm run watch:deploy:func",
         "df": "npm run deploy:func:win",
-        "ds": "npm run deploy:spa",
-        "postinstall": "patch-package"
+        "ds": "npm run deploy:spa"
     },
     "dependencies": {
         "@cycle/dom": "18.1.0",
