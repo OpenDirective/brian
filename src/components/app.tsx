@@ -24,14 +24,12 @@ export interface Sinks extends BaseSinks {
 
 // State
 export interface State {
-    thing: number
     counter: CounterState
-    speaker: SpeakerState
+    speaker?: SpeakerState
 }
 const defaultState: State = {
-    thing: 123,
     counter: { count: 5 },
-    speaker: { text: 'Edit me!' }
+    speaker: undefined // use conmponent default
 }
 export type Reducer = (prev?: State) => State | undefined
 
