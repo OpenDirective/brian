@@ -25,7 +25,7 @@ const defaultState: State = {
 }
 export type Reducer = (prev: State) => State | undefined
 
-const PHOTOS_URL = `${API_HOST}/api/test?name=foo`
+const PHOTOS_URL = `${API_HOST}/api/getGoogleAlbums`
 
 export function Home({ HTTP, DOM, onion }: Sources): Sinks {
     const action$: Stream<Reducer> = intent(HTTP)
@@ -69,11 +69,9 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
     const response$$ = HTTP.select('request-photos')
     const photos$ = response$$
         .map(response$ =>
-            response$.replaceError((error: any) => {
-                return xs.of(
-                    error.response ? error.reponse : { error, body: '' }
-                )
-            })
+            response$.replaceError((error: any) =>
+                xs.of(error.response ? error.response : { error, body: '' })
+            )
         )
         .flatten()
         .map<Reducer>(({ error, body }) => state => ({
