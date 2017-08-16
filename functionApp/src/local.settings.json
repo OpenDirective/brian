@@ -2,7 +2,12 @@
     "IsEncrypted": false,
     "Values": {
         "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=odbriana7da;AccountKey=ybhEK7icmUt1r3ohHLaL/SftQ1/tx0+ogWBNtICJpBuwowXQfJLAc9GGmf6QOIKUSkGUutF4kocC++ntXethpA==",
-        "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=odbriana7da;AccountKey=ybhEK7icmUt1r3ohHLaL/SftQ1/tx0+ogWBNtICJpBuwowXQfJLAc9GGmf6QOIKUSkGUutF4kocC++ntXethpA=="
+        "AzureWebJobsDashboard": "DefaultEndpointsProtocol=https;AccountName=odbriana7da;AccountKey=ybhEK7icmUt1r3ohHLaL/SftQ1/tx0+ogWBNtICJpBuwowXQfJLAc9GGmf6QOIKUSkGUutF4kocC++ntXethpA==",
+        "AUTH0_DOMAIN_URL": "https://odbrian.eu.auth0.com",
+        "AUTH0_API_ID": "https://brianAPI",
+        "AUTH0_API_SIGNING_CERTIFICATE": "-----BEGIN CERTIFICATE-----\nMIIDAzCCAeugAwIBAgIJMmdlKJbhL/OQMA0GCSqGSIb3DQEBCwUAMB8xHTAbBgNV\nBAMTFG9kYnJpYW4uZXUuYXV0aDAuY29tMB4XDTE3MDczMTE5NTM0N1oXDTMxMDQw\nOTE5NTM0N1owHzEdMBsGA1UEAxMUb2Ricmlhbi5ldS5hdXRoMC5jb20wggEiMA0G\nCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC6mEyHQeLP/nUk74fx0Ztz6acgSrEi\nYVGsItJjv8jthjNRxhoO5PlIgwvZjXGgGr2OBiTeFmNMVHB+gtWLff+wNTXLJgKs\ntKK7lEUOVQvcNFdvVlB60QZlFpa2D8pyrvJ8jQvc1hbc7Rt0G7+4je/BpkZe8m6D\nd8Lt3pRBKI1N3HJWuepBzU7TTol0zmZbpANSnsQqkPkolrHfPXgxCjZnhyyac/QR\n0ggvLz0dwOId6b2aQ0TFNQ8SRpRGRCabHoKRzzalSUrAT5sFIu6NWocGXs3ykx25\nCHCKt0pLvIGIlDSxlp2e1jRIK3YT/Df2ZbALSz0UQIwJy4B+wqkBT76RAgMBAAGj\nQjBAMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFB8jHZ2bIJk9BV1AVecTMOje\n3O2NMA4GA1UdDwEB/wQEAwIChDANBgkqhkiG9w0BAQsFAAOCAQEAqK2UUWWvjGLx\nA2dNWrmlPKcBhsLvR/b1chteEMpKsbIPX56cRLxeU4O1ecjH0UceSGyV+gEOWGkl\ntRfyjEPafiuActlSZU3E1d9/+EuAXqyrT0jp02gzR+WpUCdxe+hKv6o2AcOP5aY2\noNhZo7zn0RZhyeEYttuGG4bcnFLUWHLmJcxvdCiW2sO4FA+w6O2/OAl9Mj4d2M4t\n55KhujAfqeAhAHt3TI+tHXgNVgrrx9YPrLKELyJbbllkvj8q3U7aY0u6ECh36ook\nZm79V3A1GVXg333qQBZ19gSFNzSMJ2Mad2TlBPjfTV7EpusdAF5TeNWQGOWL90px\nRx/U48BoDA==\n-----END CERTIFICATE-----",
+        "AUTH0_ADMIN_CLIENT_ID": "m58w2CCJCckZDJMkxeH0YhFUKaWl4oCR",
+        "AUTH0_ADMIN_CLIENT_SECRET": "fT6m9In2nwyq5cO1fPoTcpleRJFEqaVvXPR7zLRDx6hlf2RBBP1fQGCpY_So9zq_"
     },
     "Host": {
         "LocalHttpPort": 7071,
