@@ -69,9 +69,15 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
     const response$$ = HTTP.select('request-photos')
     const photos$ = response$$
         .map(response$ =>
-            response$.replaceError((error: any) =>
-                xs.of(error.response ? error.response : { error, body: '' })
-            )
+            response$.replaceError((error: any) => {
+                if (error.response) {
+                    error.response.error.message =
+                        error.response.error.message + ' ' + error.response.text
+                }
+                return xs.of(
+                    error.response ? error.response : { error, body: '' }
+                )
+            })
         )
         .flatten()
         .map<Reducer>(({ error, body }) => state => ({
