@@ -1,28 +1,34 @@
-const request = require('request')
+import request = require('request') // note the namespace is also 'request' not 'Request'
+import { Auth0ifyOptions, Auth0FunctionRequest, auth0ify } from './auth0ify'
 
-const AUTH0_DOMAIN_URL = process.env.AUTH0_DOMAIN_URL
-const AUTH0_API_ID = process.env.AUTH0_API_ID
-const AUTH0_API_SIGNING_CERTIFICATE = process.env.AUTH0_API_SIGNING_CERTIFICATE
-const AUTH0_ADMIN_CLIENT_ID = process.env.AUTH0_ADMIN_CLIENT_ID
-const AUTH0_ADMIN_CLIENT_SECRET = process.env.AUTH0_ADMIN_CLIENT_SECRET
+// TODO check all defined
+const AUTH0_DOMAIN_URL: string = <string>process.env.AUTH0_DOMAIN_URL
+const AUTH0_API_ID: string = <string>process.env.AUTH0_API_ID
+const AUTH0_API_SIGNING_CERTIFICATE: string = <string>process.env
+    .AUTH0_API_SIGNING_CERTIFICATE
+const AUTH0_ADMIN_CLIENT_ID: string = <string>process.env.AUTH0_ADMIN_CLIENT_ID
+const AUTH0_ADMIN_CLIENT_SECRET: string = <string>process.env
+    .AUTH0_ADMIN_CLIENT_SECRET
 
-const auth0BianAPIConfig = {
+const auth0BianAPIConfig: Auth0ifyOptions = {
     clientId: AUTH0_API_ID,
     clientSecret: AUTH0_API_SIGNING_CERTIFICATE,
     algorithms: ['RS256'],
     domain: `${AUTH0_DOMAIN_URL}/`
 }
 
-// Create decorator that checks the JWT signature and specified fields
-exports.auth0ifyBrianAPI = require('./auth0ify')(auth0BianAPIConfig)
+export const auth0ifyBrianAPI = auth0ify(auth0BianAPIConfig)
 
 // Call a remote HTTP endpoint and return a JSON object
-exports.requestObject = requestObject = (options) => {
+export const requestObject = (options: request.OptionsWithUrl) => {
     return new Promise((resolve, reject) => {
         request(options, function(error, response, body) {
             if (error) {
                 reject(error)
-            } else if (200 > response.statusCode || 299 < response.statusCode) {
+            } else if (
+                200 > (<number>response.statusCode) ||
+                299 < (<number>response.statusCode)
+            ) {
                 reject(
                     new Error(
                         `Resource ${options.url} returned status code: ${response.statusCode}: ${body}`
@@ -38,7 +44,7 @@ exports.requestObject = requestObject = (options) => {
 }
 
 // Get an access token for the Auth0 Admin API
-exports.getAdminAccessToken = () => {
+export const getAdminAccessToken = () => {
     const options = {
         method: 'POST',
         url: `${AUTH0_DOMAIN_URL}/oauth/token`,
@@ -55,7 +61,7 @@ exports.getAdminAccessToken = () => {
 }
 
 // Get the user's profile from the Admin API
-exports.getUserProfile = (accessToken, userID) => {
+export const getUserProfile = (accessToken: string, userID: string) => {
     const options = {
         method: 'GET',
         url: `${AUTH0_DOMAIN_URL}/api/v2/users/${userID}`,

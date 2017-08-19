@@ -7,3 +7,4 @@ coverage/
 *.log
 *.env
 *.PublishSettings
+functionApp/build

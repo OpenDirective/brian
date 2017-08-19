@@ -1,11 +1,26 @@
 // based on the npm package azure-functions-auth0
 // But modified to handle the Auth0 API accessToken
-
+import {
+    HttpContext,
+    IFunctionRequest,
+    HttpStatusCodes
+} from 'azure-functions-typescript'
 const jwt = require('express-jwt')
 //import ArgumentError from './errors/ArgumentError';
 const ArgumentError = Error
 
-module.exports = options => {
+export interface Auth0FunctionRequest extends IFunctionRequest {
+    user: any
+}
+
+export interface Auth0ifyOptions {
+    clientId: string
+    clientSecret: string
+    algorithms: string[]
+    domain: string
+}
+
+export const auth0ify = (options: Auth0ifyOptions) => {
     if (!options || !(options instanceof Object)) {
         throw new ArgumentError('The options must be an object.')
     }
@@ -33,9 +48,12 @@ module.exports = options => {
         algorithms: options.algorithms
     })
 
-    return (requiredScopes, next) => {
-        return (context, req) => {
-            middleware(req, null, err => {
+    return (
+        requiredScopes: string[],
+        next: (c: HttpContext, r: Auth0FunctionRequest) => any
+    ) => {
+        return (context: HttpContext, req: Auth0FunctionRequest) => {
+            middleware(req, null, (err: any) => {
                 if (err) {
                     const res = {
                         status: err.status || 500,
@@ -46,13 +64,15 @@ module.exports = options => {
 
                     return context.done(null, res)
                 }
-                const allowedScopes = req.user.scope.split(" ")
-                const sufficent = requiredScopes.every((scope) => allowedScopes.indexOf(scope) !== -1)
+                const allowedScopes = req.user.scope.split(' ')
+                const sufficent = requiredScopes.every(
+                    scope => allowedScopes.indexOf(scope) !== -1
+                )
                 if (!sufficent) {
                     const res = {
-                        status:  403,
+                        status: 403,
                         body: {
-                            message: "Forbidden"
+                            message: 'Forbidden'
                         }
                     }
 

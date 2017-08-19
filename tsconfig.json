@@ -12,7 +12,7 @@
         "allowJs": true,
         "lib": ["es2015", "dom"],
         "pretty": true,
-        "baseURL": "src"
+        "baseUrl": "src"
     },
     "exclude": ["node_modules", "functionApp"]
 }

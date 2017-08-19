@@ -21,6 +21,7 @@
         "node": ">=4.3.2"
     },
     "scripts": {
+        "start:both": "start \"func\" npm run start:func && npm run start",
         "start": "cycle-scripts start",
         "postinstall": "patch-package && cd functionApp\\src && npm install & cd ..",
         "test": "cycle-scripts test",
@@ -35,10 +36,10 @@
         "lsTextTypes": "bash -c \"grep -rIl --exclude-dir={.git,.vs,node_modules} . ./ | sed -e 's/.*\\.//' | sort | uniq\"",
         "predeploy:spa": "npm run build",
         "deploy:spa": "dotenv cross-env-shell AzCopy /Source:build /Dest:$AZURE_SPA_CONTAINER_URL /DestKey:$AZURE_SPA_STORAGE_KEY /S /Y /SetContentType",
-        "install:func": "cd functionApp\\src && npm install && cd ..\\..",
+        "install:func": "rimraf functionApp/src/node_modules && cd functionApp\\src && npm install && cd ..\\..",
         "start:func": "cd functionApp\\src && func host start --debug vscode && cd ..\\..",
-        "prebuild:func": "rimraf functionApp/build && rimraf functionApp/src/node_modules",
-        "build:func": "npm run install:func && ncp functionApp/src functionApp/build && funcpack pack .\\functionApp\\build && rimraf functionApp/build/node_modules",
+        "prebuild:func": "rimraf functionApp/build",
+        "build:func": "ncp functionApp/src functionApp/build && tsc -p functionApp/build && funcpack pack .\\functionApp\\build && rimraf functionApp/build/node_modules",
         "predeploy:func:win": "npm run build:func",
         "predeploy:func": "npm run build:func",
         "deploy:func": "dotenv cross-env-shell \"ncftpput -R -y -u $AZURE_FTP_USER -p $AZURE_FTP_PWD $AZURE_FTP_HOST /site/wwwroot functionApp/build/*\"",
@@ -53,7 +54,7 @@
         "bf": "npm run build:func",
         "bs": "npm run deploy",
         "sf": "npm run start:func",
-        "ss": "npm run start"
+        "sb": "npm run start:both"
     },
     "dependencies": {
         "@cycle/dom": "18.1.0",
