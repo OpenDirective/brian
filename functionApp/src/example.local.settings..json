@@ -1,0 +1,19 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "Value",
+        "AzureWebJobsDashboard": "Value",
+        "AUTH0_DOMAIN_URL": "https://odbrian.eu.auth0.com",
+        "AUTH0_API_ID": "https://brianAPI",
+        "AUTH0_API_SIGNING_CERTIFICATE": "Value",
+        "AUTH0_ADMIN_CLIENT_ID": "Value",
+        "AUTH0_ADMIN_CLIENT_SECRET": "Value"
+    },
+    "Host": {
+        "LocalHttpPort": 7071,
+        "CORS": "*"
+    },
+    "ConnectionStrings": {
+        "SQLConnectionString": "Value"
+    }
+}

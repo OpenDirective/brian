@@ -1,5 +1,5 @@
-import { auth0ifyBrianAPI } from '../auth0'
-import { getPhotoAlbumList } from '../google'
+import { auth0ifyBrianAPI } from '../providers//auth0'
+import { getPhotoAlbumList } from '../providers/google'
 
 export = auth0ifyBrianAPI(['photos'], async (context, req) => {
     try {
