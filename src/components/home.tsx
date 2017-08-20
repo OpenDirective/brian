@@ -25,7 +25,7 @@ const defaultState: State = {
 }
 export type Reducer = (prev: State) => State | undefined
 
-const PHOTOS_URL = `${API_HOST}/api/getGoogleAlbums`
+const PHOTOS_URL = `${API_HOST}/api/getPhotoAlbums`
 
 export function Home({ HTTP, DOM, onion }: Sources): Sinks {
     const action$: Stream<Reducer> = intent(HTTP)

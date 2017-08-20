@@ -1,17 +1,15 @@
-import { requestObject } from './auth0'
+import { requestObject, getProviderAccessToken } from './auth0'
 
-interface GooglePhotoAlbumTitle {
+interface PhotoAlbumTitle {
     title: { $t: string }
 }
 
-export interface GooglePhotoTitlesFeed {
-    feed: { entry: GooglePhotoAlbumTitle[] }
+interface PhotoTitlesFeed {
+    feed: { entry: PhotoAlbumTitle[] }
 }
 
-// Get user Google Photos album list
-export function getGooglePhotoAlbumList(
-    accessToken: string
-): Promise<string[]> {
+export async function getPhotoAlbumList(userId: string): Promise<string[]> {
+    const accessToken: string = await getProviderAccessToken(userId)
     const options = {
         method: 'GET',
         //url: `https://www.googleapis.com/gmail/v1/users/me/labels`,
@@ -20,9 +18,6 @@ export function getGooglePhotoAlbumList(
             Authorization: `Bearer ${accessToken}`
         }
     }
-    return requestObject<GooglePhotoTitlesFeed>(
-        options
-    ).then(({ feed: { entry } }) => {
-        return entry.map((ent: GooglePhotoAlbumTitle) => ent.title.$t)
-    })
+    const { feed: { entry } } = await requestObject<PhotoTitlesFeed>(options)
+    return entry.map((ent: PhotoAlbumTitle) => ent.title.$t)
 }
