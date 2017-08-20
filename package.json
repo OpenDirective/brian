@@ -36,7 +36,7 @@
         "deploy:spa": "dotenv cross-env-shell AzCopy /Source:build /Dest:$AZURE_SPA_CONTAINER_URL /DestKey:$AZURE_SPA_STORAGE_KEY /S /Y /SetContentType",
         "pre:install:func": "npm install",
         "install:func": "cd functionApp && npm install && cd ..",
-        "start:func": "cd functionApp\\deploy && func host start --debug vscode && cd ..\\..",
+        "start:func": "cd functionApp\\build && func host start --debug vscode && cd ..\\..",
         "start:func:deployed": "cd functionApp\\deploy && func host start --debug vscode && cd ..\\..",
         "build:func": "ncp functionApp/src functionApp/build && tsc -p functionApp",
         "predeploy:func": "rimraf functionApp/deploy && ncp functionApp/build functionApp/deploy && funcpack pack .\\functionApp\\deploy",
