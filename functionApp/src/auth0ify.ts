@@ -5,8 +5,9 @@ import {
     IFunctionRequest,
     HttpStatusCodes
 } from 'azure-functions-typescript'
+
 const jwt = require('express-jwt')
-//import ArgumentError from './errors/ArgumentError';
+
 const ArgumentError = Error
 
 export interface Auth0FunctionRequest extends IFunctionRequest {

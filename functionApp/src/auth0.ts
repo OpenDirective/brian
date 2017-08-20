@@ -1,4 +1,5 @@
-import request = require('request') // note the namespace is also 'request' not 'Request'
+//import request = require('request') // note the namespace is also 'request' not 'Request'
+import * as request from 'request'
 import { Auth0ifyOptions, Auth0FunctionRequest, auth0ify } from './auth0ify'
 
 // TODO check all defined
@@ -20,9 +21,9 @@ const auth0BianAPIConfig: Auth0ifyOptions = {
 export const auth0ifyBrianAPI = auth0ify(auth0BianAPIConfig)
 
 // Call a remote HTTP endpoint and return a JSON object
-export const requestObject = (options: request.OptionsWithUrl) => {
-    return new Promise((resolve, reject) => {
-        request(options, function(error, response, body) {
+export function requestObject<T>(options: request.OptionsWithUrl): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        request(options, (error, response, body) => {
             if (error) {
                 reject(error)
             } else if (
@@ -37,14 +38,21 @@ export const requestObject = (options: request.OptionsWithUrl) => {
             } else {
                 const object =
                     typeof body === 'string' ? JSON.parse(body) : body // FIXME throws
-                resolve({ code: response.statusCode, object })
+                resolve(object)
             }
         })
     })
 }
 
+export interface OAuthAdminToken {
+    access_token: string
+    expires_in: number
+    scope: string
+    token_type: 'Bearer'
+}
+
 // Get an access token for the Auth0 Admin API
-export const getAdminAccessToken = () => {
+export function getAdminAccessToken(): Promise<OAuthAdminToken> {
     const options = {
         method: 'POST',
         url: `${AUTH0_DOMAIN_URL}/oauth/token`,
@@ -57,11 +65,22 @@ export const getAdminAccessToken = () => {
         },
         json: true
     }
-    return requestObject(options)
+    return requestObject<OAuthAdminToken>(options)
+}
+
+export interface OAuthUserProfile {
+    identities: [
+        {
+            access_token: string
+        }
+    ]
 }
 
 // Get the user's profile from the Admin API
-export const getUserProfile = (accessToken: string, userID: string) => {
+export function getUserProfile(
+    accessToken: string,
+    userID: string
+): Promise<OAuthUserProfile> {
     const options = {
         method: 'GET',
         url: `${AUTH0_DOMAIN_URL}/api/v2/users/${userID}`,
@@ -70,5 +89,5 @@ export const getUserProfile = (accessToken: string, userID: string) => {
             'content-type': 'application/json'
         }
     }
-    return requestObject(options)
+    return requestObject<OAuthUserProfile>(options)
 }

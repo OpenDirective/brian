@@ -1,32 +1,53 @@
 import {
+    OAuthAdminToken,
+    OAuthUserProfile,
     auth0ifyBrianAPI,
     getAdminAccessToken,
-    getUserProfile,
-    requestObject
+    getUserProfile
 } from '../auth0'
-
-// Get user Google Photos album list
-function getPhotoAlbums(accessToken: string) {
-    const options = {
-        method: 'GET',
-        //url: `https://www.googleapis.com/gmail/v1/users/me/labels`,
-        url: 'https://picasaweb.google.com/data/feed/api/user/default?alt=json',
-        headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
-    }
-    return requestObject(options)
-}
-
-// The main Functions Function
+import { getGooglePhotoAlbumList } from '../google'
+import { Auth0FunctionRequest } from '../auth0ify'
 import {
     HttpContext,
     IFunctionRequest,
     HttpStatusCodes
 } from 'azure-functions-typescript'
 
+async function doit(
+    context: HttpContext,
+    req: Auth0FunctionRequest
+): Promise<void> {
+    try {
+        const { access_token: admin_access_token } = await getAdminAccessToken()
+        context.log('got Admin Access Token')
+
+        const userId = req.user.sub // has been added to the req by the decorator
+        const { identities } = await getUserProfile(admin_access_token, userId)
+        context.log('Obtained user profile')
+
+        const google_access_token = identities[0].access_token // hidden from the Auth0 console
+        const titles = await getGooglePhotoAlbumList(google_access_token)
+        context.log(titles)
+
+        const titlesText = JSON.stringify(titles)
+        context.log('Got Album list')
+        context.done(null, {
+            status: 200,
+            body: titlesText,
+            headers: { 'Content-Type': 'application/json' }
+        })
+    } catch (err) {
+        context.done(null, {
+            status: 400,
+            body: err.message
+        })
+    }
+}
+
 export const main = auth0ifyBrianAPI(['photos'], (context, req) => {
-    getAdminAccessToken()
+    doit(context, req).then()
+
+    /*    getAdminAccessToken()
         .then(({ object: { access_token } }) => {
             context.log('got Admin Access Token')
             const userId = req.user.sub // has been added to the req by the decorator
@@ -58,4 +79,5 @@ export const main = auth0ifyBrianAPI(['photos'], (context, req) => {
         .then(res => {
             context.done(null, res)
         })
+    */
 })
