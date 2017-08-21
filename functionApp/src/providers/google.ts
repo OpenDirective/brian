@@ -1,4 +1,5 @@
-import { requestObject, getProviderAccessToken } from './auth0'
+import { getProviderAccessToken } from './auth0'
+import { requestObject } from '../http'
 
 interface FeedEntry {
     title: { $t: string }
