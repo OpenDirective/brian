@@ -49,7 +49,8 @@ export function Home({ HTTP, DOM, onion }: Sources): Sinks {
     const request$ = photosAction$.map(accessToken => ({
         url: PHOTOS_URL,
         method: 'get',
-        category: 'request-photos'
+        category: 'request-photos',
+        accept: 'application/json'
         // bearer header is added by auth0ify
     }))
 
@@ -68,7 +69,7 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
 
     const response$$ = HTTP.select('request-photos')
     const photos$ = response$$
-        .map(response$ =>
+        /*        .map(response$ =>
             response$.replaceError((error: any) => {
                 if (error.response) {
                     error.response.error.message =
@@ -78,7 +79,7 @@ function intent(HTTP: HTTPSource): Stream<Reducer> {
                     error.response ? error.response : { error, body: '' }
                 )
             })
-        )
+        )*/
         .flatten()
         .map<Reducer>(({ error, body }) => state => ({
             ...state,
@@ -104,9 +105,9 @@ function view(state$: Stream<State>): Stream<VNode> {
                 <button type="button" data-action="fetch-photos">
                     Get Photos
                 </button>
-                <div className="result">
-                    {result}
-                </div>
+                <pre className="result">
+                    {JSON.stringify(result, undefined, 4)}
+                </pre>
             </div>
         )
 }
