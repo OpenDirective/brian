@@ -1,15 +1,20 @@
 import { getProviderAccessToken } from './auth0'
-import { requestObject } from '../http'
+import { requestObject } from '../_modules/http'
+import { log } from '../_modules/logger'
 
-interface FeedEntry {
+interface GDataFeedEntry {
     title: { $t: string }
     id: { $t: string }
     gphoto$id: { $t: string }
+    media$group: {
+        media$content: { url: string; height: number; width: number }[]
+        media$thumbnail: { url: string; height: number; width: number }[]
+    }
 }
 
-interface FeedEntries {
+interface GDataFeed {
     feed: {
-        entry: FeedEntry[]
+        entry: GDataFeedEntry[]
     }
 }
 
@@ -18,14 +23,12 @@ export interface AlbumEntry {
     id: string
 }
 export interface PhotoEntry {
-    title: string
     url: string
+    height: number
+    width: number
 }
 
-export async function getPhotoAlbumList(
-    userId: string,
-    context?: any
-): Promise<AlbumEntry[]> {
+export async function getPhotoAlbumList(userId: string): Promise<AlbumEntry[]> {
     const accessToken: string = await getProviderAccessToken(userId)
     const options = {
         method: 'GET',
@@ -35,24 +38,16 @@ export async function getPhotoAlbumList(
             'GData-Version': '3'
         }
     }
-    /*    context.log(
-        JSON.stringify(
-            (await requestObject<FeedEntries>(options)).feed.entry[0],
-            undefined,
-            4
-        )
-    )*/
-    const { feed: { entry } } = await requestObject<FeedEntries>(options)
+    const { feed: { entry } } = await requestObject<GDataFeed>(options)
     return entry.map(
-        (ent: FeedEntry) =>
+        (ent: GDataFeedEntry) =>
             <AlbumEntry>{ title: ent.title.$t, id: ent.gphoto$id.$t }
     )
 }
 
 export async function getPhotoAlbumContents(
     userId: string,
-    albumId: string,
-    context?: any
+    albumId: string
 ): Promise<PhotoEntry[]> {
     const accessToken: string = await getProviderAccessToken(userId)
     const options = {
@@ -63,15 +58,16 @@ export async function getPhotoAlbumContents(
             'GData-Version': '3'
         }
     }
-    context.log(
-        JSON.stringify(
-            (await requestObject<FeedEntries>(options)).feed.entry[0],
-            undefined,
-            4
-        )
-    )
-    const { feed: { entry } } = await requestObject<FeedEntries>(options)
-    return entry.map(
-        (ent: FeedEntry) => <PhotoEntry>{ title: ent.title.$t, url: ent.id.$t }
-    )
+    const { feed: { entry } } = await requestObject<GDataFeed>(options)
+    //    log((await requestObject<GDataFeed>(options)).feed.entry[0])
+
+    return entry.map((ent: GDataFeedEntry) => {
+        const { media$group: { media$content: [{ url, height, width }] } } = ent
+
+        return <PhotoEntry>{
+            url,
+            width,
+            height
+        }
+    })
 }
