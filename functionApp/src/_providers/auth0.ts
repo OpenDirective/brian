@@ -1,5 +1,5 @@
 //import request = require('request') // note the namespace is also 'request' not 'Request'
-import { requestObject } from '../_modules/http'
+import { requestObject } from '../_modules/httpUtils'
 import { Auth0ifyOptions, Auth0FunctionRequest, auth0ify } from './auth0ify'
 
 // TODO check all defined
@@ -69,7 +69,7 @@ export function getUserProfile(
 }
 
 export async function getProviderAccessToken(userId: string): Promise<string> {
-    const { access_token: admin_access_token } = await getAdminAccessToken()
-    const { identities } = await getUserProfile(admin_access_token, userId)
+    const { access_token: adminAccessToken } = await getAdminAccessToken()
+    const { identities } = await getUserProfile(adminAccessToken, userId)
     return identities[0].access_token // Note is hidden in the Auth0 console
 }

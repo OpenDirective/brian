@@ -1,5 +1,5 @@
 import { getProviderAccessToken } from './auth0'
-import { requestObject } from '../_modules/http'
+import { requestObject } from '../_modules/httpUtils'
 import { log } from '../_modules/logger'
 
 interface GDataFeedEntry {

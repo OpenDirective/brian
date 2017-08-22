@@ -1,5 +1,16 @@
 import * as request from 'request'
+import { STATUS_CODES } from 'http'
 
+export class HTTPError extends Error {
+    public statusCode: number
+    constructor(statusCode: number, message: string) {
+        super(
+            `Response ${statusCode} (${STATUS_CODES[statusCode]}) - ${message}`
+        )
+        this.name = 'HTTPError'
+        this.statusCode = statusCode
+    }
+}
 // Call a remote HTTP endpoint and return a JSON object
 export function requestObject<T>(options: request.OptionsWithUrl): Promise<T> {
     return new Promise<T>((resolve, reject) => {
@@ -10,11 +21,9 @@ export function requestObject<T>(options: request.OptionsWithUrl): Promise<T> {
                 200 > (<number>response.statusCode) ||
                 299 < (<number>response.statusCode)
             ) {
-                reject(
-                    new Error(
-                        `Resource ${options.url} returned status code: ${response.statusCode}: ${body}`
-                    )
-                )
+                const message =
+                    typeof body !== 'string' ? JSON.stringify(body) : body
+                reject(new HTTPError(<number>response.statusCode, body))
             } else {
                 const object =
                     typeof body === 'string' ? JSON.parse(body) : body // FIXME throws
