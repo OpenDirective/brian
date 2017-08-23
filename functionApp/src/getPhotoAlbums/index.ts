@@ -1,5 +1,8 @@
-import { auth0ifyBrianAPI } from '../_providers//auth0'
-import { getPhotoAlbumList, getPhotoAlbumContents } from '../_providers/google'
+import { auth0ifyBrianAPI } from '../_modules/providers//auth0'
+import {
+    getPhotoAlbumList,
+    getPhotoAlbumContents
+} from '../_modules/providers/google'
 import { setLogger } from '../_modules/logger'
 
 export = auth0ifyBrianAPI(['photos'], async (context, req) => {
