@@ -1,5 +1,5 @@
 //import request = require('request') // note the namespace is also 'request' not 'Request'
-import { requestObject } from '../_modules/httpUtils'
+import { requestObject } from '../httpUtils'
 import { Auth0ifyOptions, Auth0FunctionRequest, auth0ify } from './auth0ify'
 
 // TODO check all defined
