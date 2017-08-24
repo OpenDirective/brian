@@ -16,7 +16,11 @@
         "type": "git",
         "url": "git://github.com/OpenDirective/brian"
     },
-    "keywords": ["Access", "Assistive Technology", "Cognitive"],
+    "keywords": [
+        "Access",
+        "Assistive Technology",
+        "Cognitive"
+    ],
     "engines": {
         "node": ">=4.3.2"
     },
@@ -35,7 +39,7 @@
         "open:dev": "opener chrome --remote-debugging-port=9222 http://localhost:8080/",
         "start:func:deployed": "cd functionApp/deploy && func host start --debug vscode && cd ../..",
         "start:funchost": "cd functionApp/build && func host start --debug vscode && cd ../..",
-        "_watch:func": "nodemon --watch functionApp/build/_modules --watch functionApp/build/_providers --exec \"npm run start:funchost\"",
+        "_watch:func": "nodemon --watch functionApp/build/_modules --exec \"npm run start:funchost\"",
         "start:func": "npm-run-all -p \"build:func -- --watch\" _watch:func",
         "predeploy:func": "rimraf functionApp/deploy && ncp functionApp/build functionApp/deploy && funcpack pack .\\functionApp\\deploy",
         "deploy": "dotenv cross-env-shell AzCopy /Source:build /Dest:$AZURE_SPA_CONTAINER_URL /DestKey:$AZURE_SPA_STORAGE_KEY /S /Y /SetContentType",
@@ -97,7 +101,12 @@
         "snabbdom-to-html": "^3.2.0"
     },
     "nyc": {
-        "include": ["src"],
-        "reporter": ["html", "text-summary"]
+        "include": [
+            "src"
+        ],
+        "reporter": [
+            "html",
+            "text-summary"
+        ]
     }
 }

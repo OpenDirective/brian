@@ -1,0 +1,17 @@
+{
+    "disabled": false,
+    "bindings": [
+        {
+            "methods": ["get", "options"],
+            "authLevel": "anonymous",
+            "type": "httpTrigger",
+            "direction": "in",
+            "name": "req"
+        },
+        {
+            "type": "http",
+            "direction": "out",
+            "name": "$return"
+        }
+    ]
+}

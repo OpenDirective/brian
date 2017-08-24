@@ -34,10 +34,13 @@ const defaultState: State = {
 export type Reducer = (prev?: State) => State | undefined
 
 export function App(sources: Sources): Sinks {
-    const state$ = sources.onion.state$
-    const initReducer$ = xs.of<Reducer>(
-        prevState => (prevState === undefined ? defaultState : prevState)
-    )
+    sources.onion.state$.addListener({}) // might help keep state working
+
+    const initReducer$ = xs
+        .of<Reducer>(
+            prevState => (prevState === undefined ? defaultState : prevState)
+        )
+        .filter(() => true)
 
     const routeMatch$ = sources.router.define(routes)
 

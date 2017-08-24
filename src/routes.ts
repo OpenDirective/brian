@@ -1,5 +1,6 @@
 import { Component } from './interfaces'
 import { Home } from './components/home'
+import { Photos } from './components/photos'
 import { Counter } from './components/counter'
 import { Speaker } from './components/speaker'
 
@@ -13,6 +14,7 @@ export interface Routes {
 
 export const routes: Routes = {
     '/': { component: Home, scope: 'home' },
+    '/photos': { component: Photos, scope: 'photos' },
     '/counter': { component: Counter, scope: 'counter' },
     '/speaker': { component: Speaker, scope: 'speaker' }
 }

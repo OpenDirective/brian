@@ -2,7 +2,7 @@ import xs, { MemoryStream, Stream } from 'xstream'
 import { VNode, DOMSource } from '@cycle/dom'
 import { ResponseStream, HTTPSource } from '@cycle/HTTP'
 import { StateSource } from 'cycle-onionify'
-import { Auth0Request, Logout } from 'cyclejs-auth0'
+import { Logout } from 'cyclejs-auth0'
 
 import { BaseSources, BaseSinks } from '../interfaces'
 import { API_HOST } from '../environment'
@@ -18,11 +18,14 @@ function speech(DOM: DOMSource): Stream<string> {
 }
 
 function routes(DOM: DOMSource): Stream<string> {
-    return DOM.select('[data-navigate="photos"]').events('click').map(e => {
-        const he = e.target as HTMLElement
-        const route = he.dataset.navigate as string
-        return `/${route}`
-    })
+    return DOM.select('[data-navigate]')
+        .events('click')
+        .map(e => {
+            const he = e.target as HTMLElement
+            const route = he.dataset.navigate as string
+            return `/${route}`
+        })
+        .debug('routing to')
 }
 
 // Types
@@ -48,16 +51,12 @@ const PHOTOS_URL = `${API_HOST}/api/getPhotoAlbums`
 
 export function Home({ DOM, onion }: Sources): Sinks {
     const vdom$: Stream<VNode> = view(onion.state$)
-
-    /*
-    const request$ = photosAction$.map(accessToken => ({
-        url: PHOTOS_URL,
-        method: 'get',
-        category: 'request-photos',
-        accept: 'application/json'
-        // bearer header is added by auth0ify
-    }))
-*/
+    const init$ = xs
+        .of<Reducer>(
+            prevState => (prevState === undefined ? defaultState : prevState)
+        )
+        .filter(() => true)
+    const reducer$ = init$
 
     const logout$ = DOM.select('[data-action="logout"]')
         .events('click')
@@ -65,39 +64,11 @@ export function Home({ DOM, onion }: Sources): Sinks {
 
     return {
         DOM: vdom$,
-        //     onion: action$,
+        onion: reducer$,
         router: routes(DOM),
         auth0: logout$,
         speech: speech(DOM)
     }
-}
-
-function intent(HTTP: HTTPSource): Stream<Reducer> {
-    const init$ = xs.of<Reducer>(
-        prevState => (prevState === undefined ? defaultState : prevState)
-    )
-
-    const response$$ = HTTP.select('request-photos')
-    const photos$ = response$$
-        .map(response$ =>
-            response$.replaceError((error: any) => {
-                if (error.response) {
-                    error.response.error.message =
-                        error.response.error.message + ' ' + error.response.text
-                }
-                return xs.of(
-                    error.response ? error.response : { error, body: '' }
-                )
-            })
-        )
-        .flatten()
-        .map<Reducer>(({ error, body }) => state => ({
-            ...state,
-            error: error.message,
-            body
-        }))
-
-    return xs.merge(init$, photos$)
 }
 
 function view(state$: Stream<State>): Stream<VNode> {
