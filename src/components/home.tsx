@@ -1,33 +1,10 @@
-import xs, { MemoryStream, Stream } from 'xstream'
+import xs, { Stream } from 'xstream'
 import { VNode, DOMSource } from '@cycle/dom'
-import { ResponseStream, HTTPSource } from '@cycle/HTTP'
 import { StateSource } from 'cycle-onionify'
-import { Logout } from 'cyclejs-auth0'
 
 import { BaseSources, BaseSinks } from '../interfaces'
 import { API_HOST } from '../environment'
-
-function speech(DOM: DOMSource): Stream<string> {
-    return DOM.select('[data-speech]').events('click').map(e => {
-        const he = e.target as HTMLElement
-        const value = he.dataset.speech as string
-        const text = he.textContent ? he.textContent : ''
-        const speech = value === '<text>' ? text : value
-        return speech
-    })
-}
-
-function routes(DOM: DOMSource): Stream<string> {
-    return DOM.select('[data-navigate]')
-        .events('click')
-        .map(e => {
-            const he = e.target as HTMLElement
-            const route = he.dataset.navigate as string
-            return `/${route}`
-        })
-        .debug('routing to')
-}
-
+import { routes, logout, speech } from '../pageify'
 // Types
 export interface Sources extends BaseSources {
     onion: StateSource<State>
@@ -58,23 +35,33 @@ export function Home({ DOM, onion }: Sources): Sinks {
         .filter(() => true)
     const reducer$ = init$
 
-    const logout$ = DOM.select('[data-action="logout"]')
-        .events('click')
-        .mapTo({ action: 'logout' } as Logout)
-
     return {
         DOM: vdom$,
         onion: reducer$,
         router: routes(DOM),
-        auth0: logout$,
+        auth0: logout(DOM),
         speech: speech(DOM)
     }
 }
 
 function view(state$: Stream<State>): Stream<VNode> {
-    return state$
-        .map(state => (state.error ? state.error : state.body))
-        .map(result =>
+    return state$.map(result => {
+        interface ButtonDef {
+            title: string
+            id?: string
+            page?: string
+        }
+        const buttonDefs = [
+            { title: 'Photo Albums', page: 'photos' },
+            { title: 'Counter', page: 'counter' }
+        ]
+        const buttons = buttonDefs.map(v =>
+            <button type="button" className="action key" data-navigate={v.page}>
+                {v.title}
+            </button>
+        )
+
+        return (
             <div>
                 <div className="wrapper">
                     <header className="header">
@@ -95,18 +82,10 @@ function view(state$: Stream<State>): Stream<VNode> {
                     </header>
 
                     <main className="grid">
-                        <button
-                            type="button"
-                            className="action key"
-                            data-navigate="photos"
-                        >
-                            View Photos
-                        </button>
+                        {buttons}
                     </main>
                 </div>
-                <footer className="result">
-                    {JSON.stringify(result, undefined, 4)}
-                </footer>
             </div>
         )
+    })
 }

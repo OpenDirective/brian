@@ -23,4 +23,5 @@ export interface BaseSinks {
     storage?: Stream<any>
     speech?: Stream<string>
     auth0?: Stream<Auth0Request>
+    error?: Stream<string>
 }

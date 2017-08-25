@@ -22,6 +22,7 @@ import {
 } from './config/client-config'
 
 import speechDriver from './drivers/speech'
+import errorDriver from './drivers/error'
 
 export type DriverThunk = Readonly<[string, () => any]> & [string, () => any] // work around readonly
 export type DriverThunkMapper = (t: DriverThunk) => DriverThunk
@@ -34,6 +35,7 @@ const driverThunks: ReadonlyArray<DriverThunk> = [
     ['history', () => makeHistoryDriver()],
     ['storage', () => storageDriver],
     ['speech', () => speechDriver],
+    ['error', () => errorDriver],
     [
         'auth0',
         () => makeAuth0Driver(AUTH0_APPKEY, AUTH0_DOMAIN, AUTH0_LOCKOPTIONS)

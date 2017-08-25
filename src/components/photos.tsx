@@ -4,6 +4,8 @@ import { ResponseStream, Response, HTTPSource } from '@cycle/HTTP'
 import { StateSource } from 'cycle-onionify'
 import { Logout } from 'cyclejs-auth0'
 
+import { logout, processResponse } from '../pageify'
+
 import { BaseSources, BaseSinks } from '../interfaces'
 import { API_HOST } from '../environment'
 
@@ -34,96 +36,20 @@ const defaultState: State = {
 }
 export type Reducer = (prev: State) => State | undefined
 
-interface ErrorDetails {
-    status: number
-    statusDescription: string
-    message: string
-    url: string
-}
-
-interface MyResponse extends Response {
-    errorDetails?: ErrorDetails
-}
-
-interface ResponseStreams {
-    [index: string]: Stream<any>
-}
-
-function processResponse(
-    response$$: Stream<MemoryStream<MyResponse> & ResponseStream>
-): ResponseStreams {
-    const extendedResponse$ = response$$
-        .map(response$ => {
-            let _response: MyResponse
-            response$.map(response => {
-                _response = response
-                return response
-            })
-            return response$.replaceError((error: any) => {
-                const err: ErrorDetails = {
-                    status: error.status,
-                    statusDescription: error.message,
-                    message:
-                        error.response.body && error.response.body.message
-                            ? error.response.body.message
-                            : error.response.text,
-                    url:
-                        error.response && error.response.error
-                            ? error.response.error.url
-                            : ''
-                }
-                return xs.of({ ..._response, errorDetails: err } as MyResponse)
-            })
-        })
-        .flatten()
-
-    const unorthorised$ = extendedResponse$
-        .filter(
-            ({ errorDetails }) => !!errorDetails && errorDetails.status === 401
-        )
-        .map(({ errorDetails }) => errorDetails)
-        .debug('u')
-
-    const error$ = extendedResponse$
-        .filter(
-            ({ errorDetails }) => !!errorDetails && errorDetails.status !== 401
-        )
-        .map(({ errorDetails }) => errorDetails)
-        .debug('e')
-
-    const response$ = extendedResponse$
-        .filter(({ errorDetails }) => !errorDetails)
-        .debug('e')
-
-    const goHome$ = unorthorised$.mapTo('/home')
-    const logout$ = unorthorised$.mapTo({ action: 'logout' } as Logout)
-
-    return {
-        error$,
-        goHome$,
-        logout$,
-        response$: response$
-    }
-}
-
 export function Photos({ HTTP, DOM, onion }: Sources): Sinks {
     const vdom$: Stream<VNode> = view(onion.state$)
 
-    const request$ = xs
-        .of({
-            url: PHOTOS_URL,
-            method: 'get',
-            category: 'request-albums',
-            accept: 'application/json'
-            // bearer header is added by auth0ify
-        })
-        .debug('request')
+    const request$ = xs.of({
+        url: PHOTOS_URL,
+        method: 'get',
+        category: 'request-albums',
+        accept: 'application/json'
+        // bearer header is added by auth0ify
+    })
 
-    const init$ = xs
-        .of<Reducer>(
-            prevState => (prevState === undefined ? defaultState : prevState)
-        )
-        .debug('i')
+    const init$ = xs.of<Reducer>(
+        prevState => (prevState === undefined ? defaultState : prevState)
+    )
 
     const responseStreams = processResponse(HTTP.select('request-albums')) // TODO will actiosn be better??
 
@@ -139,46 +65,51 @@ export function Photos({ HTTP, DOM, onion }: Sources): Sinks {
     return {
         DOM: vdom$,
         HTTP: request$,
-        onion: reducers$.debug('r'),
+        onion: reducers$,
         router: responseStreams.goHome$.debug('h'),
-        auth0: responseStreams.logout$.debug('l')
+        auth0: xs.merge(logout(DOM), responseStreams.logout$.debug('l')),
+        error: responseStreams.error$.map(e => JSON.stringify(e, undefined, 4))
     }
 }
 
 function view(state$: Stream<State>): Stream<VNode> {
-    return state$.debug('pv').map(state =>
-        <div>
-            <div className="wrapper">
-                <header className="header">
-                    <button
-                        type="button"
-                        className="header-title key"
-                        data-speech="<text>"
-                    >
-                        Touch the photo album you want to view &#x1f50a;
-                    </button>
-                    <button
-                        type="button"
-                        className="header-logout key"
-                        data-action="logout"
-                    >
-                        Logout
-                    </button>
-                </header>
+    return state$.map(state => {
+        const buttons = state.albums.map(v =>
+            <button
+                type="button"
+                className="action key"
+                data-action="view"
+                data-value={v.id}
+            >
+                {v.title}
+            </button>
+        )
 
-                <main className="grid">
-                    <button
-                        type="button"
-                        className="action key"
-                        data-navigate="photos"
-                    >
-                        {state.albums ? state.albums[0].title : 'none'}
-                    </button>
-                </main>
+        return (
+            <div>
+                <div className="wrapper">
+                    <header className="header">
+                        <button
+                            type="button"
+                            className="header-title key"
+                            data-speech="<text>"
+                        >
+                            Touch the photo album you want to view &#x1f50a;
+                        </button>
+                        <button
+                            type="button"
+                            className="header-logout key"
+                            data-action="logout"
+                        >
+                            Logout
+                        </button>
+                    </header>
+
+                    <main className="grid">
+                        {buttons}
+                    </main>
+                </div>
             </div>
-            <footer className="result">
-                {JSON.stringify(state.body, undefined, 4)}
-            </footer>
-        </div>
-    )
+        )
+    })
 }
