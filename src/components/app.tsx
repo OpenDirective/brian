@@ -12,9 +12,6 @@ import { RouteValue, routes, initialRoute } from '../routes'
 const protect: any = require('cyclejs-auth0').protect // TODO PR to add missing typeings
 
 // Types
-import { State as CounterState } from './counter'
-import { State as SpeakerState } from './speaker'
-
 export interface Sources extends BaseSources {
     onion: StateSource<State>
 }
@@ -23,13 +20,9 @@ export interface Sinks extends BaseSinks {
 }
 
 // State
-export interface State {
-    counter: CounterState
-    speaker?: SpeakerState
-}
+export interface State {}
 const defaultState: State = {
-    counter: { count: 5 },
-    speaker: undefined // use conmponent default
+    // state intialised in pages
 }
 export type Reducer = (prev?: State) => State | undefined
 
